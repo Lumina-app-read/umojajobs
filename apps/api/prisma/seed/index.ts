@@ -1,5 +1,5 @@
 /**
- * Seed du référentiel : 54 pays africains et villes GeoNames.
+ * Seed du référentiel : 54 pays africains, villes GeoNames, rôles et permissions.
  * Idempotent : peut être relancé sans créer de doublon (mise à jour des données existantes).
  *
  * Usage : pnpm --filter @opportinities/api db:seed
@@ -13,6 +13,7 @@ import { uuidv7 } from '../../src/common/uuid-v7';
 import { Prisma, PrismaClient } from '../../src/generated/prisma/client';
 import { toSearchName } from '../../src/locations/search-name';
 import { type CityDatasetRow, parseCityDataset } from './cities-dataset';
+import { seedRolesAndPermissions } from './roles';
 
 loadEnv({
   path: [resolve(__dirname, '../../.env'), resolve(__dirname, '../../../../.env')],
@@ -112,7 +113,10 @@ async function main(): Promise<void> {
   try {
     const countryIds = await seedCountries(prisma);
     const cityCount = await seedCities(prisma, countryIds);
-    process.stdout.write(`Seed terminé : ${countryIds.size} pays, ${cityCount} villes.\n`);
+    const rbac = await seedRolesAndPermissions(prisma);
+    process.stdout.write(
+      `Seed terminé : ${countryIds.size} pays, ${cityCount} villes, ${rbac.roles} rôles, ${rbac.permissions} permissions.\n`,
+    );
   } finally {
     await prisma.$disconnect();
   }

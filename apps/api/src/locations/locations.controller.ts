@@ -1,10 +1,12 @@
 import { Controller, Get, Header, Param, Query } from '@nestjs/common';
 import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CityDto, CitySearchQueryDto, CountryDto, CountryIso2ParamDto } from './locations.dto';
+import { Public } from '../security/decorators';
 import { LocationsService } from './locations.service';
 
 /** Référentiel public des pays et des villes (sélecteurs recherchables de l'interface). */
 @ApiTags('locations')
+@Public()
 @Controller('countries')
 export class LocationsController {
   constructor(private readonly locations: LocationsService) {}

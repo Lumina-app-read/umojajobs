@@ -1,0 +1,34 @@
+{
+  "common": {
+    "greeting": "Bonjour {firstName},",
+    "signature": "L'équipe OPPORTINITIES",
+    "footer": "Cet email automatique a été envoyé par OPPORTINITIES. Merci de ne pas y répondre.",
+    "linkFallback": "Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :"
+  },
+  "verifyEmail": {
+    "subject": "Confirmez votre adresse email",
+    "intro": "Merci pour votre inscription sur OPPORTINITIES. Confirmez votre adresse email pour activer votre compte.",
+    "action": "Confirmer mon adresse email",
+    "expiry": "Ce lien expire dans {hours} heures.",
+    "ignore": "Si vous n'êtes pas à l'origine de cette inscription, ignorez simplement cet email."
+  },
+  "accountExists": {
+    "subject": "Tentative d'inscription avec votre adresse email",
+    "intro": "Une inscription a été tentée avec votre adresse email, alors qu'un compte OPPORTINITIES existe déjà pour cette adresse.",
+    "hint": "Si c'est vous, connectez-vous. En cas d'oubli, vous pouvez réinitialiser votre mot de passe.",
+    "action": "Réinitialiser mon mot de passe",
+    "ignore": "Si vous n'êtes pas à l'origine de cette tentative, aucune action n'est nécessaire : votre compte n'a pas été modifié."
+  },
+  "passwordReset": {
+    "subject": "Réinitialisation de votre mot de passe",
+    "intro": "Une demande de réinitialisation du mot de passe de votre compte a été reçue.",
+    "action": "Choisir un nouveau mot de passe",
+    "expiry": "Ce lien expire dans {minutes} minutes et ne peut être utilisé qu'une seule fois.",
+    "ignore": "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email : votre mot de passe reste inchangé."
+  },
+  "passwordChanged": {
+    "subject": "Votre mot de passe a été modifié",
+    "intro": "Le mot de passe de votre compte OPPORTINITIES vient d'être modifié. Par sécurité, vos autres sessions ont été déconnectées.",
+    "warning": "Si vous n'êtes pas à l'origine de cette modification, réinitialisez immédiatement votre mot de passe et contactez notre support."
+  }
+}

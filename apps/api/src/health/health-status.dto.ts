@@ -8,4 +8,7 @@ export class HealthStatusDto {
 export class ReadinessStatusDto extends HealthStatusDto {
   @ApiProperty({ example: 'up', enum: ['up'] })
   database!: 'up';
+
+  @ApiProperty({ example: 'up', enum: ['up'] })
+  redis!: 'up';
 }

@@ -30,12 +30,22 @@ docs/         Cahier des charges, rapports d'audit et de phase
 
 ```bash
 pnpm install
-cp .env.example .env    # puis remplacer les mots de passe locaux
+cp .env.example .env    # puis remplacer les mots de passe et générer APP_ENCRYPTION_KEY
 pnpm docker:up          # PostgreSQL, Redis, Mailpit
 pnpm db:deploy          # applique les migrations Prisma
-pnpm db:seed            # 54 pays africains et villes (idempotent)
+pnpm db:seed            # pays, villes, rôles et permissions (idempotent)
 pnpm dev                # web sur http://localhost:3000, API sur http://localhost:4000/api/v1/health
 ```
+
+Les emails envoyés en développement sont capturés par Mailpit : http://localhost:8025.
+
+## Authentification (API)
+
+- Sessions serveur révocables, cookie `HttpOnly` / `SameSite=Lax` (`Secure` et préfixe `__Host-` en production).
+- Protection CSRF : jeton obtenu par `GET /api/v1/auth/csrf`, à renvoyer dans l'en-tête `X-CSRF-Token` ; origine vérifiée.
+- Double authentification TOTP obligatoire pour `admin` et `super_admin`.
+- Premier administrateur d'un environnement : `pnpm role:grant <email> super_admin` (après inscription et vérification de l'email).
+- Documentation interactive des routes : http://localhost:4000/api/docs (hors production).
 
 ## Base de données
 
@@ -43,7 +53,7 @@ pnpm dev                # web sur http://localhost:3000, API sur http://localhos
 - Migrations versionnées : `apps/api/prisma/migrations/`. Nouvelle migration : `pnpm db:migrate --name <nom>`.
 - Référentiel des pays : `packages/shared/src/countries.ts` (source unique pour le web, l'API et le seed).
 - Villes : `apps/api/prisma/seed/data/cities-africa.tsv`, dérivé de [GeoNames](https://www.geonames.org/) (CC BY 4.0, voir `ATTRIBUTION.md`).
-- Les tests de bout en bout démarrent leur propre PostgreSQL avec Testcontainers (Docker requis).
+- Les tests de bout en bout démarrent leurs propres PostgreSQL, Redis et Mailpit avec Testcontainers (Docker requis).
 
 ## Commandes
 

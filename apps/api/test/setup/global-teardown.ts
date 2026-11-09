@@ -1,3 +1,3 @@
 export default async function globalTeardown(): Promise<void> {
-  await globalThis.__POSTGRES_CONTAINER__?.stop();
+  await Promise.all((globalThis.__TEST_CONTAINERS__ ?? []).map((container) => container.stop()));
 }

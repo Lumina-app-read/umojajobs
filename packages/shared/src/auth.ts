@@ -1,0 +1,42 @@
+/** Rôles de la plateforme (CLAUDE.md §15). Un compte peut cumuler plusieurs rôles. */
+export const ROLE_CODES = ['user', 'moderator', 'admin', 'super_admin'] as const;
+export type RoleCode = (typeof ROLE_CODES)[number];
+
+/** Rôles pour lesquels la double authentification (TOTP) est obligatoire (décision D7). */
+export const MFA_REQUIRED_ROLES: readonly RoleCode[] = ['admin', 'super_admin'];
+
+/**
+ * Permissions vérifiées côté API. Le frontend ne s'en sert que pour adapter l'affichage :
+ * il ne remplace jamais le contrôle du backend.
+ */
+export const PERMISSIONS = {
+  ADMIN_ACCESS: 'admin.access',
+  USERS_READ: 'users.read',
+  USERS_MANAGE: 'users.manage',
+  ROLES_MANAGE: 'roles.manage',
+  JOBS_MODERATE: 'jobs.moderate',
+  SECURITY_EVENTS_READ: 'security_events.read',
+  AUDIT_LOGS_READ: 'audit_logs.read',
+  SETTINGS_MANAGE: 'settings.manage',
+} as const;
+
+export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+
+/** Règles de mot de passe (recommandations NIST SP 800-63B : longueur plutôt que complexité). */
+export const PASSWORD_MIN_LENGTH = 12;
+export const PASSWORD_MAX_LENGTH = 128;
+
+export const PERSON_NAME_MAX_LENGTH = 100;
+export const EMAIL_MAX_LENGTH = 254;
+
+/** États de la double authentification pour la session courante. */
+export const MFA_STATES = [
+  'not_required',
+  'enrollment_required',
+  'verification_required',
+  'verified',
+] as const;
+export type MfaState = (typeof MFA_STATES)[number];
+
+export const THEME_PREFERENCES = ['light', 'dark', 'system'] as const;
+export type ThemePreference = (typeof THEME_PREFERENCES)[number];

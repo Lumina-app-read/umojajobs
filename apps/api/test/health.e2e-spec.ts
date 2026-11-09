@@ -18,15 +18,28 @@ describe('API — santé (e2e)', () => {
     expect(response.body).toEqual({ status: 'ok' });
   });
 
-  it('GET /api/v1/health/ready confirme que la base répond', async () => {
+  it('GET /api/v1/health/ready confirme que PostgreSQL et Redis répondent', async () => {
     const response = await request(app.getHttpServer()).get('/api/v1/health/ready').expect(200);
-    expect(response.body).toEqual({ status: 'ok', database: 'up' });
+    expect(response.body).toEqual({ status: 'ok', database: 'up', redis: 'up' });
   });
 
   it('applique les en-têtes de sécurité et masque X-Powered-By', async () => {
     const response = await request(app.getHttpServer()).get('/api/v1/health');
     expect(response.headers['x-content-type-options']).toBe('nosniff');
     expect(response.headers['x-powered-by']).toBeUndefined();
+  });
+
+  it('attribue un identifiant de requête, ou conserve celui du proxy s’il est valide', async () => {
+    const generated = await request(app.getHttpServer()).get('/api/v1/health');
+    expect(generated.headers['x-request-id']).toMatch(/^[0-9a-f-]{36}$/);
+    const forwarded = await request(app.getHttpServer())
+      .get('/api/v1/health')
+      .set('X-Request-Id', 'nginx-req-12345678');
+    expect(forwarded.headers['x-request-id']).toBe('nginx-req-12345678');
+    const invalid = await request(app.getHttpServer())
+      .get('/api/v1/health')
+      .set('X-Request-Id', '<script>');
+    expect(invalid.headers['x-request-id']).not.toBe('<script>');
   });
 
   it('refuse une route non versionnée', async () => {

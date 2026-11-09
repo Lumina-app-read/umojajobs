@@ -31,6 +31,7 @@ model Country {
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   cities City[]
+  users  User[]
 
   @@map("countries")
 }
@@ -68,4 +69,221 @@ model City {
   @@index([countryId, population(sort: Desc)])
   @@index([searchName(ops: raw("gin_trgm_ops"))], type: Gin, map: "cities_search_name_trgm_idx")
   @@map("cities")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 1c — Identité, sessions, rôles et sécurité
+// ---------------------------------------------------------------------------
+
+enum UserStatus {
+  active
+  suspended
+
+  @@map("user_status")
+}
+
+enum Locale {
+  fr
+  en
+
+  @@map("locale")
+}
+
+enum ThemePreference {
+  light
+  dark
+  system
+
+  @@map("theme_preference")
+}
+
+enum RoleCode {
+  user
+  moderator
+  admin
+  super_admin
+
+  @@map("role_code")
+}
+
+enum VerificationTokenType {
+  email_verification
+  password_reset
+
+  @@map("verification_token_type")
+}
+
+enum SecurityEventType {
+  user_registered
+  registration_attempt_existing_email
+  email_verification_sent
+  email_verified
+  login_succeeded
+  login_failed
+  account_locked
+  logout
+  logout_all
+  session_revoked
+  password_reset_requested
+  password_reset_completed
+  password_changed
+  mfa_enrollment_started
+  mfa_enabled
+  mfa_verified
+  mfa_failed
+  mfa_recovery_code_used
+  role_granted
+  role_revoked
+
+  @@map("security_event_type")
+}
+
+/// Compte unique : recherche d'emploi, publication, commissions et documents.
+model User {
+  id                         String          @id @default(uuid(7)) @db.Uuid
+  /// Insensible à la casse (citext) : une seule inscription par adresse.
+  email                      String          @unique @db.Citext
+  passwordHash               String          @map("password_hash") @db.VarChar(255)
+  firstName                  String          @map("first_name") @db.VarChar(100)
+  lastName                   String          @map("last_name") @db.VarChar(100)
+  countryId                  String          @map("country_id") @db.Uuid
+  /// Facultatif, au format E.164 (profil ou moment d'un paiement).
+  phoneE164                  String?         @map("phone_e164") @db.VarChar(16)
+  locale                     Locale          @default(fr)
+  theme                      ThemePreference @default(system)
+  status                     UserStatus      @default(active)
+  emailVerifiedAt            DateTime?       @map("email_verified_at") @db.Timestamptz(3)
+  termsAcceptedAt            DateTime        @map("terms_accepted_at") @db.Timestamptz(3)
+  termsVersion               String          @map("terms_version") @db.VarChar(32)
+  failedLoginCount           Int             @default(0) @map("failed_login_count")
+  lockedUntil                DateTime?       @map("locked_until") @db.Timestamptz(3)
+  lastLoginAt                DateTime?       @map("last_login_at") @db.Timestamptz(3)
+  /// Secret TOTP chiffré (AES-256-GCM). Jamais stocké ni renvoyé en clair.
+  totpSecretEncrypted        String?         @map("totp_secret_encrypted") @db.VarChar(255)
+  totpPendingSecretEncrypted String?         @map("totp_pending_secret_encrypted") @db.VarChar(255)
+  totpEnabledAt              DateTime?       @map("totp_enabled_at") @db.Timestamptz(3)
+  /// Dernier pas de temps TOTP accepté : empêche la réutilisation d'un code.
+  totpLastUsedStep           Int?            @map("totp_last_used_step")
+  createdAt                  DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                  DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  country            Country             @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  roles              UserRole[]          @relation("UserRoles")
+  rolesAssigned      UserRole[]          @relation("RoleAssignedBy")
+  sessions           Session[]
+  verificationTokens VerificationToken[]
+  recoveryCodes      MfaRecoveryCode[]
+  securityEvents     SecurityEvent[]
+
+  @@index([countryId])
+  @@map("users")
+}
+
+model Role {
+  id          String           @id @default(uuid(7)) @db.Uuid
+  code        RoleCode         @unique
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String           @id @default(uuid(7)) @db.Uuid
+  code        String           @unique @db.VarChar(100)
+  description String           @db.VarChar(255)
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id") @db.Uuid
+  permissionId String     @map("permission_id") @db.Uuid
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  userId       String   @map("user_id") @db.Uuid
+  roleId       String   @map("role_id") @db.Uuid
+  assignedAt   DateTime @default(now()) @map("assigned_at") @db.Timestamptz(3)
+  /// Vide lorsque le rôle est attribué automatiquement (inscription) ou en ligne de commande.
+  assignedById String?  @map("assigned_by_id") @db.Uuid
+  user         User     @relation("UserRoles", fields: [userId], references: [id], onDelete: Cascade)
+  role         Role     @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  assignedBy   User?    @relation("RoleAssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+/// Session serveur révocable. Seule l'empreinte SHA-256 du jeton est stockée.
+model Session {
+  id            String    @id @default(uuid(7)) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  tokenHash     String    @unique @map("token_hash") @db.Char(64)
+  ip            String?   @db.VarChar(45)
+  userAgent     String?   @map("user_agent") @db.VarChar(512)
+  /// Date de validation du TOTP pour cette session. L'obligation dépend des rôles actuels (admin, super_admin).
+  mfaVerifiedAt DateTime? @map("mfa_verified_at") @db.Timestamptz(3)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  lastSeenAt    DateTime  @default(now()) @map("last_seen_at") @db.Timestamptz(3)
+  expiresAt     DateTime  @map("expires_at") @db.Timestamptz(3)
+  revokedAt     DateTime? @map("revoked_at") @db.Timestamptz(3)
+  revokedReason String?   @map("revoked_reason") @db.VarChar(50)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@map("sessions")
+}
+
+/// Jetons à usage unique (vérification d'email, réinitialisation). Empreinte SHA-256 uniquement.
+model VerificationToken {
+  id        String                @id @default(uuid(7)) @db.Uuid
+  userId    String                @map("user_id") @db.Uuid
+  type      VerificationTokenType
+  tokenHash String                @unique @map("token_hash") @db.Char(64)
+  expiresAt DateTime              @map("expires_at") @db.Timestamptz(3)
+  usedAt    DateTime?             @map("used_at") @db.Timestamptz(3)
+  createdAt DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("verification_tokens")
+}
+
+/// Codes de secours TOTP (usage unique). Empreinte SHA-256 uniquement.
+model MfaRecoveryCode {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  codeHash  String    @map("code_hash") @db.Char(64)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, codeHash])
+  @@map("mfa_recovery_codes")
+}
+
+/// Journal des événements de sécurité. Ajout uniquement : UPDATE et DELETE bloqués par trigger.
+model SecurityEvent {
+  id        String            @id @default(uuid(7)) @db.Uuid
+  userId    String?           @map("user_id") @db.Uuid
+  type      SecurityEventType
+  ip        String?           @db.VarChar(45)
+  userAgent String?           @map("user_agent") @db.VarChar(512)
+  requestId String?           @map("request_id") @db.VarChar(64)
+  metadata  Json?
+  createdAt DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  user      User?             @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([type, createdAt(sort: Desc)])
+  @@map("security_events")
 }
