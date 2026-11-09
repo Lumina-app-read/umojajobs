@@ -1,0 +1,108 @@
+{
+  "hero": {
+    "eyebrow": "Verified offers across all 54 African countries",
+    "title": "Find your next opportunity, anywhere in Africa",
+    "subtitle": "Job offers checked by our moderation team, shared by the community, and a Career Studio to prepare professional applications.",
+    "ctaPrimary": "Create my free account",
+    "ctaSecondary": "How it works",
+    "free": "Free sign-up",
+    "languages": "French and English",
+    "imageAlt": "A recruiter and a candidate shake hands after an interview"
+  },
+  "preview": {
+    "label": "Sample offer",
+    "verified": "Verified",
+    "jobTitle": "Senior accountant",
+    "company": "Logistics company",
+    "city": "Dakar",
+    "contract": "Permanent",
+    "deadline": "Deadline: June 30",
+    "unlock": "Unlock the offer",
+    "searchPlaceholder": "Job title, company or keyword",
+    "cvLabel": "CV preview",
+    "cvReady": "CV ready to export"
+  },
+  "trust": {
+    "label": "Our commitments",
+    "countries": "All 54 African countries covered",
+    "moderation": "Offers checked before publication",
+    "account": "One account for everything",
+    "languages": "Interface in French and English"
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "title": "Three steps to your next application",
+    "subtitle": "A simple path, from a free account to an application ready to send.",
+    "step1Title": "Create your account",
+    "step1Body": "For free, with your email and country. The same account lets you search, share and prepare your documents.",
+    "step2Title": "Find a verified offer",
+    "step2Body": "Every offer is reviewed by moderation before publication. Unlock its full details with your credits.",
+    "step3Title": "Apply with a polished file",
+    "step3Body": "Prepare your CV and cover letter in the Career Studio, then follow the official application instructions."
+  },
+  "jobs": {
+    "eyebrow": "Opportunities",
+    "title": "Reliable offers, from Dakar to Nairobi",
+    "subtitle": "Offers come from verifiable sources: official websites, institutions, newspapers, professional networks. Our team checks each one before publishing it.",
+    "point1": "Source and publication date shown",
+    "point2": "Deadline tracked: an expired offer is no longer listed",
+    "point3": "Official contact details only",
+    "countriesTitle": "A few of the countries covered",
+    "allCountries": "and {count} more countries",
+    "cta": "Create an account to follow offers"
+  },
+  "studio": {
+    "eyebrow": "Career Studio",
+    "title": "Professional documents, nothing made up",
+    "subtitle": "Enter your information: AI improves the wording, never the content. No degree or experience is ever added on your behalf.",
+    "documentsTitle": "Available documents",
+    "doc1": "CV",
+    "doc2": "Cover letter",
+    "doc3": "Unsolicited job application",
+    "doc4": "Internship application",
+    "doc5": "Recommendation letter",
+    "doc6": "Resignation letter",
+    "doc7": "Follow-up letter",
+    "doc8": "Thank-you letter",
+    "flow": "Filling in, previewing and editing are free. You only pay when exporting to PDF.",
+    "cta": "Prepare my CV",
+    "imageAlt": "A young professional working on his laptop"
+  },
+  "share": {
+    "eyebrow": "Contribute",
+    "title": "Share an offer, earn commissions",
+    "subtitle": "Spotted an offer on WhatsApp, Facebook, LinkedIn or in a newspaper? Share it for free. You earn a commission on every eligible unlock.",
+    "step1Title": "Share the offer",
+    "step1Body": "Add the source, the deadline and the application instructions.",
+    "step2Title": "Moderation checks it",
+    "step2Body": "An offer is only published after review. It may be sent back to you for correction.",
+    "step3Title": "Receive your commissions",
+    "step3Body": "After a security period, your earnings become available and can be withdrawn.",
+    "note": "Rate, security period and withdrawal threshold are shown in your account before you contribute.",
+    "cta": "Share my first offer"
+  },
+  "faq": {
+    "eyebrow": "Frequently asked questions",
+    "title": "Everything you need to know",
+    "q1": "Are the offers verified?",
+    "a1": "Yes. Every offer is reviewed by our moderation team before publication: source, consistency of the information, deadline and official contact details. An expired offer is removed automatically.",
+    "q2": "Is sign-up free?",
+    "a2": "Yes. Creating an account, searching and sharing offers are free.",
+    "q3": "What are credits for?",
+    "a3": "Credits are bought in packs and are used to unlock the full details of an offer and to export your Career Studio documents.",
+    "q4": "How do commissions work?",
+    "a4": "When an offer you shared is unlocked by another user, you receive a share of its value. Earnings become available after a security period and can be withdrawn above a minimum threshold.",
+    "q5": "Can AI make up information in my CV?",
+    "a5": "No. AI rewords and structures what you entered. It never adds a degree, an experience or a skill.",
+    "q6": "Is my data protected?",
+    "a6": "Your password is never stored in plain text and your documents are kept in a private space that only you can access.",
+    "q7": "Which languages does the platform support?",
+    "a7": "French and English. Offers stay published in their original language."
+  },
+  "final": {
+    "title": "Your next opportunity starts here",
+    "subtitle": "Create your free account in under a minute.",
+    "cta": "Create my free account",
+    "login": "I already have an account"
+  }
+}

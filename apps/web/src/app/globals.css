@@ -195,6 +195,9 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Liens d'ancrage : défilement doux, sous l'en-tête collant de 64 px. */
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
 
   body {
@@ -236,6 +239,33 @@
       animation-delay: 0s !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+}
+
+/*
+ * Apparition au défilement, en CSS pur (navigateurs compatibles avec les timelines de défilement).
+ * Ailleurs, le contenu s'affiche directement. Désactivée si l'utilisateur réduit les animations.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@layer components {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      animation: none;
     }
   }
 }

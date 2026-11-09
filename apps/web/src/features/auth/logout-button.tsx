@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
 import { api, setCsrfToken } from '@/lib/api/client';
 
-export function LogoutButton() {
+export function LogoutButton({ className }: { className?: string }) {
   const t = useTranslations('common.nav');
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -22,7 +22,7 @@ export function LogoutButton() {
   }
 
   return (
-    <Button variant="secondary" icon={LogOut} onClick={logout} loading={busy}>
+    <Button variant="secondary" icon={LogOut} onClick={logout} loading={busy} className={className}>
       {t('logout')}
     </Button>
   );

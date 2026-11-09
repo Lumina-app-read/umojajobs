@@ -1,6 +1,7 @@
 import 'server-only';
 import { type CountryResponse, type MeResponse } from '@opportinities/shared';
 import { cookies } from 'next/headers';
+import { cache } from 'react';
 
 /** Adresse interne de l'API, utilisée par les Server Components (jamais exposée au navigateur). */
 const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
@@ -26,10 +27,13 @@ async function serverGet<T>(path: string): Promise<ServerResult<T>> {
   return { status: response.status, data: body as T, code: null };
 }
 
-/** Utilisateur connecté, ou état d'authentification à traiter par la page appelante. */
-export function getCurrentUser(): Promise<ServerResult<MeResponse>> {
-  return serverGet<MeResponse>('/auth/me');
-}
+/**
+ * Utilisateur connecté, ou état d'authentification à traiter par la page appelante.
+ * Mis en cache pour la durée d'une requête : en-tête, mise en page et page partagent un seul appel.
+ */
+export const getCurrentUser = cache((): Promise<ServerResult<MeResponse>> =>
+  serverGet<MeResponse>('/auth/me'),
+);
 
 /** Pays actifs (référentiel administrable). */
 export async function getCountries(): Promise<CountryResponse[]> {

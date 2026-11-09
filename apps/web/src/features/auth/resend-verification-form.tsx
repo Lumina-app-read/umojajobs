@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail } from 'lucide-react';
+import { Mail, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
@@ -46,13 +46,14 @@ export function ResendVerificationForm() {
         label={t('fields.email')}
         name="email"
         icon={Mail}
+        placeholder={t('placeholders.email')}
         type="email"
         autoComplete="email"
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         error={fieldMessage(error)}
       />
-      <Button type="submit" variant="secondary" fullWidth loading={submitting}>
+      <Button type="submit" variant="secondary" fullWidth icon={Send} loading={submitting}>
         {t('verifyEmail.resendSubmit')}
       </Button>
     </form>

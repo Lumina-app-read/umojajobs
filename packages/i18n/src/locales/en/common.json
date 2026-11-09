@@ -10,7 +10,16 @@
     "register": "Sign up",
     "dashboard": "Dashboard",
     "logout": "Sign out",
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "homeLabel": "OPPORTINITIES home",
+    "jobs": "Job offers",
+    "share": "Share an offer",
+    "careerStudio": "Career Studio",
+    "howItWorks": "How it works",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menu": "Menu",
+    "preferences": "Preferences"
   },
   "language": {
     "label": "Language",
@@ -30,19 +39,17 @@
     "loading": "Loading…",
     "submitting": "Sending…"
   },
-  "home": {
-    "title": "Professional opportunities from across Africa, in one place",
-    "subtitle": "Job offers checked by our moderation team, shared by the community, and tools to prepare professional applications.",
-    "ctaRegister": "Create a free account",
-    "ctaLogin": "Sign in",
-    "comingSoon": "Job search and the Career Studio will open soon."
-  },
   "footer": {
     "rights": "© {year} OPPORTINITIES. All rights reserved.",
     "terms": "Terms of use",
     "privacy": "Privacy policy",
     "geonames": "Geographic data: GeoNames, CC BY 4.0 licence.",
-    "flags": "Flags: Twemoji, CC BY 4.0 licence."
+    "flags": "Flags: Twemoji, CC BY 4.0 licence.",
+    "label": "Footer",
+    "platform": "Platform",
+    "account": "Account",
+    "legal": "Legal",
+    "credits": "Credits"
   },
   "legal": {
     "termsTitle": "Terms of use",
@@ -75,5 +82,78 @@
     "close": "Close",
     "dismiss": "Dismiss notification",
     "stepOf": "Step {current} of {total}"
+  },
+  "app": {
+    "nav": {
+      "label": "Personal space navigation",
+      "groups": {
+        "offers": "Offers",
+        "contribute": "Contribute",
+        "finances": "Finances",
+        "studio": "Career Studio",
+        "account": "Account"
+      },
+      "overview": "Overview",
+      "jobs": "Search",
+      "saved": "Saved",
+      "unlocked": "Unlocked",
+      "publications": "My posts",
+      "publish": "Post an offer",
+      "wallet": "Wallet",
+      "commissions": "Commissions",
+      "withdrawals": "Withdrawals",
+      "studio": "Studio",
+      "documents": "My documents",
+      "notifications": "Notifications",
+      "settings": "Settings"
+    },
+    "tabs": {
+      "home": "Home",
+      "offers": "Offers",
+      "publish": "Post",
+      "studio": "Studio",
+      "account": "Account"
+    },
+    "publicSite": "Back to the website",
+    "soon": {
+      "badge": "Soon",
+      "title": "Coming soon",
+      "phase2": "This section comes with the Offers module: search, posting, moderation and expiry.",
+      "phase3": "This section comes with the credit wallet, commissions and withdrawals.",
+      "phase4": "This section comes with the Career Studio: forms, templates, AI and PDF export.",
+      "phase5": "This section comes with the notification center.",
+      "back": "Back to overview"
+    },
+    "overview": {
+      "greeting": "Hello {firstName}",
+      "intro": "Welcome to your space. Here is where your account stands.",
+      "primaryAction": "Search for an offer",
+      "gettingStarted": "Getting started",
+      "stepAccount": "Create your account",
+      "stepExplore": "Find a verified offer",
+      "stepStudio": "Prepare your CV",
+      "stepShare": "Share a first offer",
+      "done": "Done",
+      "credits": "Credits",
+      "unlocked": "Unlocked offers",
+      "earnings": "Available earnings",
+      "documents": "Documents",
+      "statSoon": "Available soon",
+      "recommended": "Recommended offers",
+      "recommendedEmpty": "No offers yet",
+      "recommendedEmptyBody": "Verified offers will appear here as soon as the Offers module opens.",
+      "notifications": "Notifications",
+      "notificationsEmpty": "No notifications",
+      "notificationsEmptyBody": "Approvals, unlocks and payments will be reported here."
+    },
+    "settings": {
+      "intro": "Your account information and display preferences.",
+      "account": "Account",
+      "preferences": "Preferences",
+      "preferencesHint": "Saved on this device."
+    },
+    "user": {
+      "account": "Your account"
+    }
   }
 }

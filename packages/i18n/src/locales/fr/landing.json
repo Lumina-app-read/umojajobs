@@ -1,0 +1,108 @@
+{
+  "hero": {
+    "eyebrow": "Offres vérifiées dans les 54 pays africains",
+    "title": "Trouvez votre prochaine opportunité, partout en Afrique",
+    "subtitle": "Des offres d'emploi vérifiées par notre équipe de modération, partagées par la communauté, et un Career Studio pour préparer des candidatures professionnelles.",
+    "ctaPrimary": "Créer mon compte gratuit",
+    "ctaSecondary": "Comment ça marche",
+    "free": "Inscription gratuite",
+    "languages": "Français et anglais",
+    "imageAlt": "Une recruteuse et un candidat se serrent la main à l'issue d'un entretien"
+  },
+  "preview": {
+    "label": "Exemple d'offre",
+    "verified": "Vérifiée",
+    "jobTitle": "Comptable confirmé",
+    "company": "Entreprise de logistique",
+    "city": "Dakar",
+    "contract": "CDI",
+    "deadline": "Date limite : 30 juin",
+    "unlock": "Déverrouiller l'offre",
+    "searchPlaceholder": "Poste, entreprise ou mot-clé",
+    "cvLabel": "Aperçu du CV",
+    "cvReady": "CV prêt à exporter"
+  },
+  "trust": {
+    "label": "Nos engagements",
+    "countries": "54 pays africains couverts",
+    "moderation": "Offres vérifiées avant publication",
+    "account": "Un seul compte pour tout",
+    "languages": "Interface en français et en anglais"
+  },
+  "how": {
+    "eyebrow": "Comment ça marche",
+    "title": "Trois étapes vers votre prochaine candidature",
+    "subtitle": "Un parcours simple, du compte gratuit jusqu'au dossier prêt à envoyer.",
+    "step1Title": "Créez votre compte",
+    "step1Body": "Gratuitement, avec votre email et votre pays. Le même compte sert à chercher, partager et préparer vos documents.",
+    "step2Title": "Trouvez une offre vérifiée",
+    "step2Body": "Chaque offre est relue par la modération avant publication. Déverrouillez ses informations complètes avec vos crédits.",
+    "step3Title": "Postulez avec un dossier soigné",
+    "step3Body": "Préparez votre CV et votre lettre dans le Career Studio, puis suivez les instructions officielles de candidature."
+  },
+  "jobs": {
+    "eyebrow": "Opportunités",
+    "title": "Des offres fiables, de Dakar à Nairobi",
+    "subtitle": "Les offres viennent de sources vérifiables : sites officiels, institutions, journaux, réseaux professionnels. Notre équipe contrôle chacune d'elles avant de la publier.",
+    "point1": "Source et date de publication indiquées",
+    "point2": "Date limite suivie : une offre expirée n'est plus proposée",
+    "point3": "Coordonnées officielles uniquement",
+    "countriesTitle": "Quelques pays couverts",
+    "allCountries": "et {count} autres pays",
+    "cta": "Créer un compte pour suivre les offres"
+  },
+  "studio": {
+    "eyebrow": "Career Studio",
+    "title": "Des documents professionnels, sans rien inventer",
+    "subtitle": "Saisissez vos informations : l'IA améliore la formulation, jamais le contenu. Aucun diplôme ni aucune expérience n'est ajouté à votre place.",
+    "documentsTitle": "Documents disponibles",
+    "doc1": "CV",
+    "doc2": "Lettre de motivation",
+    "doc3": "Demande d'emploi spontanée",
+    "doc4": "Demande de stage",
+    "doc5": "Lettre de recommandation",
+    "doc6": "Lettre de démission",
+    "doc7": "Lettre de relance",
+    "doc8": "Lettre de remerciement",
+    "flow": "Remplissage, aperçu et modifications gratuits. Vous ne payez qu'à l'export PDF.",
+    "cta": "Préparer mon CV",
+    "imageAlt": "Un jeune professionnel travaille sur son ordinateur portable"
+  },
+  "share": {
+    "eyebrow": "Contribuer",
+    "title": "Partagez une offre, gagnez des commissions",
+    "subtitle": "Vous avez repéré une offre sur WhatsApp, Facebook, LinkedIn ou dans un journal ? Partagez-la gratuitement. Vous recevez une commission sur chaque déverrouillage éligible.",
+    "step1Title": "Partagez l'offre",
+    "step1Body": "Indiquez la source, la date limite et les instructions de candidature.",
+    "step2Title": "La modération la vérifie",
+    "step2Body": "Une offre n'est publiée qu'après contrôle. Elle peut vous être renvoyée pour correction.",
+    "step3Title": "Recevez vos commissions",
+    "step3Body": "Après un délai de sécurité, vos gains deviennent disponibles et peuvent être retirés.",
+    "note": "Taux, délai et seuil de retrait sont indiqués dans votre espace avant toute contribution.",
+    "cta": "Partager ma première offre"
+  },
+  "faq": {
+    "eyebrow": "Questions fréquentes",
+    "title": "Tout ce qu'il faut savoir",
+    "q1": "Les offres sont-elles vérifiées ?",
+    "a1": "Oui. Chaque offre est examinée par notre équipe de modération avant publication : source, cohérence des informations, date limite et coordonnées officielles. Une offre expirée est automatiquement retirée.",
+    "q2": "L'inscription est-elle payante ?",
+    "a2": "Non. La création du compte, la recherche et le partage d'offres sont gratuits.",
+    "q3": "À quoi servent les crédits ?",
+    "a3": "Les crédits s'achètent en packs et servent à déverrouiller les informations complètes d'une offre et à exporter vos documents du Career Studio.",
+    "q4": "Comment fonctionnent les commissions ?",
+    "a4": "Lorsqu'une offre que vous avez partagée est déverrouillée par un autre utilisateur, vous recevez une part de sa valeur. Les gains deviennent disponibles après un délai de sécurité et peuvent être retirés à partir d'un seuil minimum.",
+    "q5": "L'IA peut-elle inventer des informations dans mon CV ?",
+    "a5": "Non. L'IA reformule et structure ce que vous avez saisi. Elle n'ajoute ni diplôme, ni expérience, ni compétence.",
+    "q6": "Mes données sont-elles protégées ?",
+    "a6": "Votre mot de passe n'est jamais stocké en clair et vos documents sont conservés dans un espace privé, accessible uniquement par vous.",
+    "q7": "Dans quelles langues fonctionne la plateforme ?",
+    "a7": "En français et en anglais. Les offres restent publiées dans leur langue d'origine."
+  },
+  "final": {
+    "title": "Votre prochaine opportunité commence ici",
+    "subtitle": "Créez votre compte gratuit en moins d'une minute.",
+    "cta": "Créer mon compte gratuit",
+    "login": "J'ai déjà un compte"
+  }
+}

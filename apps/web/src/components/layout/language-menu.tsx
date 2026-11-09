@@ -14,17 +14,25 @@ import { cn } from '@/lib/cn';
  * Chaque langue est écrite dans sa propre langue. Pas de drapeau : le français et l'anglais
  * sont parlés dans des dizaines de pays africains. La préférence est mémorisée par next-intl.
  */
-export function LanguageMenu({ className }: { className?: string }) {
-  const t = useTranslations('common.language');
+/** Langue courante et changement de langue en restant sur la même page. */
+export function useLocaleSwitch() {
   const locale = useLocale() as Locale;
   const router = useRouter();
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
+  const switchLocale = (target: Locale) =>
+    startTransition(() => router.replace(pathname, { locale: target }));
+  return { locale, switchLocale, pending };
+}
+
+export function LanguageMenu({ className }: { className?: string }) {
+  const t = useTranslations('common.language');
+  const { locale, switchLocale, pending } = useLocaleSwitch();
 
   return (
     <SelectMenu<Locale>
       value={locale}
-      onChange={(target) => startTransition(() => router.replace(pathname, { locale: target }))}
+      onChange={switchLocale}
       label={t('label')}
       disabled={pending}
       options={SUPPORTED_LOCALES.map((value) => ({ value, label: t(value), lang: value }))}

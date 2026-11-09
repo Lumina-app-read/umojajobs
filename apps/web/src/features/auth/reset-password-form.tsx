@@ -1,13 +1,13 @@
 'use client';
 
-import { Lock } from 'lucide-react';
+import { Lock, LogIn, Save, Send } from 'lucide-react';
 import { PASSWORD_MIN_LENGTH, type ResetPasswordRequest } from '@opportinities/shared';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
-import { Button, buttonClasses } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
+import { ButtonLink } from '@/components/ui/button-link';
 import { PasswordField } from '@/components/ui/form-field';
-import { Link } from '@/i18n/navigation';
 import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
 import { useFormErrors } from '@/lib/use-form-errors';
@@ -39,9 +39,9 @@ export function ResetPasswordForm() {
     return (
       <div className="space-y-6">
         <Alert tone="success">{t('resetPassword.success')}</Alert>
-        <Link href="/login" className={buttonClasses('primary', 'lg', true)}>
+        <ButtonLink href="/login" size="lg" fullWidth icon={LogIn}>
           {t('login.submit')}
-        </Link>
+        </ButtonLink>
       </div>
     );
   }
@@ -54,9 +54,9 @@ export function ResetPasswordForm() {
         <Alert tone="error">
           {tokenInvalid && formError ? formError : t('resetPassword.missingToken')}
         </Alert>
-        <Link href="/forgot-password" className={buttonClasses('secondary', 'md', true)}>
+        <ButtonLink href="/forgot-password" variant="secondary" fullWidth icon={Send}>
           {t('resetPassword.requestNew')}
-        </Link>
+        </ButtonLink>
       </div>
     );
   }
@@ -93,6 +93,7 @@ export function ResetPasswordForm() {
       <PasswordField
         icon={Lock}
         label={t('fields.newPassword')}
+        placeholder={t('placeholders.newPassword')}
         name="password"
         autoComplete="new-password"
         value={password}
@@ -106,6 +107,7 @@ export function ResetPasswordForm() {
       <PasswordField
         icon={Lock}
         label={t('fields.newPasswordConfirmation')}
+        placeholder={t('placeholders.passwordConfirmation')}
         name="passwordConfirmation"
         autoComplete="new-password"
         value={confirmation}
@@ -118,6 +120,7 @@ export function ResetPasswordForm() {
       <Button
         type="submit"
         fullWidth
+        icon={Save}
         size="lg"
         loading={submitting}
         loadingLabel={tActions('submitting')}

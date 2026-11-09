@@ -21,13 +21,20 @@ const ICONS = { light: Sun, dark: Moon, system: Monitor } as const;
  * Sélecteur de thème unique : un bouton dont l'icône reflète la préférence (soleil, lune, écran),
  * qui ouvre un menu Clair / Sombre / Système. La préférence est mémorisée (cookie d'un an).
  */
-export function ThemeMenu({ className }: { className?: string }) {
-  const t = useTranslations('common.theme');
-  const preference = useSyncExternalStore(
+/** Préférence de thème mémorisée (« system » au rendu serveur). */
+export function useThemePreference(): ThemePreference {
+  return useSyncExternalStore(
     subscribeThemePreference,
     getThemePreference,
     (): ThemePreference => 'system',
   );
+}
+
+export const THEME_ICONS = ICONS;
+
+export function ThemeMenu({ className }: { className?: string }) {
+  const t = useTranslations('common.theme');
+  const preference = useThemePreference();
 
   // Applique le thème choisi et, en mode « Système », suit les changements du système d'exploitation.
   useEffect(() => {

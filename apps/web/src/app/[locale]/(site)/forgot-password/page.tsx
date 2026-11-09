@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { KeyRound } from 'lucide-react';
 import { AuthCard } from '@/components/ui/card';
 import { ForgotPasswordForm } from '@/features/auth/forgot-password-form';
 import { Link } from '@/i18n/navigation';
@@ -13,6 +14,7 @@ export default async function ForgotPasswordPage() {
   const t = await getTranslations('auth.forgotPassword');
   return (
     <AuthCard
+      icon={KeyRound}
       title={t('title')}
       subtitle={t('subtitle')}
       footer={

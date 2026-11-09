@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { MailCheck } from 'lucide-react';
 import { AuthCard } from '@/components/ui/card';
 import { VerifyEmailView } from '@/features/auth/verify-email-view';
 
@@ -11,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function VerifyEmailPage() {
   const t = await getTranslations('auth.verifyEmail');
   return (
-    <AuthCard title={t('title')}>
+    <AuthCard icon={MailCheck} title={t('title')}>
       <VerifyEmailView />
     </AuthCard>
   );

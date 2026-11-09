@@ -1,20 +1,21 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { ShieldCheck } from 'lucide-react';
 import { AuthCard } from '@/components/ui/card';
-import { MfaVerifyForm } from '@/features/auth/mfa-verify-form';
+import { MfaSetup } from '@/features/auth/mfa-setup';
 import { requireMfaStep } from '@/lib/auth-guard';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('auth.mfa');
-  return { title: t('verifyTitle'), robots: { index: false } };
+  return { title: t('setupTitle'), robots: { index: false } };
 }
 
-export default async function MfaVerifyPage() {
-  await requireMfaStep('/mfa');
+export default async function MfaSetupPage() {
+  await requireMfaStep('/mfa/setup');
   const t = await getTranslations('auth.mfa');
   return (
-    <AuthCard title={t('verifyTitle')} subtitle={t('verifySubtitle')}>
-      <MfaVerifyForm />
+    <AuthCard icon={ShieldCheck} title={t('setupTitle')}>
+      <MfaSetup />
     </AuthCard>
   );
 }

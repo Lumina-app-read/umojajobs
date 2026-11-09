@@ -10,7 +10,16 @@
     "register": "Inscription",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
-    "skipToContent": "Aller au contenu principal"
+    "skipToContent": "Aller au contenu principal",
+    "homeLabel": "Accueil d'OPPORTINITIES",
+    "jobs": "Offres d'emploi",
+    "share": "Partager une offre",
+    "careerStudio": "Career Studio",
+    "howItWorks": "Comment ça marche",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "menu": "Menu",
+    "preferences": "Préférences"
   },
   "language": {
     "label": "Langue",
@@ -30,19 +39,17 @@
     "loading": "Chargement…",
     "submitting": "Envoi en cours…"
   },
-  "home": {
-    "title": "Les opportunités professionnelles de toute l'Afrique, au même endroit",
-    "subtitle": "Offres vérifiées par notre équipe de modération, partagées par la communauté, et outils pour préparer des candidatures professionnelles.",
-    "ctaRegister": "Créer un compte gratuit",
-    "ctaLogin": "Se connecter",
-    "comingSoon": "La recherche d'offres et le Career Studio ouvriront prochainement."
-  },
   "footer": {
     "rights": "© {year} OPPORTINITIES. Tous droits réservés.",
     "terms": "Conditions d'utilisation",
     "privacy": "Politique de confidentialité",
     "geonames": "Données géographiques : GeoNames, licence CC BY 4.0.",
-    "flags": "Drapeaux : Twemoji, licence CC BY 4.0."
+    "flags": "Drapeaux : Twemoji, licence CC BY 4.0.",
+    "label": "Pied de page",
+    "platform": "Plateforme",
+    "account": "Compte",
+    "legal": "Informations légales",
+    "credits": "Crédits"
   },
   "legal": {
     "termsTitle": "Conditions d'utilisation",
@@ -75,5 +82,78 @@
     "close": "Fermer",
     "dismiss": "Fermer la notification",
     "stepOf": "Étape {current} sur {total}"
+  },
+  "app": {
+    "nav": {
+      "label": "Navigation de l'espace personnel",
+      "groups": {
+        "offers": "Offres",
+        "contribute": "Contribuer",
+        "finances": "Finances",
+        "studio": "Career Studio",
+        "account": "Compte"
+      },
+      "overview": "Vue d'ensemble",
+      "jobs": "Rechercher",
+      "saved": "Enregistrées",
+      "unlocked": "Débloquées",
+      "publications": "Mes publications",
+      "publish": "Publier une offre",
+      "wallet": "Portefeuille",
+      "commissions": "Commissions",
+      "withdrawals": "Retraits",
+      "studio": "Studio",
+      "documents": "Mes documents",
+      "notifications": "Notifications",
+      "settings": "Paramètres"
+    },
+    "tabs": {
+      "home": "Accueil",
+      "offers": "Offres",
+      "publish": "Publier",
+      "studio": "Studio",
+      "account": "Compte"
+    },
+    "publicSite": "Retour au site",
+    "soon": {
+      "badge": "Bientôt",
+      "title": "Bientôt disponible",
+      "phase2": "Cette rubrique arrive avec le module Offres : recherche, publication, modération et expiration.",
+      "phase3": "Cette rubrique arrive avec le portefeuille de crédits, les commissions et les retraits.",
+      "phase4": "Cette rubrique arrive avec le Career Studio : formulaires, modèles, IA et export PDF.",
+      "phase5": "Cette rubrique arrive avec le centre de notifications.",
+      "back": "Retour à la vue d'ensemble"
+    },
+    "overview": {
+      "greeting": "Bonjour {firstName}",
+      "intro": "Bienvenue dans votre espace. Voici où en est votre compte.",
+      "primaryAction": "Rechercher une offre",
+      "gettingStarted": "Premiers pas",
+      "stepAccount": "Créer votre compte",
+      "stepExplore": "Trouver une offre vérifiée",
+      "stepStudio": "Préparer votre CV",
+      "stepShare": "Partager une première offre",
+      "done": "Fait",
+      "credits": "Crédits",
+      "unlocked": "Offres débloquées",
+      "earnings": "Gains disponibles",
+      "documents": "Documents",
+      "statSoon": "Disponible prochainement",
+      "recommended": "Offres recommandées",
+      "recommendedEmpty": "Aucune offre pour le moment",
+      "recommendedEmptyBody": "Les offres vérifiées apparaîtront ici dès l'ouverture du module Offres.",
+      "notifications": "Notifications",
+      "notificationsEmpty": "Aucune notification",
+      "notificationsEmptyBody": "Les validations, déverrouillages et paiements vous seront signalés ici."
+    },
+    "settings": {
+      "intro": "Les informations de votre compte et vos préférences d'affichage.",
+      "account": "Compte",
+      "preferences": "Préférences",
+      "preferencesHint": "Enregistrées sur cet appareil."
+    },
+    "user": {
+      "account": "Votre compte"
+    }
   }
 }

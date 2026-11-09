@@ -1,3 +1,4 @@
+import { getClientMessages } from '@opportinities/i18n';
 import { APP_NAME } from '@opportinities/shared';
 import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
@@ -6,11 +7,9 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { type ReactNode } from 'react';
 import { FlagEmojiPolyfill } from '@/components/layout/flag-emoji-polyfill';
-import { SiteFooter } from '@/components/layout/site-footer';
-import { SiteHeader } from '@/components/layout/site-header';
+import { ThemeScript } from '@/components/theme/theme-script';
 import { Toaster } from '@/components/ui/toast';
 import { routing } from '@/i18n/routing';
-import { THEME_BOOTSTRAP_SCRIPT } from '@/lib/theme';
 import '../globals.css';
 
 // Plus Jakarta Sans (police variable 200-800) est téléchargée au build et servie depuis notre domaine :
@@ -52,12 +51,18 @@ export default async function LocaleLayout({
 
   return (
     // La classe .dark est posée par le script ci-dessous avant le premier affichage.
-    <html lang={locale} className={jakarta.variable} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={jakarta.variable}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
+        <ThemeScript />
       </head>
       <body className="flex min-h-dvh flex-col font-sans antialiased">
-        <NextIntlClientProvider>
+        {/* Seuls les messages des composants client partent au navigateur (pas ceux de l'accueil). */}
+        <NextIntlClientProvider messages={getClientMessages(locale)}>
           <FlagEmojiPolyfill />
           <a
             href="#main"
@@ -65,11 +70,8 @@ export default async function LocaleLayout({
           >
             {t('skipToContent')}
           </a>
-          <SiteHeader />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <SiteFooter />
+          {/* Chaque groupe fournit sa structure : site public (site) ou espace connecté (app). */}
+          {children}
           <Toaster />
         </NextIntlClientProvider>
       </body>

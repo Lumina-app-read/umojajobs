@@ -45,19 +45,25 @@ export function buttonClasses(
   );
 }
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+/**
+ * Règle du design system : tout bouton porte une icône Lucide, avant le libellé (`icon`) ou après
+ * (`trailingIcon`, pour une flèche « Continuer »). Le typage l'impose : un bouton sans icône ne
+ * compile pas.
+ */
+export type ButtonIcons =
+  { icon: LucideIcon; trailingIcon?: LucideIcon } | { icon?: undefined; trailingIcon: LucideIcon };
+
+interface BaseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
-  /** Icône Lucide placée avant le libellé. */
-  icon?: LucideIcon;
-  /** Icône Lucide placée après le libellé (par exemple une flèche). */
-  trailingIcon?: LucideIcon;
   /** Action en cours : indicateur visible, bouton désactivé, libellé conservé (pas de saut de largeur). */
   loading?: boolean;
   /** Libellé annoncé pendant le chargement (lecteurs d'écran). */
   loadingLabel?: string;
 }
+
+export type ButtonProps = BaseButtonProps & ButtonIcons;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
@@ -92,7 +98,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   );
 });
 
-export interface IconButtonProps extends Omit<ButtonProps, 'icon' | 'trailingIcon' | 'children'> {
+export interface IconButtonProps extends Omit<
+  BaseButtonProps,
+  'children' | 'loadingLabel' | 'fullWidth'
+> {
   icon: LucideIcon;
   /** Libellé accessible obligatoire (aucun texte visible). */
   label: string;
@@ -101,21 +110,33 @@ export interface IconButtonProps extends Omit<ButtonProps, 'icon' | 'trailingIco
 
 /** Bouton carré à icône seule, avec libellé accessible et info-bulle native. */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
-  { icon: Icon, label, variant = 'ghost', size = 'md', className, children, ...props },
+  {
+    icon: Icon,
+    label,
+    variant = 'ghost',
+    size = 'md',
+    className,
+    children,
+    type,
+    loading = false,
+    disabled,
+    ...props
+  },
   ref,
 ) {
   return (
-    <Button
+    <button
       ref={ref}
-      variant={variant}
-      size={size}
+      type={type ?? 'button'}
       aria-label={label}
       title={label}
-      className={cn(ICON_SIZES[size], 'px-0', className)}
+      disabled={disabled ?? loading}
+      aria-busy={loading || undefined}
       {...props}
+      className={cn(buttonClasses(variant, size), ICON_SIZES[size], 'px-0', className)}
     >
       <Icon className="size-[18px]" aria-hidden="true" />
       {children}
-    </Button>
+    </button>
   );
 });

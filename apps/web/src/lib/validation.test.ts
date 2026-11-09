@@ -5,7 +5,9 @@ import {
   validateNewPassword,
   validatePersonName,
   validateRecoveryCode,
+  passwordContainsIdentity,
   validateRegister,
+  validateRegisterStep,
   validateTotpCode,
 } from './validation';
 
@@ -60,5 +62,35 @@ describe('validation côté navigateur', () => {
     );
     expect(errors.countryIso2).toEqual({ key: 'country' });
     expect(errors.acceptTerms).toEqual({ key: 'terms' });
+  });
+});
+
+describe('inscription en deux étapes', () => {
+  const values = {
+    firstName: 'Awa',
+    lastName: 'Diallo',
+    email: '',
+    countryIso2: 'SN',
+    password: '',
+    passwordConfirmation: '',
+    acceptTerms: false,
+  };
+
+  it('ne valide que les champs de l’étape demandée', () => {
+    expect(validateRegisterStep(values, 0)).toEqual({});
+    expect(Object.keys(validateRegisterStep(values, 1)).sort()).toEqual([
+      'acceptTerms',
+      'email',
+      'password',
+      'passwordConfirmation',
+    ]);
+  });
+
+  it('repère le nom ou l’email dans le mot de passe (4 caractères ou plus)', () => {
+    const identity = { firstName: 'Awa', lastName: 'Diallo', email: 'awa.d@example.com' };
+    expect(passwordContainsIdentity('mon-DIALLO-2026', identity)).toBe(true);
+    expect(passwordContainsIdentity('awa.d et la mer', identity)).toBe(true);
+    // « Awa » fait moins de 4 caractères : il n'est pas pris en compte, comme dans l'API.
+    expect(passwordContainsIdentity('awa aime la mer', identity)).toBe(false);
   });
 });

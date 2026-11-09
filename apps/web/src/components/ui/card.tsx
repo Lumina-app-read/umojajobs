@@ -1,3 +1,4 @@
+import { type LucideIcon } from 'lucide-react';
 import { type HTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
@@ -53,21 +54,32 @@ export function CardHeader({
   );
 }
 
-/** Mise en page provisoire des écrans d'authentification (refonte prévue à l'étape D3). */
+/**
+ * Écrans d'authentification secondaires (mot de passe oublié, confirmation, double
+ * authentification) : carte centrée de 440 px, avec une icône qui situe l'écran.
+ * L'inscription et la connexion utilisent `AuthShell`.
+ */
 export function AuthCard({
   title,
   subtitle,
+  icon: Icon,
   children,
   footer,
 }: {
   title: string;
   subtitle?: string;
+  icon?: LucideIcon;
   children: ReactNode;
   footer?: ReactNode;
 }) {
   return (
     <div className="mx-auto w-full max-w-[440px] px-4 py-10 sm:py-16">
-      <Card className="p-6 sm:p-7">
+      <Card className="p-6 sm:p-8">
+        {Icon && (
+          <span className="mb-5 grid size-11 place-items-center rounded-xl bg-primary-soft text-brand">
+            <Icon className="size-5" aria-hidden="true" />
+          </span>
+        )}
         <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg">{title}</h1>
         {subtitle && <p className="mt-1.5 text-sm text-fg-muted">{subtitle}</p>}
         <div className="mt-6">{children}</div>

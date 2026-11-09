@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { LockKeyhole } from 'lucide-react';
 import { AuthCard } from '@/components/ui/card';
 import { ResetPasswordForm } from '@/features/auth/reset-password-form';
 
@@ -11,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ResetPasswordPage() {
   const t = await getTranslations('auth.resetPassword');
   return (
-    <AuthCard title={t('title')} subtitle={t('subtitle')}>
+    <AuthCard icon={LockKeyhole} title={t('title')} subtitle={t('subtitle')}>
       <ResetPasswordForm />
     </AuthCard>
   );

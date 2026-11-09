@@ -7,7 +7,15 @@
  */
 import { AFRICAN_COUNTRIES, type CountryResponse, flagEmoji } from '@opportinities/shared';
 import {
+  ArrowLeft,
   ArrowRight,
+  Ban,
+  CircleAlert,
+  CircleCheck,
+  Info,
+  KeyRound,
+  Send,
+  X,
   Bookmark,
   Briefcase,
   Coins,
@@ -175,25 +183,37 @@ export function DesignShowcase() {
             <Button variant="secondary" icon={Bookmark}>
               Enregistrer
             </Button>
-            <Button variant="ghost">Annuler</Button>
+            <Button variant="ghost" icon={X}>
+              Annuler
+            </Button>
             <Button variant="danger" icon={Trash2}>
               Supprimer
             </Button>
-            <Button variant="link">Mot de passe oublié ?</Button>
+            <Button variant="link" icon={KeyRound}>
+              Mot de passe oublié ?
+            </Button>
           </div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <Button size="sm">Petit</Button>
-            <Button size="md">Moyen</Button>
-            <Button size="lg">Grand</Button>
+            <Button size="sm" icon={Plus}>
+              Petit
+            </Button>
+            <Button size="md" icon={Plus}>
+              Moyen
+            </Button>
+            <Button size="lg" icon={Plus}>
+              Grand
+            </Button>
             <Button size="xl" trailingIcon={ArrowRight}>
               Créer mon compte gratuit
             </Button>
           </div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <Button loading loadingLabel="Envoi…">
+            <Button icon={Send} loading loadingLabel="Envoi…">
               Envoyer
             </Button>
-            <Button disabled>Désactivé</Button>
+            <Button icon={Ban} disabled>
+              Désactivé
+            </Button>
             <IconButton icon={SlidersHorizontal} label="Filtrer" variant="secondary" />
             <IconButton icon={Search} label="Rechercher" />
           </div>
@@ -224,12 +244,20 @@ export function DesignShowcase() {
             label="Mot de passe"
             name="demo-password"
             icon={Lock}
+            placeholder="Au moins 12 caractères"
             defaultValue="motdepasse"
             error="Au moins 12 caractères."
             showLabel="Afficher le mot de passe"
             hideLabel="Masquer le mot de passe"
           />
-          <FormField label="Prénom" name="demo-first" icon={User} defaultValue="Aminata" valid />
+          <FormField
+            label="Prénom"
+            name="demo-first"
+            icon={User}
+            placeholder="Ex. : Aminata"
+            defaultValue="Aminata"
+            valid
+          />
           <CountrySelect
             countries={COUNTRIES}
             label="Pays de résidence"
@@ -240,6 +268,7 @@ export function DesignShowcase() {
             label="Téléphone"
             name="demo-phone"
             icon={Phone}
+            placeholder="Ex. : +223 70 00 00 00"
             defaultValue="+223"
             disabled
             optionalLabel="(facultatif)"
@@ -287,12 +316,18 @@ export function DesignShowcase() {
               <Button
                 variant="secondary"
                 size="sm"
+                icon={ArrowLeft}
                 disabled={step === 1}
                 onClick={() => setStep(1)}
               >
                 Retour
               </Button>
-              <Button size="sm" disabled={step === 2} onClick={() => setStep(2)}>
+              <Button
+                size="sm"
+                trailingIcon={ArrowRight}
+                disabled={step === 2}
+                onClick={() => setStep(2)}
+              >
                 Continuer
               </Button>
             </div>
@@ -344,6 +379,7 @@ export function DesignShowcase() {
               <Button
                 variant="secondary"
                 size="sm"
+                icon={CircleCheck}
                 onClick={() =>
                   toast.success('Offre enregistrée', 'Retrouvez-la dans « Enregistrées ».')
                 }
@@ -353,6 +389,7 @@ export function DesignShowcase() {
               <Button
                 variant="secondary"
                 size="sm"
+                icon={Info}
                 onClick={() => toast.info('Nouvelle offre disponible')}
               >
                 Information
@@ -360,11 +397,12 @@ export function DesignShowcase() {
               <Button
                 variant="secondary"
                 size="sm"
+                icon={CircleAlert}
                 onClick={() => toast.error('Paiement non confirmé', 'Aucun crédit n’a été débité.')}
               >
                 Erreur
               </Button>
-              <Button size="sm" onClick={() => setDialogOpen(true)}>
+              <Button size="sm" icon={Unlock} onClick={() => setDialogOpen(true)}>
                 Ouvrir une modale
               </Button>
             </div>
@@ -377,7 +415,7 @@ export function DesignShowcase() {
           description="5 crédits seront débités de votre portefeuille."
           footer={
             <>
-              <Button variant="secondary" onClick={() => setDialogOpen(false)}>
+              <Button variant="secondary" icon={X} onClick={() => setDialogOpen(false)}>
                 Annuler
               </Button>
               <Button icon={Unlock} onClick={() => setDialogOpen(false)}>

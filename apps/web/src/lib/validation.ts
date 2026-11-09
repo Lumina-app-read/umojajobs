@@ -86,6 +86,37 @@ export function validateRegister(values: RegisterValues): FieldErrors<keyof Regi
   return compact(errors);
 }
 
+/** Champs de chaque étape de l'inscription. */
+export const REGISTER_STEPS = [
+  ['firstName', 'lastName', 'countryIso2'],
+  ['email', 'password', 'passwordConfirmation', 'acceptTerms'],
+] as const satisfies readonly (readonly (keyof RegisterValues)[])[];
+
+/** Validation limitée aux champs d'une étape. */
+export function validateRegisterStep(
+  values: RegisterValues,
+  step: 0 | 1,
+): FieldErrors<keyof RegisterValues> {
+  const all = validateRegister(values);
+  const fields: readonly (keyof RegisterValues)[] = REGISTER_STEPS[step];
+  return compact(Object.fromEntries(fields.map((field) => [field, all[field]])));
+}
+
+/**
+ * Le mot de passe contient-il le prénom, le nom ou la partie locale de l'email (4 caractères
+ * ou plus) ? Reprend la règle de l'API pour l'afficher en direct ; l'API reste seule juge.
+ */
+export function passwordContainsIdentity(
+  password: string,
+  identity: { firstName: string; lastName: string; email: string },
+): boolean {
+  const lower = password.toLowerCase();
+  return [identity.email.split('@')[0] ?? '', identity.firstName, identity.lastName]
+    .map((part) => part.toLowerCase().trim())
+    .filter((part) => part.length >= 4)
+    .some((part) => lower.includes(part));
+}
+
 export function validateTotpCode(value: string): FieldError | undefined {
   return /^\d{6}$/.test(value.trim()) ? undefined : { key: 'totpCode' };
 }

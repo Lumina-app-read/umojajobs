@@ -1,6 +1,6 @@
 'use client';
 
-import { Lock, Mail } from 'lucide-react';
+import { Lock, LogIn, Mail } from 'lucide-react';
 import { type LoginRequest, type LoginResponse, type MfaState } from '@opportinities/shared';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
@@ -88,6 +88,7 @@ export function LoginForm() {
         label={t('fields.email')}
         name="email"
         icon={Mail}
+        placeholder={t('placeholders.email')}
         type="email"
         autoComplete="username"
         inputMode="email"
@@ -98,6 +99,7 @@ export function LoginForm() {
       />
       <PasswordField
         icon={Lock}
+        placeholder={t('placeholders.password')}
         label={t('fields.password')}
         name="password"
         autoComplete="current-password"
@@ -119,6 +121,7 @@ export function LoginForm() {
       <Button
         type="submit"
         fullWidth
+        icon={LogIn}
         size="lg"
         loading={submitting}
         loadingLabel={tActions('submitting')}

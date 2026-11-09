@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRight, Check, Copy, ShieldCheck, Smartphone } from 'lucide-react';
 import { type RecoveryCodesResponse, type TotpSetupResponse } from '@opportinities/shared';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
@@ -7,7 +8,7 @@ import { toDataURL } from 'qrcode';
 import { type FormEvent, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { FormField } from '@/components/ui/form-field';
+import { Checkbox, FormField } from '@/components/ui/form-field';
 import { useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
@@ -77,6 +78,7 @@ export function MfaSetup() {
         <Button
           fullWidth
           size="lg"
+          trailingIcon={ArrowRight}
           onClick={start}
           loading={busy}
           loadingLabel={tActions('loading')}
@@ -112,6 +114,8 @@ export function MfaSetup() {
         <p className="text-sm text-fg">{t('mfa.step2')}</p>
         <FormField
           label={t('fields.code')}
+          icon={Smartphone}
+          placeholder={t('placeholders.code')}
           name="code"
           inputMode="numeric"
           autoComplete="one-time-code"
@@ -125,6 +129,7 @@ export function MfaSetup() {
           type="submit"
           fullWidth
           size="lg"
+          icon={ShieldCheck}
           loading={busy}
           loadingLabel={tActions('submitting')}
         >
@@ -148,22 +153,20 @@ export function MfaSetup() {
           <li key={recoveryCode}>{recoveryCode}</li>
         ))}
       </ul>
-      <Button variant="secondary" fullWidth onClick={copy}>
+      <Button variant="secondary" fullWidth icon={copied ? Check : Copy} onClick={copy}>
         {copied ? t('mfa.copied') : t('mfa.copy')}
       </Button>
-      <label className="flex items-start gap-3 text-sm text-fg">
-        <input
-          type="checkbox"
-          checked={confirmed}
-          onChange={(event) => setConfirmed(event.target.checked)}
-          className="mt-0.5 size-4 accent-primary"
-        />
-        <span>{t('mfa.recoveryConfirm')}</span>
-      </label>
+      <Checkbox
+        name="recoveryConfirmed"
+        checked={confirmed}
+        onChange={(event) => setConfirmed(event.target.checked)}
+        label={t('mfa.recoveryConfirm')}
+      />
       <Button
         fullWidth
         size="lg"
         disabled={!confirmed}
+        trailingIcon={ArrowRight}
         onClick={() => {
           router.replace('/dashboard');
           router.refresh();

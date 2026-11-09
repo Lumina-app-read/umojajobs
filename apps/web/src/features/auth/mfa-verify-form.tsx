@@ -1,5 +1,6 @@
 'use client';
 
+import { KeyRound, ShieldCheck, Smartphone } from 'lucide-react';
 import { type MfaVerifyRequest } from '@opportinities/shared';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
@@ -56,6 +57,8 @@ export function MfaVerifyForm() {
         <FormField
           key="code"
           label={t('fields.code')}
+          icon={Smartphone}
+          placeholder={t('placeholders.code')}
           name="code"
           inputMode="numeric"
           autoComplete="one-time-code"
@@ -70,6 +73,8 @@ export function MfaVerifyForm() {
         <FormField
           key="recovery"
           label={t('fields.recoveryCode')}
+          icon={KeyRound}
+          placeholder={t('placeholders.recoveryCode')}
           name="recoveryCode"
           autoComplete="off"
           maxLength={11}
@@ -83,6 +88,7 @@ export function MfaVerifyForm() {
       <Button
         type="submit"
         fullWidth
+        icon={ShieldCheck}
         size="lg"
         loading={submitting}
         loadingLabel={tActions('submitting')}
@@ -92,8 +98,13 @@ export function MfaVerifyForm() {
       <button
         type="button"
         onClick={switchMode}
-        className="w-full text-sm font-medium text-brand underline-offset-2 hover:underline"
+        className="inline-flex w-full items-center justify-center gap-2 text-sm font-medium text-brand underline-offset-2 hover:underline"
       >
+        {mode === 'code' ? (
+          <KeyRound className="size-4" aria-hidden="true" />
+        ) : (
+          <Smartphone className="size-4" aria-hidden="true" />
+        )}
         {mode === 'code' ? t('mfa.useRecovery') : t('mfa.useCode')}
       </button>
     </form>

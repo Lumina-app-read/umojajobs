@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Mail } from 'lucide-react';
+import { Send, Mail } from 'lucide-react';
 import { describe, expect, it, vi } from 'vitest';
 import { LanguageMenu } from '@/components/layout/language-menu';
 import { ThemeMenu } from '@/components/theme/theme-menu';
@@ -86,7 +86,7 @@ describe('Stepper', () => {
 describe('Button et FormField', () => {
   it('le bouton en chargement est désactivé et signalé comme occupé', () => {
     renderWithIntl(
-      <Button loading loadingLabel="Envoi…">
+      <Button icon={Send} loading loadingLabel="Envoi…">
         Envoyer
       </Button>,
     );
@@ -101,6 +101,7 @@ describe('Button et FormField', () => {
         label="Adresse email"
         name="email"
         icon={Mail}
+        placeholder="nom@exemple.com"
         hint="Aide"
         error="Adresse invalide"
       />,

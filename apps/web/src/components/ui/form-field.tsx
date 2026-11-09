@@ -66,8 +66,12 @@ interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id
   name: string;
   error?: string | null;
   hint?: ReactNode;
-  /** Icône Lucide à gauche (Mail, Lock, User…). */
-  icon?: LucideIcon;
+  /**
+   * Règle du design system : chaque champ a une icône Lucide à gauche (Mail, Lock, User…) et un
+   * exemple de saisie en placeholder. Les deux sont obligatoires dans le typage.
+   */
+  icon: LucideIcon;
+  placeholder: string;
   /** Élément à droite (bouton d'action, unité). */
   trailing?: ReactNode;
   /** Affiche une coche discrète lorsque la valeur est validée. */
@@ -88,6 +92,7 @@ export function FormField({
   optionalLabel,
   className,
   disabled,
+  'aria-describedby': extraDescription,
   ...props
 }: FormFieldProps) {
   const id = useId();
@@ -100,14 +105,16 @@ export function FormField({
         {label}
       </FieldLabel>
       <div className={controlFrameClasses(Boolean(error), disabled)}>
-        {Icon && <Icon className="ml-3 size-4 text-fg-subtle" aria-hidden="true" />}
+        <Icon className="ml-3 size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
         <input
           id={id}
           name={name}
           disabled={disabled}
-          className={cn(controlInputClasses, Icon && 'pl-2')}
+          className={cn(controlInputClasses, 'pl-2')}
           aria-invalid={error ? true : undefined}
-          aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
+          aria-describedby={
+            [hintId, errorId, extraDescription].filter(Boolean).join(' ') || undefined
+          }
           {...props}
         />
         {valid && !error && <Check className="mr-3 size-4 text-success" aria-hidden="true" />}

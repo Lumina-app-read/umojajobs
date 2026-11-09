@@ -83,6 +83,8 @@ Toutes les couleurs sont des **jetons sémantiques** (`--bg`, `--surface`, `--te
 | `navy` | `#0D1B4C` | `#0D1B4C` | Identité, bandeaux, panneau d'inscription |
 | `accent` (ambre) | `#9A5B00` | `#F5B544` | Gains, nouveautés : usage rare |
 
+**Logo** (fourni par le propriétaire, `public/images/logos`) : le « O » seul, bleu en clair (`mark-light.png`), cyan en sombre (`mark-dark.png`), versions détourées de 128 px de haut. Le nom n'est jamais écrit dans les barres d'en-tête. Favicons générés depuis `images/favicon/favicon.png` (`app/favicon.ico`, `icon.png`, `apple-icon.png`).
+
 ### Neutres (légèrement teintés de bleu, jamais de gris pur)
 
 | Jeton | Clair | Sombre |
@@ -192,6 +194,8 @@ Tous les composants sont construits une fois dans `apps/web/src/components/ui`, 
 
 ---
 
+> **Règle (imposée par le typage)** : chaque champ a une icône Lucide à gauche et un placeholder d'exemple (`FormField`, `PasswordField`) ; chaque bouton porte une icône (`Button`, `ButtonLink`). Un lien présenté comme un bouton utilise toujours `ButtonLink`.
+
 ## 8. Landing : recommandations
 
 Objectif unique : **faire créer un compte**, et secondairement faire explorer les offres.
@@ -273,10 +277,10 @@ Objectif unique : **faire créer un compte**, et secondairement faire explorer l
 | Étape | Contenu |
 |---|---|
 | **D1 — Fondations** | Jetons (couleurs, typographie, espacements, rayons, ombres, animations), Plus Jakarta Sans, composants fondamentaux, page `/design` de référence. |
-| **D2 — Navigation** | En-tête, menus de thème et de langue uniques, pied de page. |
-| **D3 — Authentification** | Inscription en deux étapes, connexion, mot de passe, double authentification. |
-| **D4 — Landing** | Sections 1 à 11, compositions d'interface, apparitions au défilement. |
-| **D5 — Tableau de bord** | Structure (phase 1e) : barre latérale, barre mobile, vue d'ensemble, états vides, squelettes, notifications. |
+| **D2 — Navigation** ✓ | En-tête (logo, 4 liens, langue, thème, compte) ; sous 1024 px, tiroir avec liens, langue, thème et compte ; pied de page en 4 colonnes. Liens vers les sections de l'accueil (`/#jobs`, `#share`, `#career-studio`, `#how-it-works`) jusqu'à D4, centralisés dans `nav-items.ts`. |
+| **D3 — Authentification** ✓ | `AuthShell` (inscription, connexion) : panneau bleu nuit avec photo (`job team`, `found opp`) et formulaire de 440 px ; inscription en deux étapes ; règles du mot de passe en direct (longueur, ni nom ni email, comme l'API) ; écran de confirmation avec renvoi. Autres écrans : `AuthCard` avec icône. |
+| **D4 — Landing** ✓ | Hero (photo et composition d'interface, offre marquée « Exemple »), bandeau de confiance, Comment ça marche, Opportunités (12 pays mis en avant), Career Studio, Contribuer (aucun taux ni seuil codé en dur), FAQ (`<details>`), appel final. Textes dans l'espace `landing`, rendus côté serveur uniquement. Apparition au défilement en CSS (`.reveal`). Témoignages : non affichés tant qu'il n'y en a pas d'authentiques. |
+| **D5 — Tableau de bord** ✓ | Groupes de routes `(site)` (en-tête et pied publics) et `(app)` (espace connecté). `AppShell` : barre latérale de 256 px, barre supérieure, tiroir et barre d'onglets mobile ; navigation centralisée dans `features/app-shell/app-nav.ts`. Vue d'ensemble sans donnée inventée (indicateurs « — », états vides). Rubriques à venir servies par `/dashboard/[section]` avec le module qui les rendra fonctionnelles ; Paramètres réels (compte, langue, thème). Reste à faire : barre latérale repliable en icônes, squelettes branchés sur les vraies données (phases 2 à 4). |
 
 Chaque étape sera présentée avec des captures en clair et en sombre, sur ordinateur et sur mobile, avant de passer à la suivante.
 
@@ -285,5 +289,5 @@ Chaque étape sera présentée avec des captures en clair et en sombre, sur ordi
 1. **Typographie** : valider Plus Jakarta Sans et la mise à jour de `CLAUDE.md` §14 et du cahier §3.
 2. **Palette** : valider le bleu azur, le bleu nuit et l'accent ambre.
 3. **Visuels** : budget et source des photographies et illustrations.
-4. **Logo** : aucun logo n'existe. Je propose un logotype provisoire en Plus Jakarta Sans 800. Un vrai logo, conçu par un designer, est recommandé avant le lancement.
+4. **Logo** : réglé, logo fourni par le propriétaire (voir §4).
 5. **Ordre de réalisation** : D1 à D5 comme ci-dessus.

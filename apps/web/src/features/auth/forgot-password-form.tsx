@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail } from 'lucide-react';
+import { Mail, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
@@ -46,6 +46,7 @@ export function ForgotPasswordForm() {
         label={t('fields.email')}
         name="email"
         icon={Mail}
+        placeholder={t('placeholders.email')}
         type="email"
         autoComplete="email"
         inputMode="email"
@@ -57,6 +58,7 @@ export function ForgotPasswordForm() {
       <Button
         type="submit"
         fullWidth
+        icon={Send}
         size="lg"
         loading={submitting}
         loadingLabel={tActions('submitting')}

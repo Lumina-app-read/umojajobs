@@ -1,3 +1,4 @@
+import { AFRICAN_COUNTRIES, type CountryResponse, flagEmoji } from '@opportinities/shared';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -108,20 +109,84 @@ describe('LoginForm', () => {
   });
 });
 
+const COUNTRIES: CountryResponse[] = AFRICAN_COUNTRIES.map((country) => ({
+  ...country,
+  flagEmoji: flagEmoji(country.iso2),
+}));
+
+/** Remplit l'étape 1 et passe à l'étape 2. */
+async function completeFirstStep(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(screen.getByLabelText('Prénom'), 'Awa');
+  await user.type(screen.getByLabelText('Nom'), 'Diallo');
+  await user.type(screen.getByRole('combobox', { name: 'Pays de résidence' }), 'senegal');
+  await user.keyboard('{ArrowDown}{Enter}');
+  await user.click(screen.getByRole('button', { name: 'Continuer' }));
+}
+
 describe('RegisterForm', () => {
-  it('signale tous les champs obligatoires, sans appel réseau', async () => {
+  it('étape 1 : signale les champs obligatoires sans appel réseau', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch');
     const user = userEvent.setup();
     renderWithIntl(<RegisterForm countries={[]} />);
-    await user.click(screen.getByRole('button', { name: 'Créer mon compte' }));
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
     expect(fetchMock).not.toHaveBeenCalled();
     expect(screen.getByLabelText('Prénom')).toHaveAccessibleDescription(
       'Ce champ est obligatoire.',
     );
     expect(screen.getByText('Choisissez votre pays dans la liste.')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Adresse email')).not.toBeInTheDocument();
+  });
+
+  it('étape 2 : focus sur l’email, saisies conservées au retour', async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<RegisterForm countries={COUNTRIES} />);
+    await completeFirstStep(user);
+
+    expect(screen.getByText(/Étape 2 sur 2/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Adresse email')).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: 'Retour' }));
+    expect(screen.getByLabelText('Prénom')).toHaveValue('Awa');
+  });
+
+  it('coche les règles du mot de passe en direct', async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<RegisterForm countries={COUNTRIES} />);
+    await completeFirstStep(user);
+    const password = screen.getByLabelText('Mot de passe');
+    expect(password).toHaveAccessibleDescription(/au moins 12 caractères/);
+
+    await user.type(password, 'diallo-2026-dakar');
+    expect(screen.getByText('contenir au moins 12 caractères').closest('li')).toHaveClass(
+      'text-success',
+    );
     expect(
-      screen.getByText('Vous devez accepter les conditions pour créer un compte.'),
-    ).toBeInTheDocument();
+      screen.getByText('ne contenir ni votre nom ni votre email').closest('li'),
+    ).not.toHaveClass('text-success');
+  });
+
+  it('revient à l’étape 1 si l’API rejette un champ de cette étape', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      jsonResponse(400, {
+        statusCode: 400,
+        code: 'VALIDATION_FAILED',
+        requestId: 'r',
+        details: [{ field: 'lastName', rules: ['matches'] }],
+      }),
+    );
+    const user = userEvent.setup();
+    renderWithIntl(<RegisterForm countries={COUNTRIES} />);
+    await completeFirstStep(user);
+    await user.type(screen.getByLabelText('Adresse email'), 'awa@example.com');
+    await user.type(screen.getByLabelText('Mot de passe'), 'une longue phrase de passe');
+    await user.type(
+      screen.getByLabelText('Confirmation du mot de passe'),
+      'une longue phrase de passe',
+    );
+    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByRole('button', { name: 'Créer mon compte' }));
+
+    expect(await screen.findByText(/Étape 1 sur 2/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Nom')).toHaveValue('Diallo');
   });
 });

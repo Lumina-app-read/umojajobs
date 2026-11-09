@@ -1,10 +1,10 @@
 'use client';
 
+import { LogIn } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
-import { buttonClasses } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
+import { ButtonLink } from '@/components/ui/button-link';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
 import { ResendVerificationForm } from './resend-verification-form';
@@ -36,9 +36,9 @@ export function VerifyEmailView() {
     return (
       <div className="space-y-6">
         <Alert tone="success">{t('success')}</Alert>
-        <Link href="/login" className={buttonClasses('primary', 'lg', true)}>
+        <ButtonLink href="/login" size="lg" fullWidth icon={LogIn}>
           {t('loginCta')}
-        </Link>
+        </ButtonLink>
       </div>
     );
   }

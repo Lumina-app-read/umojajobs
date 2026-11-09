@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { AuthCard } from '@/components/ui/card';
+import { AuthShell } from '@/components/layout/auth-shell';
 import { LoginForm } from '@/features/auth/login-form';
 import { Link } from '@/i18n/navigation';
 
@@ -12,7 +12,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function LoginPage() {
   const t = await getTranslations('auth.login');
   return (
-    <AuthCard
+    <AuthShell
+      visual="login"
       title={t('title')}
       subtitle={t('subtitle')}
       footer={
@@ -28,6 +29,6 @@ export default async function LoginPage() {
       }
     >
       <LoginForm />
-    </AuthCard>
+    </AuthShell>
   );
 }
