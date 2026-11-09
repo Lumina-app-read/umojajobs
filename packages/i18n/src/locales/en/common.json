@@ -70,5 +70,10 @@
     "moderator": "Moderator",
     "admin": "Administrator",
     "super_admin": "Super administrator"
+  },
+  "ui": {
+    "close": "Close",
+    "dismiss": "Dismiss notification",
+    "stepOf": "Step {current} of {total}"
   }
 }

@@ -22,8 +22,7 @@ export function LogoutButton() {
   }
 
   return (
-    <Button variant="secondary" onClick={logout} loading={busy}>
-      <LogOut className="size-4" aria-hidden="true" />
+    <Button variant="secondary" icon={LogOut} onClick={logout} loading={busy}>
       {t('logout')}
     </Button>
   );

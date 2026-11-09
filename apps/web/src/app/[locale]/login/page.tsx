@@ -20,7 +20,7 @@ export default async function LoginPage() {
           {t('noAccount')}{' '}
           <Link
             href="/register"
-            className="font-medium text-primary underline-offset-2 hover:underline"
+            className="font-medium text-brand underline-offset-2 hover:underline"
           >
             {t('registerLink')}
           </Link>

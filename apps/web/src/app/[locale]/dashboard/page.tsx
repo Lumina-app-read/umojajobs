@@ -31,27 +31,27 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight text-fg">
             {t('dashboard.title', { firstName: user.firstName })}
           </h1>
-          <p className="mt-1 text-sm text-muted">{t('dashboard.intro')}</p>
+          <p className="mt-1 text-sm text-fg-muted">{t('dashboard.intro')}</p>
         </div>
         <LogoutButton />
       </div>
       <Card>
-        <h2 className="text-base font-semibold text-foreground">{t('dashboard.account')}</h2>
+        <h2 className="text-base font-semibold text-fg">{t('dashboard.account')}</h2>
         <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-muted">{t('dashboard.email')}</dt>
-            <dd className="mt-1 font-medium text-foreground">{user.email}</dd>
+            <dt className="text-fg-muted">{t('dashboard.email')}</dt>
+            <dd className="mt-1 font-medium text-fg">{user.email}</dd>
           </div>
           <div>
-            <dt className="text-muted">{t('dashboard.country')}</dt>
-            <dd className="mt-1 font-medium text-foreground">{countryLabel}</dd>
+            <dt className="text-fg-muted">{t('dashboard.country')}</dt>
+            <dd className="mt-1 font-medium text-fg">{countryLabel}</dd>
           </div>
           <div>
-            <dt className="text-muted">{t('dashboard.roles')}</dt>
-            <dd className="mt-1 font-medium text-foreground">
+            <dt className="text-fg-muted">{t('dashboard.roles')}</dt>
+            <dd className="mt-1 font-medium text-fg">
               {(user.roles as string[])
                 .filter(isRoleCode)
                 .map((role) => t(`roles.${role}`))
@@ -59,12 +59,12 @@ export default async function DashboardPage() {
             </dd>
           </div>
           <div>
-            <dt className="text-muted">{t('dashboard.security')}</dt>
-            <dd className="mt-1 flex items-center gap-2 font-medium text-foreground">
+            <dt className="text-fg-muted">{t('dashboard.security')}</dt>
+            <dd className="mt-1 flex items-center gap-2 font-medium text-fg">
               {user.totpEnabled ? (
                 <ShieldCheck className="size-4 text-success" aria-hidden="true" />
               ) : (
-                <ShieldOff className="size-4 text-muted" aria-hidden="true" />
+                <ShieldOff className="size-4 text-fg-muted" aria-hidden="true" />
               )}
               {user.totpEnabled ? t('dashboard.mfaEnabled') : t('dashboard.mfaDisabled')}
             </dd>

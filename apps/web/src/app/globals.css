@@ -4,80 +4,192 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Design system OPPORTINITIES : fond blanc et gris léger, bleu professionnel et bleu foncé,
- * typographie IBM Plex Sans, bordures discrètes. Contrastes conformes WCAG AA dans les deux thèmes.
+ * Design system OPPORTINITIES — « Clarté et élan » (référence : docs/DESIGN_SYSTEM.md).
+ * Toutes les couleurs sont des jetons sémantiques redéfinis par thème : aucun composant
+ * n'utilise de couleur brute. Contrastes WCAG AA vérifiés dans les deux thèmes.
  */
 :root {
-  --background: #f8fafc;
+  /* Surfaces et texte (neutres légèrement teintés de bleu) */
+  --canvas: #f6f7fa;
   --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --foreground: #0f172a;
-  --muted: #475569;
-  --primary: #1d4ed8;
-  --primary-hover: #1e40af;
-  --primary-foreground: #ffffff;
-  --brand-dark: #1e3a8a;
-  --ring: #2563eb;
-  --danger: #b91c1c;
-  --danger-surface: #fef2f2;
-  --danger-border: #fecaca;
-  --success: #15803d;
-  --success-surface: #f0fdf4;
-  --success-border: #bbf7d0;
-  --info-surface: #eff6ff;
-  --info-border: #bfdbfe;
+  --surface-2: #f0f2f6;
+  --surface-raised: #ffffff;
+  --line: #e3e6ed;
+  --line-strong: #cbd1dc;
+  --fg: #0e1525;
+  --fg-muted: #4a5468;
+  --fg-subtle: #646d80;
+
+  /* Marque : primary pour les aplats (boutons), brand pour le texte et les icônes colorés */
+  --primary: #2452e6;
+  --primary-hover: #1c40c2;
+  --primary-soft: #eef3ff;
+  --primary-fg: #ffffff;
+  --brand: #2452e6;
+  --navy: #0d1b4c;
+  --navy-2: #132463;
+  --on-navy: #e8edff;
+  --on-navy-muted: #a9b6e6;
+  --accent: #9a5b00;
+  --accent-soft: #fff6e5;
+
+  /* États */
+  --success: #067647;
+  --success-soft: #ecfdf3;
+  --warning: #b54708;
+  --warning-soft: #fffaeb;
+  --danger: #b42318;
+  --danger-soft: #fef3f2;
+  /* Aplat des actions destructives, identique dans les deux thèmes (texte blanc 4,8:1). */
+  --danger-solid: #d92d20;
+
+  /* Élévation : ombres en clair, bordures et reflet en sombre */
+  --ring: rgb(36 82 230 / 0.22);
+  --elev-xs: 0 1px 2px rgb(16 24 40 / 0.05);
+  --elev-sm: 0 1px 3px rgb(16 24 40 / 0.08), 0 1px 2px rgb(16 24 40 / 0.04);
+  --elev-md: 0 6px 12px -4px rgb(16 24 40 / 0.1), 0 2px 4px -2px rgb(16 24 40 / 0.05);
+  --elev-lg: 0 20px 32px -12px rgb(16 24 40 / 0.18);
+  --highlight: 0 0 #0000;
 }
 
 .dark {
-  --background: #0b1220;
-  --surface: #111a2e;
-  --surface-muted: #16213a;
-  --border: #1f2c45;
-  --border-strong: #334155;
-  --foreground: #e2e8f0;
-  --muted: #94a3b8;
-  --primary: #3b82f6;
-  --primary-hover: #60a5fa;
-  --primary-foreground: #0b1220;
-  --brand-dark: #93c5fd;
-  --ring: #60a5fa;
-  --danger: #f87171;
-  --danger-surface: #2a1215;
-  --danger-border: #7f1d1d;
-  --success: #4ade80;
-  --success-surface: #0f2418;
-  --success-border: #14532d;
-  --info-surface: #0f1f3d;
-  --info-border: #1e3a8a;
+  --canvas: #0a0f1d;
+  --surface: #111829;
+  --surface-2: #162036;
+  --surface-raised: #1a2540;
+  --line: #222d45;
+  --line-strong: #33405e;
+  --fg: #e7ebf3;
+  --fg-muted: #a5aec3;
+  --fg-subtle: #8a94aa;
+
+  --primary: #3866f5;
+  --primary-hover: #4d7bff;
+  --primary-soft: #16224a;
+  --primary-fg: #ffffff;
+  --brand: #8aa8ff;
+  --navy: #0f1c4f;
+  --navy-2: #172a6e;
+  --on-navy: #e8edff;
+  --on-navy-muted: #a9b6e6;
+  --accent: #f5b544;
+  --accent-soft: #2b2109;
+
+  --success: #47cd89;
+  --success-soft: #0c2a1d;
+  --warning: #fdb022;
+  --warning-soft: #2e2008;
+  --danger: #f97066;
+  --danger-soft: #2f1214;
+
+  --ring: rgb(77 123 255 / 0.32);
+  --elev-xs: 0 0 #0000;
+  --elev-sm: 0 0 #0000;
+  --elev-md: 0 8px 20px -6px rgb(0 0 0 / 0.5);
+  --elev-lg: 0 24px 40px -12px rgb(0 0 0 / 0.6);
+  --highlight: inset 0 1px 0 rgb(255 255 255 / 0.04);
 }
 
 @theme inline {
   /* « Twemoji Country Flags » ne couvre que les drapeaux (chargée uniquement là où ils manquent). */
-  --font-sans: 'Twemoji Country Flags', var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    'Twemoji Country Flags', var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --color-background: var(--background);
+  --color-canvas: var(--canvas);
   --color-surface: var(--surface);
-  --color-surface-muted: var(--surface-muted);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
+  --color-surface-2: var(--surface-2);
+  --color-surface-raised: var(--surface-raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-brand-dark: var(--brand-dark);
-  --color-ring: var(--ring);
-  --color-danger: var(--danger);
-  --color-danger-surface: var(--danger-surface);
-  --color-danger-border: var(--danger-border);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-fg: var(--primary-fg);
+  --color-brand: var(--brand);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-on-navy: var(--on-navy);
+  --color-on-navy-muted: var(--on-navy-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --color-success: var(--success);
-  --color-success-surface: var(--success-surface);
-  --color-success-border: var(--success-border);
-  --color-info-surface: var(--info-surface);
-  --color-info-border: var(--info-border);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-solid: var(--danger-solid);
+  --color-ring: var(--ring);
+
+  --shadow-xs: var(--elev-xs), var(--highlight);
+  --shadow-sm: var(--elev-sm), var(--highlight);
+  --shadow-md: var(--elev-md), var(--highlight);
+  --shadow-lg: var(--elev-lg), var(--highlight);
+}
+
+@theme {
+  /* Échelle typographique (titres) : taille / interligne / approche / graisse */
+  --text-display-xl: 3.5rem;
+  --text-display-xl--line-height: 4rem;
+  --text-display-xl--letter-spacing: -0.035em;
+  --text-display-xl--font-weight: 800;
+  --text-display-lg: 2.5rem;
+  --text-display-lg--line-height: 3rem;
+  --text-display-lg--letter-spacing: -0.025em;
+  --text-display-lg--font-weight: 700;
+  --text-heading-lg: 1.75rem;
+  --text-heading-lg--line-height: 2.25rem;
+  --text-heading-lg--letter-spacing: -0.015em;
+  --text-heading-lg--font-weight: 700;
+  --text-heading-md: 1.25rem;
+  --text-heading-md--line-height: 1.75rem;
+  --text-heading-md--letter-spacing: -0.01em;
+  --text-heading-md--font-weight: 600;
+
+  /* Animations : rapides (120 ms), de base (200 ms), lentes (320 ms) */
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade-in: fade-in 320ms var(--ease-emphasized) both;
+  --animate-fade-up: fade-up 320ms var(--ease-emphasized) both;
+  --animate-step-forward: step-forward 320ms var(--ease-emphasized) both;
+  --animate-step-back: step-back 320ms var(--ease-emphasized) both;
+  --animate-shimmer: shimmer 1.2s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  @keyframes step-forward {
+    from {
+      opacity: 0;
+      transform: translateX(12px);
+    }
+  }
+  @keyframes step-back {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -100% 0;
+    }
+  }
 }
 
 @layer base {
@@ -86,21 +198,44 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--canvas);
+    color: var(--fg);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
   }
 
   :focus-visible {
-    outline: 2px solid var(--ring);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--primary-soft);
+    color: var(--fg);
+  }
+
+  /* Les icônes Lucide héritent d'un trait fin et cohérent. */
+  .lucide {
+    stroke-width: 1.75;
+    flex-shrink: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
-      transition-duration: 0.01ms !important;
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }

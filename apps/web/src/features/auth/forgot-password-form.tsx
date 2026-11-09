@@ -1,5 +1,6 @@
 'use client';
 
+import { Mail } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
@@ -44,6 +45,7 @@ export function ForgotPasswordForm() {
       <FormField
         label={t('fields.email')}
         name="email"
+        icon={Mail}
         type="email"
         autoComplete="email"
         inputMode="email"

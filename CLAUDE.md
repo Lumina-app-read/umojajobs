@@ -331,13 +331,14 @@ Direction visuelle :
 - Design premium.
 - Fond blanc et gris léger.
 - Bleu professionnel et bleu foncé.
-- Typographie IBM Plex Sans.
+- Typographie Plus Jakarta Sans, famille unique (décision du propriétaire, novembre 2026).
+- Design system de référence : `docs/DESIGN_SYSTEM.md` (jetons, composants, règles).
 - Cartes sobres.
 - Bordures discrètes.
 - Espacements généreux.
 - Interface mobile-first.
 
-Ne pas utiliser Poppins ou Inter.
+Ne pas utiliser d'autre police d'interface (ni IBM Plex Sans, ni Poppins, ni Inter). Les icônes viennent uniquement de Lucide.
 
 Prévoir :
 

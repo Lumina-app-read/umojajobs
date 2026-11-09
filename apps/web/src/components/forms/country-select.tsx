@@ -10,10 +10,11 @@ import {
   Label,
 } from '@headlessui/react';
 import { type CountryResponse } from '@opportinities/shared';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, MapPin } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
-import { inputClasses } from '@/components/ui/form-field';
+import { controlFrameClasses, controlInputClasses, FieldError } from '@/components/ui/form-field';
+import { menuItemClasses, menuSurfaceClasses } from '@/components/ui/select-menu';
 import { cn } from '@/lib/cn';
 
 /** Minuscules sans accents : « Côte d'Ivoire », « cote d ivoire » et « COTE » se retrouvent. */
@@ -75,8 +76,8 @@ export function CountrySelect({
   const selected = sorted.find((country) => country.iso2 === value) ?? null;
 
   return (
-    <Field className="space-y-1.5">
-      <Label className="block text-sm font-medium text-foreground">{label}</Label>
+    <Field className="grid gap-1.5">
+      <Label className="block text-[13px] font-semibold text-fg">{label}</Label>
       <Combobox
         value={selected}
         onChange={(country: CountryResponse | null) => onChange(country?.iso2 ?? '')}
@@ -84,9 +85,10 @@ export function CountrySelect({
         name={name}
         by="iso2"
       >
-        <div className="relative">
+        <div className={controlFrameClasses(Boolean(error))}>
+          <MapPin className="ml-3 size-4 text-fg-subtle" aria-hidden="true" />
           <ComboboxInput
-            className={cn(inputClasses(Boolean(error)), 'pr-10')}
+            className={cn(controlInputClasses, 'pl-2 pr-1')}
             displayValue={(country: CountryResponse | null) =>
               country ? `${country.flagEmoji} ${countryName(country, locale)}` : ''
             }
@@ -96,30 +98,30 @@ export function CountrySelect({
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? errorId : undefined}
           />
-          <ComboboxButton className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted">
+          <ComboboxButton className="flex h-full w-9 items-center justify-center text-fg-subtle">
             <ChevronsUpDown className="size-4" aria-hidden="true" />
           </ComboboxButton>
         </div>
         <ComboboxOptions
-          anchor="bottom start"
-          className="z-50 mt-1 max-h-72 w-(--input-width) overflow-auto rounded-md border border-border bg-surface py-1 shadow-lg empty:invisible"
+          anchor={{ to: 'bottom start', gap: 6 }}
+          transition
+          className={cn(
+            menuSurfaceClasses,
+            'max-h-72 w-(--input-width) overflow-auto empty:invisible',
+          )}
         >
           {filtered.length === 0 ? (
-            <div className="px-3 py-2 text-sm text-muted">{t('noResult')}</div>
+            <div className="px-2 py-2 text-[13px] text-fg-muted">{t('noResult')}</div>
           ) : (
             filtered.map((country) => (
-              <ComboboxOption
-                key={country.iso2}
-                value={country}
-                className="group flex cursor-pointer items-center gap-3 px-3 py-2 text-sm text-foreground data-focus:bg-surface-muted"
-              >
-                <span aria-hidden="true" className="text-lg leading-none">
+              <ComboboxOption key={country.iso2} value={country} className={menuItemClasses}>
+                <span aria-hidden="true" className="w-5 text-center text-base leading-none">
                   {country.flagEmoji}
                 </span>
-                <span className="flex-1">{countryName(country, locale)}</span>
-                <span className="text-xs text-muted">{country.dialCode}</span>
+                <span className="min-w-0 flex-1 truncate">{countryName(country, locale)}</span>
+                <span className="text-xs text-fg-subtle tabular-nums">{country.dialCode}</span>
                 <Check
-                  className="invisible size-4 text-primary group-data-selected:visible"
+                  className="invisible size-4 text-brand group-data-selected:visible"
                   aria-hidden="true"
                 />
               </ComboboxOption>
@@ -127,11 +129,7 @@ export function CountrySelect({
           )}
         </ComboboxOptions>
       </Combobox>
-      {error && (
-        <p id={errorId} className="text-sm font-medium text-danger">
-          {error}
-        </p>
-      )}
+      {error && <FieldError id={errorId}>{error}</FieldError>}
     </Field>
   );
 }

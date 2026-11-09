@@ -1,116 +1,178 @@
 'use client';
 
-import { Eye, EyeOff } from 'lucide-react';
+import { Check, CircleAlert, Eye, EyeOff, type LucideIcon } from 'lucide-react';
 import { type InputHTMLAttributes, type ReactNode, useId, useState } from 'react';
 import { cn } from '@/lib/cn';
 
-export const inputClasses = (invalid: boolean) =>
-  cn(
-    'block h-11 w-full rounded-md border bg-surface px-3 text-base text-foreground shadow-xs',
-    'placeholder:text-muted focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30',
-    invalid ? 'border-danger' : 'border-border-strong',
+/**
+ * Cadre commun des champs (40 px) : utilisé par les champs texte, mot de passe et combobox.
+ * Texte en 16 px sur mobile (évite le zoom automatique d'iOS), 14 px à partir de 640 px.
+ */
+export function controlFrameClasses(invalid: boolean, disabled = false): string {
+  return cn(
+    'relative flex h-10 w-full items-center rounded-md border bg-surface shadow-xs',
+    'transition-[border-color,box-shadow] duration-[120ms]',
+    'focus-within:border-primary focus-within:ring-[3px] focus-within:ring-ring',
+    invalid
+      ? 'border-danger focus-within:border-danger focus-within:ring-danger/20'
+      : 'border-line-strong hover:border-fg-subtle/50',
+    disabled && 'cursor-not-allowed bg-surface-2 opacity-70',
   );
+}
 
-interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> {
+export const controlInputClasses =
+  'h-full min-w-0 flex-1 bg-transparent px-3 text-base text-fg outline-none placeholder:text-fg-subtle disabled:cursor-not-allowed sm:text-sm';
+
+/** Classes d'un champ sans cadre séparé (compatibilité). */
+export const inputClasses = (invalid: boolean) =>
+  cn(controlFrameClasses(invalid), controlInputClasses, 'focus:outline-none');
+
+export function FieldLabel({
+  htmlFor,
+  children,
+  optional,
+}: {
+  htmlFor?: string;
+  children: ReactNode;
+  optional?: string;
+}) {
+  return (
+    <label htmlFor={htmlFor} className="block text-[13px] font-semibold text-fg">
+      {children}
+      {optional && <span className="ml-1 font-normal text-fg-subtle">{optional}</span>}
+    </label>
+  );
+}
+
+export function FieldHint({ id, children }: { id?: string; children: ReactNode }) {
+  return (
+    <p id={id} className="text-xs text-fg-subtle">
+      {children}
+    </p>
+  );
+}
+
+export function FieldError({ id, children }: { id?: string; children: ReactNode }) {
+  return (
+    <p id={id} className="flex items-center gap-1.5 text-xs font-medium text-danger">
+      <CircleAlert className="size-3.5" aria-hidden="true" />
+      {children}
+    </p>
+  );
+}
+
+interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'size'> {
   label: string;
   name: string;
   error?: string | null;
   hint?: ReactNode;
+  /** Icône Lucide à gauche (Mail, Lock, User…). */
+  icon?: LucideIcon;
+  /** Élément à droite (bouton d'action, unité). */
+  trailing?: ReactNode;
+  /** Affiche une coche discrète lorsque la valeur est validée. */
+  valid?: boolean;
+  /** Mention affichée après le libellé, par exemple « (facultatif) ». */
+  optionalLabel?: string;
 }
 
-/** Champ de formulaire accessible : libellé associé, aide et erreur reliées par aria-describedby. */
-export function FormField({ label, name, error, hint, className, ...props }: FormFieldProps) {
+/** Champ accessible : libellé visible, aide et erreur reliées par aria-describedby, cinq états. */
+export function FormField({
+  label,
+  name,
+  error,
+  hint,
+  icon: Icon,
+  trailing,
+  valid,
+  optionalLabel,
+  className,
+  disabled,
+  ...props
+}: FormFieldProps) {
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
 
   return (
-    <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={id} className="block text-sm font-medium text-foreground">
+    <div className={cn('grid gap-1.5', className)}>
+      <FieldLabel htmlFor={id} optional={optionalLabel}>
         {label}
-      </label>
-      <input
-        id={id}
-        name={name}
-        className={inputClasses(Boolean(error))}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
-        {...props}
-      />
-      {hint && (
-        <p id={hintId} className="text-sm text-muted">
-          {hint}
-        </p>
-      )}
-      {error && (
-        <p id={errorId} className="text-sm font-medium text-danger">
-          {error}
-        </p>
-      )}
+      </FieldLabel>
+      <div className={controlFrameClasses(Boolean(error), disabled)}>
+        {Icon && <Icon className="ml-3 size-4 text-fg-subtle" aria-hidden="true" />}
+        <input
+          id={id}
+          name={name}
+          disabled={disabled}
+          className={cn(controlInputClasses, Icon && 'pl-2')}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
+          {...props}
+        />
+        {valid && !error && <Check className="mr-3 size-4 text-success" aria-hidden="true" />}
+        {trailing && <div className="mr-1 flex items-center">{trailing}</div>}
+      </div>
+      {hint && !error && <FieldHint id={hintId}>{hint}</FieldHint>}
+      {error && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   );
 }
 
-interface PasswordFieldProps extends Omit<FormFieldProps, 'type'> {
+interface PasswordFieldProps extends Omit<FormFieldProps, 'type' | 'trailing'> {
   showLabel: string;
   hideLabel: string;
 }
 
 /** Champ mot de passe avec bouton afficher / masquer. */
-export function PasswordField({
-  label,
-  name,
-  error,
-  hint,
-  showLabel,
-  hideLabel,
-  className,
-  ...props
-}: PasswordFieldProps) {
-  const id = useId();
+export function PasswordField({ showLabel, hideLabel, ...props }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
-
+  const ToggleIcon = visible ? EyeOff : Eye;
   return (
-    <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={id} className="block text-sm font-medium text-foreground">
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          id={id}
-          name={name}
-          type={visible ? 'text' : 'password'}
-          className={cn(inputClasses(Boolean(error)), 'pr-11')}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
-          {...props}
-        />
+    <FormField
+      {...props}
+      type={visible ? 'text' : 'password'}
+      trailing={
         <button
           type="button"
           onClick={() => setVisible((current) => !current)}
-          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-md text-muted hover:text-foreground"
+          className="flex size-8 items-center justify-center rounded-md text-fg-subtle transition-colors hover:bg-surface-2 hover:text-fg"
           aria-label={visible ? hideLabel : showLabel}
           aria-pressed={visible}
         >
-          {visible ? (
-            <EyeOff className="size-5" aria-hidden="true" />
-          ) : (
-            <Eye className="size-5" aria-hidden="true" />
-          )}
+          <ToggleIcon className="size-4" aria-hidden="true" />
         </button>
-      </div>
-      {hint && (
-        <p id={hintId} className="text-sm text-muted">
-          {hint}
-        </p>
-      )}
-      {error && (
-        <p id={errorId} className="text-sm font-medium text-danger">
-          {error}
-        </p>
-      )}
+      }
+    />
+  );
+}
+
+interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'id'> {
+  label: ReactNode;
+  error?: string | null;
+}
+
+/** Case à cocher native (accessible par défaut), habillée aux couleurs du système. */
+export function Checkbox({ label, error, className, ...props }: CheckboxProps) {
+  const id = useId();
+  const errorId = error ? `${id}-error` : undefined;
+  return (
+    <div className={cn('grid gap-1.5', className)}>
+      <label
+        htmlFor={id}
+        className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-5 text-fg-muted"
+      >
+        <input
+          id={id}
+          type="checkbox"
+          className="mt-0.5 size-4 shrink-0 cursor-pointer rounded border-line-strong accent-primary"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={errorId}
+          {...props}
+        />
+        <span>{label}</span>
+      </label>
+      {error && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   );
 }

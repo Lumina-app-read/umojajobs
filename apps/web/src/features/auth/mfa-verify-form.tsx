@@ -92,7 +92,7 @@ export function MfaVerifyForm() {
       <button
         type="button"
         onClick={switchMode}
-        className="w-full text-sm font-medium text-primary underline-offset-2 hover:underline"
+        className="w-full text-sm font-medium text-brand underline-offset-2 hover:underline"
       >
         {mode === 'code' ? t('mfa.useRecovery') : t('mfa.useCode')}
       </button>

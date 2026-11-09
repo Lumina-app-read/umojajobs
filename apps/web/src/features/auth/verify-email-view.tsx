@@ -53,7 +53,7 @@ export function VerifyEmailView() {
   }
 
   return (
-    <p role="status" className="text-sm text-muted">
+    <p role="status" className="text-sm text-fg-muted">
       {t('verifying')}
     </p>
   );

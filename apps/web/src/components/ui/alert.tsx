@@ -1,35 +1,48 @@
-import { CircleAlert, CircleCheck, Info } from 'lucide-react';
+import { CircleAlert, CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-type Tone = 'error' | 'success' | 'info';
+type Tone = 'error' | 'success' | 'info' | 'warning';
 
-const TONES: Record<Tone, string> = {
-  error: 'border-danger-border bg-danger-surface text-danger',
-  success: 'border-success-border bg-success-surface text-success',
-  info: 'border-info-border bg-info-surface text-foreground',
+const TONES: Record<Tone, { box: string; icon: string }> = {
+  error: { box: 'border-danger/30 bg-danger-soft', icon: 'text-danger' },
+  success: { box: 'border-success/30 bg-success-soft', icon: 'text-success' },
+  warning: { box: 'border-warning/30 bg-warning-soft', icon: 'text-warning' },
+  info: { box: 'border-brand/25 bg-primary-soft', icon: 'text-brand' },
 };
 
-const ICONS = { error: CircleAlert, success: CircleCheck, info: Info };
+const ICONS = { error: CircleAlert, success: CircleCheck, warning: TriangleAlert, info: Info };
 
-/** Message d'état annoncé aux lecteurs d'écran (role="alert" pour les erreurs, "status" sinon). */
+/** Message d'état : role="alert" pour les erreurs (annoncées immédiatement), "status" sinon. */
 export function Alert({
   tone,
+  title,
   children,
+  action,
   className,
 }: {
   tone: Tone;
-  children: ReactNode;
+  title?: string;
+  children?: ReactNode;
+  action?: ReactNode;
   className?: string;
 }) {
   const Icon = ICONS[tone];
   return (
     <div
       role={tone === 'error' ? 'alert' : 'status'}
-      className={cn('flex gap-3 rounded-md border px-4 py-3 text-sm', TONES[tone], className)}
+      className={cn(
+        'flex gap-3 rounded-lg border px-3.5 py-3 text-[13px] leading-5 text-fg',
+        TONES[tone].box,
+        className,
+      )}
     >
-      <Icon className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-      <div className="space-y-1">{children}</div>
+      <Icon className={cn('mt-0.5 size-4', TONES[tone].icon)} aria-hidden="true" />
+      <div className="min-w-0 flex-1 space-y-0.5">
+        {title && <p className="font-semibold">{title}</p>}
+        {children && <div className="text-fg-muted [&_strong]:text-fg">{children}</div>}
+        {action && <div className="pt-1.5">{action}</div>}
+      </div>
     </div>
   );
 }

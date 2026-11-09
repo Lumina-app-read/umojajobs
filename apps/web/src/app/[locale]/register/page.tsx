@@ -21,10 +21,7 @@ export default async function RegisterPage() {
       footer={
         <>
           {t('haveAccount')}{' '}
-          <Link
-            href="/login"
-            className="font-medium text-primary underline-offset-2 hover:underline"
-          >
+          <Link href="/login" className="font-medium text-brand underline-offset-2 hover:underline">
             {t('loginLink')}
           </Link>
         </>

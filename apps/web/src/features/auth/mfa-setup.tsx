@@ -73,7 +73,7 @@ export function MfaSetup() {
     return (
       <div className="space-y-5">
         {formError && <Alert tone="error">{formError}</Alert>}
-        <p className="text-sm text-muted">{t('mfa.setupIntro')}</p>
+        <p className="text-sm text-fg-muted">{t('mfa.setupIntro')}</p>
         <Button
           fullWidth
           size="lg"
@@ -91,7 +91,7 @@ export function MfaSetup() {
     return (
       <form onSubmit={enable} noValidate className="space-y-5">
         {formError && <Alert tone="error">{formError}</Alert>}
-        <p className="text-sm text-foreground">{t('mfa.step1')}</p>
+        <p className="text-sm text-fg">{t('mfa.step1')}</p>
         <div className="flex justify-center">
           {/* QR code généré localement : le secret n'est transmis à aucun service tiers. */}
           <Image
@@ -100,16 +100,16 @@ export function MfaSetup() {
             width={224}
             height={224}
             unoptimized
-            className="rounded-md border border-border bg-white p-2"
+            className="rounded-md border border-line bg-white p-2"
           />
         </div>
         <div className="space-y-1">
-          <p className="text-sm text-muted">{t('mfa.manualKey')}</p>
-          <code className="block break-all rounded-md bg-surface-muted px-3 py-2 font-mono text-sm text-foreground">
+          <p className="text-sm text-fg-muted">{t('mfa.manualKey')}</p>
+          <code className="block break-all rounded-md bg-surface-2 px-3 py-2 font-mono text-sm text-fg">
             {step.secret.replace(/(.{4})/g, '$1 ').trim()}
           </code>
         </div>
-        <p className="text-sm text-foreground">{t('mfa.step2')}</p>
+        <p className="text-sm text-fg">{t('mfa.step2')}</p>
         <FormField
           label={t('fields.code')}
           name="code"
@@ -141,9 +141,9 @@ export function MfaSetup() {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-lg font-semibold text-foreground">{t('mfa.recoveryTitle')}</h2>
+      <h2 className="text-lg font-semibold text-fg">{t('mfa.recoveryTitle')}</h2>
       <Alert tone="info">{t('mfa.recoveryIntro')}</Alert>
-      <ul className="grid grid-cols-2 gap-2 rounded-md bg-surface-muted p-4 font-mono text-sm text-foreground">
+      <ul className="grid grid-cols-2 gap-2 rounded-md bg-surface-2 p-4 font-mono text-sm text-fg">
         {step.codes.map((recoveryCode) => (
           <li key={recoveryCode}>{recoveryCode}</li>
         ))}
@@ -151,7 +151,7 @@ export function MfaSetup() {
       <Button variant="secondary" fullWidth onClick={copy}>
         {copied ? t('mfa.copied') : t('mfa.copy')}
       </Button>
-      <label className="flex items-start gap-3 text-sm text-foreground">
+      <label className="flex items-start gap-3 text-sm text-fg">
         <input
           type="checkbox"
           checked={confirmed}

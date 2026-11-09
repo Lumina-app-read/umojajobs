@@ -1,5 +1,6 @@
 'use client';
 
+import { Lock } from 'lucide-react';
 import { PASSWORD_MIN_LENGTH, type ResetPasswordRequest } from '@opportinities/shared';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
@@ -90,6 +91,7 @@ export function ResetPasswordForm() {
     <form onSubmit={onSubmit} noValidate className="space-y-5">
       {formError && <Alert tone="error">{formError}</Alert>}
       <PasswordField
+        icon={Lock}
         label={t('fields.newPassword')}
         name="password"
         autoComplete="new-password"
@@ -102,6 +104,7 @@ export function ResetPasswordForm() {
         required
       />
       <PasswordField
+        icon={Lock}
         label={t('fields.newPasswordConfirmation')}
         name="passwordConfirmation"
         autoComplete="new-password"

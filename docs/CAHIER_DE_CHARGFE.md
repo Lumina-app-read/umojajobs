@@ -124,7 +124,7 @@ Direction artistique :
 - Couleur principale : bleu professionnel.
 - Couleur secondaire : bleu foncé.
 - Accent : bleu lumineux.
-- Typographie : IBM Plex Sans.
+- Typographie : Plus Jakarta Sans (famille unique, décision du propriétaire de novembre 2026 ; voir `docs/DESIGN_SYSTEM.md`).
 - Interface épurée.
 - Cartes élégantes.
 - Bordures discrètes.
@@ -134,8 +134,7 @@ Direction artistique :
 - Responsive design intégral.
 
 Ne pas utiliser :
-- Poppins.
-- Inter.
+- D'autres polices d'interface (IBM Plex Sans, Poppins, Inter).
 - Des interfaces surchargées.
 - Des textes inutiles.
 - Des emojis dans l'interface, sauf les drapeaux des pays.

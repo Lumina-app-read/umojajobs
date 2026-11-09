@@ -1,5 +1,6 @@
 'use client';
 
+import { Lock, Mail, User } from 'lucide-react';
 import {
   type AcceptedResponse,
   type CountryResponse,
@@ -88,6 +89,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
         <FormField
           label={t('fields.firstName')}
           name="firstName"
+          icon={User}
           autoComplete="given-name"
           value={values.firstName}
           onChange={(event) => set('firstName', event.target.value)}
@@ -107,6 +109,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
       <FormField
         label={t('fields.email')}
         name="email"
+        icon={Mail}
         type="email"
         autoComplete="email"
         inputMode="email"
@@ -123,6 +126,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
         error={fieldMessage(errors.countryIso2)}
       />
       <PasswordField
+        icon={Lock}
         label={t('fields.password')}
         name="password"
         autoComplete="new-password"
@@ -135,6 +139,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
         required
       />
       <PasswordField
+        icon={Lock}
         label={t('fields.passwordConfirmation')}
         name="passwordConfirmation"
         autoComplete="new-password"
@@ -146,7 +151,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
         required
       />
       <div className="space-y-1.5">
-        <label className="flex items-start gap-3 text-sm text-foreground">
+        <label className="flex items-start gap-3 text-sm text-fg">
           <input
             type="checkbox"
             name="acceptTerms"
@@ -154,7 +159,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
             onChange={(event) => set('acceptTerms', event.target.checked)}
             aria-invalid={errors.acceptTerms ? true : undefined}
             aria-describedby={errors.acceptTerms ? 'accept-terms-error' : undefined}
-            className="mt-0.5 size-4 rounded border-border-strong accent-primary"
+            className="mt-0.5 size-4 rounded border-line-strong accent-primary"
           />
           <span>
             {t.rich('register.acceptTerms', {
@@ -162,7 +167,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
                 <Link
                   href="/terms"
                   target="_blank"
-                  className="font-medium text-primary underline-offset-2 hover:underline"
+                  className="font-medium text-brand underline-offset-2 hover:underline"
                 >
                   {chunks}
                 </Link>
@@ -171,7 +176,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
                 <Link
                   href="/privacy"
                   target="_blank"
-                  className="font-medium text-primary underline-offset-2 hover:underline"
+                  className="font-medium text-brand underline-offset-2 hover:underline"
                 >
                   {chunks}
                 </Link>

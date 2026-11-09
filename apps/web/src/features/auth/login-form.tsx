@@ -1,5 +1,6 @@
 'use client';
 
+import { Lock, Mail } from 'lucide-react';
 import { type LoginRequest, type LoginResponse, type MfaState } from '@opportinities/shared';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
@@ -86,6 +87,7 @@ export function LoginForm() {
       <FormField
         label={t('fields.email')}
         name="email"
+        icon={Mail}
         type="email"
         autoComplete="username"
         inputMode="email"
@@ -95,6 +97,7 @@ export function LoginForm() {
         required
       />
       <PasswordField
+        icon={Lock}
         label={t('fields.password')}
         name="password"
         autoComplete="current-password"
@@ -108,7 +111,7 @@ export function LoginForm() {
       <div className="text-right text-sm">
         <Link
           href="/forgot-password"
-          className="font-medium text-primary underline-offset-2 hover:underline"
+          className="font-medium text-brand underline-offset-2 hover:underline"
         >
           {t('login.forgot')}
         </Link>
