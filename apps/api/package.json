@@ -1,0 +1,66 @@
+{
+  "name": "@opportinities/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "API REST NestJS d'OPPORTINITIES.",
+  "type": "commonjs",
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch",
+    "start": "node dist/main.js",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config test/jest-e2e.config.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.4.1",
+    "@nestjs/config": "12.1.1",
+    "@nestjs/core": "12.4.1",
+    "@nestjs/platform-express": "12.4.1",
+    "@nestjs/swagger": "12.1.1",
+    "@opportinities/shared": "workspace:*",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
+    "helmet": "8.3.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": "<rootDir>/../tsconfig.json"
+        }
+      ]
+    },
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!main.ts"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "12.0.12",
+    "@nestjs/schematics": "12.0.13",
+    "@nestjs/testing": "12.4.1",
+    "@opportinities/config": "workspace:*",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.19.2",
+    "@types/supertest": "7.2.1",
+    "eslint": "9.39.5",
+    "jest": "30.5.2",
+    "supertest": "7.3.2",
+    "ts-jest": "29.4.15",
+    "typescript": "6.0.3"
+  }
+}

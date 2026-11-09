@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+
+/*
+ * Jetons de base. Le design system complet (palette bleu professionnel / bleu foncé,
+ * mode sombre et mode système) est livré en phase 1d.
+ */
+@theme {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-white);
+  color: var(--color-slate-900);
+}

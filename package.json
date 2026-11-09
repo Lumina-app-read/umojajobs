@@ -1,0 +1,28 @@
+{
+  "name": "opportinities",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OPPORTINITIES — plateforme panafricaine d'opportunités professionnelles et de documents de candidature.",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.11.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "docker:up": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env up -d",
+    "docker:down": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env down",
+    "docker:config": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env config --quiet"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "turbo": "2.11.10"
+  }
+}

@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Scripts d'installation des dépendances : bloqués par défaut (pnpm 10).
+# - @scarf/scarf : télémétrie de swagger-ui-dist, volontairement bloquée.
+# - @parcel/watcher : binaires précompilés fournis par des paquets optionnels, script inutile.
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@scarf/scarf'

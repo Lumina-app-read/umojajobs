@@ -1,0 +1,19 @@
+{
+  "name": "@opportinities/config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Configurations partagées : TypeScript et ESLint.",
+  "type": "module",
+  "exports": {
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/nestjs.json": "./tsconfig/nestjs.json",
+    "./tsconfig/nextjs.json": "./tsconfig/nextjs.json",
+    "./tsconfig/library.json": "./tsconfig/library.json",
+    "./eslint/base": "./eslint/base.mjs"
+  },
+  "dependencies": {
+    "@eslint/js": "9.39.4",
+    "eslint": "9.39.5",
+    "typescript-eslint": "8.72.1"
+  }
+}
