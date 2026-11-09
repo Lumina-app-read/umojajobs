@@ -42,7 +42,9 @@ jobs:
       - name: Tests unitaires
         run: pnpm test
 
-      - name: Tests de bout en bout (API)
+      # PostgreSQL jetable via Testcontainers (Docker est disponible sur les runners Ubuntu) :
+      # migrations Prisma, seed des pays et villes, puis tests d'intégration.
+      - name: Tests de bout en bout et d'intégration (API)
         run: pnpm test:e2e
 
       - name: Build

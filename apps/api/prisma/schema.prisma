@@ -1,0 +1,71 @@
+// Schéma de données OPPORTINITIES (PostgreSQL, Prisma 7).
+// Conventions : identifiants UUID v7, colonnes et tables en snake_case, dates en timestamptz.
+// Le schéma est complété module par module, au fil des phases.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Référentiel des 54 États africains (source : packages/shared/src/countries.ts).
+model Country {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  iso2            String   @unique @db.Char(2)
+  iso3            String   @unique @db.Char(3)
+  nameFr          String   @map("name_fr") @db.VarChar(100)
+  nameEn          String   @map("name_en") @db.VarChar(100)
+  officialNameFr  String   @map("official_name_fr") @db.VarChar(150)
+  officialNameEn  String   @map("official_name_en") @db.VarChar(150)
+  /// Indicatif international au format E.164, par exemple « +243 ».
+  dialCode        String   @map("dial_code") @db.VarChar(6)
+  flagEmoji       String   @map("flag_emoji") @db.VarChar(16)
+  currencyCode    String   @map("currency_code") @db.Char(3)
+  defaultTimezone String   @map("default_timezone") @db.VarChar(64)
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  cities City[]
+
+  @@map("countries")
+}
+
+enum CitySource {
+  geonames
+  admin
+
+  @@map("city_source")
+}
+
+/// Villes : import GeoNames (CC BY 4.0) et ajouts de l'administration.
+model City {
+  id          String     @id @default(uuid(7)) @db.Uuid
+  countryId   String     @map("country_id") @db.Uuid
+  /// Identifiant GeoNames ; vide pour une ville ajoutée par l'administration.
+  geonamesId  Int?       @unique @map("geonames_id")
+  name        String     @db.VarChar(200)
+  asciiName   String     @map("ascii_name") @db.VarChar(200)
+  /// Nom normalisé pour la recherche (minuscules, sans accents).
+  searchName  String     @map("search_name") @db.VarChar(200)
+  regionName  String?    @map("region_name") @db.VarChar(200)
+  latitude    Decimal?   @db.Decimal(9, 6)
+  longitude   Decimal?   @db.Decimal(9, 6)
+  population  Int        @default(0)
+  timezone    String     @db.VarChar(64)
+  featureCode String?    @map("feature_code") @db.VarChar(10)
+  source      CitySource @default(geonames)
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  @@index([countryId, population(sort: Desc)])
+  @@index([searchName(ops: raw("gin_trgm_ops"))], type: Gin, map: "cities_search_name_trgm_idx")
+  @@map("cities")
+}

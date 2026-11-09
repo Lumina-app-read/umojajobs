@@ -17,6 +17,11 @@
     "test:e2e": "turbo run test:e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "db:generate": "pnpm --filter @opportinities/api db:generate",
+    "db:migrate": "pnpm --filter @opportinities/api db:migrate",
+    "db:deploy": "pnpm --filter @opportinities/api db:deploy",
+    "db:seed": "pnpm --filter @opportinities/api db:seed",
+    "db:studio": "pnpm --filter @opportinities/api db:studio",
     "docker:up": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env up -d",
     "docker:down": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env down",
     "docker:config": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env config --quiet"

@@ -2,9 +2,22 @@ packages:
   - apps/*
   - packages/*
 
-# Scripts d'installation des dépendances : bloqués par défaut (pnpm 10).
-# - @scarf/scarf : télémétrie de swagger-ui-dist, volontairement bloquée.
-# - @parcel/watcher : binaires précompilés fournis par des paquets optionnels, script inutile.
+# Scripts d'installation des dépendances (pnpm 10 : bloqués par défaut).
+# Autorisés, car nécessaires :
+# - prisma, @prisma/engines : téléchargement du moteur de migration Prisma.
+# - esbuild : binaire utilisé par tsx (exécution du seed et des scripts).
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - esbuild
+  - prisma
+
+# Refusés volontairement :
+# - @scarf/scarf : télémétrie de swagger-ui-dist.
+# - @parcel/watcher : binaires précompilés fournis par des paquets optionnels.
+# - cpu-features, ssh2, protobufjs : dépendances optionnelles de Testcontainers (accès Docker par SSH), inutiles ici.
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - '@scarf/scarf'
+  - cpu-features
+  - protobufjs
+  - ssh2

@@ -32,21 +32,34 @@ docs/         Cahier des charges, rapports d'audit et de phase
 pnpm install
 cp .env.example .env    # puis remplacer les mots de passe locaux
 pnpm docker:up          # PostgreSQL, Redis, Mailpit
+pnpm db:deploy          # applique les migrations Prisma
+pnpm db:seed            # 54 pays africains et villes (idempotent)
 pnpm dev                # web sur http://localhost:3000, API sur http://localhost:4000/api/v1/health
 ```
 
+## Base de données
+
+- Schéma : `apps/api/prisma/schema.prisma` (Prisma 7, client généré dans `apps/api/src/generated/`, non versionné).
+- Migrations versionnées : `apps/api/prisma/migrations/`. Nouvelle migration : `pnpm db:migrate --name <nom>`.
+- Référentiel des pays : `packages/shared/src/countries.ts` (source unique pour le web, l'API et le seed).
+- Villes : `apps/api/prisma/seed/data/cities-africa.tsv`, dérivé de [GeoNames](https://www.geonames.org/) (CC BY 4.0, voir `ATTRIBUTION.md`).
+- Les tests de bout en bout démarrent leur propre PostgreSQL avec Testcontainers (Docker requis).
+
 ## Commandes
 
-| Commande                              | Rôle                                        |
-| ------------------------------------- | ------------------------------------------- |
-| `pnpm dev`                            | Lance le web et l'API en mode développement |
-| `pnpm build`                          | Compile tous les packages et applications   |
-| `pnpm lint`                           | ESLint sur tout le monorepo                 |
-| `pnpm typecheck`                      | Vérification TypeScript stricte             |
-| `pnpm test`                           | Tests unitaires                             |
-| `pnpm test:e2e`                       | Tests de bout en bout de l'API              |
-| `pnpm format` / `pnpm format:check`   | Formatage Prettier                          |
-| `pnpm docker:up` / `pnpm docker:down` | Services d'infrastructure locaux            |
+| Commande                              | Rôle                                         |
+| ------------------------------------- | -------------------------------------------- |
+| `pnpm dev`                            | Lance le web et l'API en mode développement  |
+| `pnpm build`                          | Compile tous les packages et applications    |
+| `pnpm lint`                           | ESLint sur tout le monorepo                  |
+| `pnpm typecheck`                      | Vérification TypeScript stricte              |
+| `pnpm test`                           | Tests unitaires                              |
+| `pnpm test:e2e`                       | Tests de bout en bout et d'intégration (API) |
+| `pnpm db:migrate` / `pnpm db:deploy`  | Migrations (développement / déploiement)     |
+| `pnpm db:seed`                        | Référentiel pays et villes                   |
+| `pnpm db:studio`                      | Explorateur de données Prisma                |
+| `pnpm format` / `pnpm format:check`   | Formatage Prettier                           |
+| `pnpm docker:up` / `pnpm docker:down` | Services d'infrastructure locaux             |
 
 ## Règles
 

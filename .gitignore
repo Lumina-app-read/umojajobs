@@ -10,6 +10,9 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 
+# Client Prisma généré (prisma generate)
+apps/api/src/generated/
+
 # Turborepo
 .turbo/
 

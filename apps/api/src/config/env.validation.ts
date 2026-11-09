@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { plainToInstance, Type } from 'class-transformer';
-import { IsEnum, IsInt, Max, Min, validateSync } from 'class-validator';
+import { IsEnum, IsInt, Matches, Max, Min, validateSync } from 'class-validator';
 
 export enum NodeEnv {
   Development = 'development',
@@ -10,12 +10,16 @@ export enum NodeEnv {
 
 /**
  * Variables d'environnement acceptées par l'API. Toute variable obligatoire manquante ou
- * invalide arrête le démarrage. Les variables PostgreSQL, Redis, Brevo, Chariow et OpenAI
+ * invalide arrête le démarrage. Les variables Redis, Brevo, Chariow et OpenAI
  * seront ajoutées par les phases qui les utilisent.
  */
 export class EnvironmentVariables {
   @IsEnum(NodeEnv)
   NODE_ENV: NodeEnv = NodeEnv.Development;
+
+  /** Obligatoire : URL PostgreSQL, par exemple postgresql://utilisateur:motdepasse@hote:5432/base */
+  @Matches(/^postgres(ql)?:\/\/\S+$/)
+  DATABASE_URL!: string;
 
   // Conversion explicite : les variables d'environnement arrivent toujours sous forme de texte.
   @Type(() => Number)
