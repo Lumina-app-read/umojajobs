@@ -4,13 +4,15 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { listKeys, type MessageTree, translate } from './translate';
 
+const NAMESPACES = ['common', 'auth', 'errors', 'validation', 'emails'];
+
 const load = (locale: string, namespace: string): MessageTree =>
   JSON.parse(
     readFileSync(join(__dirname, 'locales', locale, `${namespace}.json`), 'utf8'),
   ) as MessageTree;
 
 test('les catalogues fr et en ont exactement les mêmes clés', () => {
-  for (const namespace of ['emails']) {
+  for (const namespace of NAMESPACES) {
     assert.deepEqual(
       listKeys(load('fr', namespace)).sort(),
       listKeys(load('en', namespace)).sort(),
@@ -18,13 +20,26 @@ test('les catalogues fr et en ont exactement les mêmes clés', () => {
   }
 });
 
-test('les paramètres sont identiques dans les deux langues', () => {
-  const fr = load('fr', 'emails');
-  const en = load('en', 'emails');
-  const params = (tree: MessageTree, key: string) =>
-    [...translateRaw(tree, key).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-  for (const key of listKeys(fr)) {
-    assert.deepEqual(params(fr, key), params(en, key), key);
+test('les paramètres et balises sont identiques dans les deux langues', () => {
+  const tokens = (tree: MessageTree, key: string) =>
+    [...translateRaw(tree, key).matchAll(/\{(\w+)[,}]|<(\w+)>/g)].map((m) => m[1] ?? m[2]).sort();
+  for (const namespace of NAMESPACES) {
+    const fr = load('fr', namespace);
+    const en = load('en', namespace);
+    for (const key of listKeys(fr)) {
+      assert.deepEqual(tokens(fr, key), tokens(en, key), `${namespace}.${key}`);
+    }
+  }
+});
+
+test('aucun message vide', () => {
+  for (const namespace of NAMESPACES) {
+    for (const locale of ['fr', 'en']) {
+      const tree = load(locale, namespace);
+      for (const key of listKeys(tree)) {
+        assert.ok(translateRaw(tree, key).trim().length > 0, `${locale}.${namespace}.${key}`);
+      }
+    }
   }
 });
 

@@ -15,9 +15,11 @@ onlyBuiltDependencies:
 # - @scarf/scarf : télémétrie de swagger-ui-dist.
 # - @parcel/watcher : binaires précompilés fournis par des paquets optionnels.
 # - cpu-features, ssh2, protobufjs : dépendances optionnelles de Testcontainers (accès Docker par SSH), inutiles ici.
+# - @swc/core : binaires précompilés fournis par des paquets optionnels.
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - '@scarf/scarf'
+  - '@swc/core'
   - cpu-features
   - protobufjs
   - ssh2

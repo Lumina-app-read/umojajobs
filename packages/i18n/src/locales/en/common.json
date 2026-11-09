@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "tagline": "Discover Opportunities. Shape Your Future.",
+    "description": "Pan-African platform for verified job offers and professional application documents."
+  },
+  "nav": {
+    "main": "Main navigation",
+    "home": "Home",
+    "login": "Sign in",
+    "register": "Sign up",
+    "dashboard": "Dashboard",
+    "logout": "Sign out",
+    "skipToContent": "Skip to main content"
+  },
+  "language": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "actions": {
+    "back": "Back",
+    "continue": "Continue",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "submitting": "Sending…"
+  },
+  "home": {
+    "title": "Professional opportunities from across Africa, in one place",
+    "subtitle": "Job offers checked by our moderation team, shared by the community, and tools to prepare professional applications.",
+    "ctaRegister": "Create a free account",
+    "ctaLogin": "Sign in",
+    "comingSoon": "Job search and the Career Studio will open soon."
+  },
+  "footer": {
+    "rights": "© {year} OPPORTINITIES. All rights reserved.",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "geonames": "Geographic data: GeoNames, CC BY 4.0 licence.",
+    "flags": "Flags: Twemoji, CC BY 4.0 licence."
+  },
+  "legal": {
+    "termsTitle": "Terms of use",
+    "privacyTitle": "Privacy policy",
+    "pending": "This document is being drafted and legally reviewed. It will be published before the service opens."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you requested does not exist or has been moved.",
+    "back": "Back to home"
+  },
+  "dashboard": {
+    "title": "Hello {firstName}",
+    "intro": "Your account is active. Your full dashboard is coming in a future update.",
+    "account": "Your account",
+    "email": "Email address",
+    "country": "Country",
+    "roles": "Roles",
+    "security": "Security",
+    "mfaEnabled": "Two-factor authentication enabled",
+    "mfaDisabled": "Two-factor authentication not enabled"
+  },
+  "roles": {
+    "user": "User",
+    "moderator": "Moderator",
+    "admin": "Administrator",
+    "super_admin": "Super administrator"
+  }
+}

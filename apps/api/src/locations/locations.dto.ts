@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { type CityResponse, type CountryResponse } from '@opportinities/shared';
 import { Transform, Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from 'class-validator';
 
@@ -37,7 +38,7 @@ export class CitySearchQueryDto {
   limit?: number;
 }
 
-export class CountryDto {
+export class CountryDto implements CountryResponse {
   @ApiProperty({ example: 'CD' }) iso2!: string;
   @ApiProperty({ example: 'COD' }) iso3!: string;
   @ApiProperty({ example: 'République démocratique du Congo' }) nameFr!: string;
@@ -50,7 +51,7 @@ export class CountryDto {
   @ApiProperty({ example: 'Africa/Kinshasa' }) defaultTimezone!: string;
 }
 
-export class CityDto {
+export class CityDto implements CityResponse {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty({ example: 'Lubumbashi' }) name!: string;
   @ApiProperty({ example: 'Haut-Katanga', nullable: true, type: String })

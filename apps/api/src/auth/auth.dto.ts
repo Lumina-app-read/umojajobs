@@ -1,6 +1,20 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  type AcceptedResponse,
   AFRICAN_COUNTRIES,
+  type ChangePasswordRequest,
+  type CsrfTokenResponse,
+  type EmailRequest,
+  type LoginRequest,
+  type LoginResponse,
+  type MeResponse,
+  type MfaVerifyRequest,
+  type RecoveryCodesResponse,
+  type RegisterRequest,
+  type ResetPasswordRequest,
+  type TokenRequest,
+  type TotpCodeRequest,
+  type TotpSetupResponse,
   EMAIL_MAX_LENGTH,
   type MfaState,
   MFA_STATES,
@@ -36,7 +50,7 @@ const PERSON_NAME = /^[\p{L}\p{M}][\p{L}\p{M}' .-]*$/u;
 
 const AFRICAN_ISO2 = AFRICAN_COUNTRIES.map((country) => country.iso2);
 
-export class RegisterDto {
+export class RegisterDto implements RegisterRequest {
   @ApiProperty({ example: 'Awa' })
   @Transform(trim)
   @IsString()
@@ -84,7 +98,7 @@ export class RegisterDto {
   locale?: 'fr' | 'en';
 }
 
-export class EmailDto {
+export class EmailDto implements EmailRequest {
   @ApiProperty({ example: 'awa.diallo@example.com' })
   @Transform(normalizeEmail)
   @IsEmail()
@@ -92,7 +106,7 @@ export class EmailDto {
   email!: string;
 }
 
-export class LoginDto extends EmailDto {
+export class LoginDto extends EmailDto implements LoginRequest {
   @ApiProperty()
   @IsString()
   @MinLength(1)
@@ -100,7 +114,7 @@ export class LoginDto extends EmailDto {
   password!: string;
 }
 
-export class TokenDto {
+export class TokenDto implements TokenRequest {
   @ApiProperty({ description: 'Jeton reçu par email.' })
   @IsString()
   @Length(20, 200)
@@ -108,7 +122,7 @@ export class TokenDto {
   token!: string;
 }
 
-export class ResetPasswordDto extends TokenDto {
+export class ResetPasswordDto extends TokenDto implements ResetPasswordRequest {
   @ApiProperty({ minLength: PASSWORD_MIN_LENGTH, maxLength: PASSWORD_MAX_LENGTH })
   @IsString()
   @MinLength(PASSWORD_MIN_LENGTH)
@@ -120,7 +134,7 @@ export class ResetPasswordDto extends TokenDto {
   passwordConfirmation!: string;
 }
 
-export class ChangePasswordDto {
+export class ChangePasswordDto implements ChangePasswordRequest {
   @ApiProperty()
   @IsString()
   @MinLength(1)
@@ -138,14 +152,14 @@ export class ChangePasswordDto {
   newPasswordConfirmation!: string;
 }
 
-export class TotpCodeDto {
+export class TotpCodeDto implements TotpCodeRequest {
   @ApiProperty({ example: '123456' })
   @IsString()
   @Matches(/^\d{6}$/)
   code!: string;
 }
 
-export class MfaVerifyDto {
+export class MfaVerifyDto implements MfaVerifyRequest {
   @ApiPropertyOptional({ example: '123456', description: 'Code TOTP à 6 chiffres.' })
   @IsOptional()
   @IsString()
@@ -161,17 +175,17 @@ export class MfaVerifyDto {
 
 // --- Réponses -------------------------------------------------------------
 
-export class AcceptedDto {
+export class AcceptedDto implements AcceptedResponse {
   @ApiProperty({ example: 'accepted', enum: ['accepted'] })
   status!: 'accepted';
 }
 
-export class CsrfTokenDto {
+export class CsrfTokenDto implements CsrfTokenResponse {
   @ApiProperty()
   csrfToken!: string;
 }
 
-export class MeDto {
+export class MeDto implements MeResponse {
   @ApiProperty({ format: 'uuid' }) id!: string;
   @ApiProperty() email!: string;
   @ApiProperty() firstName!: string;
@@ -185,7 +199,7 @@ export class MeDto {
   @ApiProperty() totpEnabled!: boolean;
 }
 
-export class LoginResponseDto {
+export class LoginResponseDto implements LoginResponse {
   @ApiProperty({ type: MeDto }) user!: MeDto;
   @ApiProperty({ description: 'Nouveau jeton CSRF (renouvelé à la connexion).' })
   csrfToken!: string;
@@ -200,14 +214,14 @@ export class SessionDto {
   @ApiProperty() current!: boolean;
 }
 
-export class TotpSetupDto {
+export class TotpSetupDto implements TotpSetupResponse {
   @ApiProperty({ description: 'Secret Base32 à saisir manuellement si le QR code est illisible.' })
   secret!: string;
   @ApiProperty({ description: 'URI otpauth:// à afficher sous forme de QR code.' })
   otpauthUri!: string;
 }
 
-export class RecoveryCodesDto {
+export class RecoveryCodesDto implements RecoveryCodesResponse {
   @ApiProperty({ type: [String], description: 'Affichés une seule fois. À conserver en lieu sûr.' })
   recoveryCodes!: string[];
 }

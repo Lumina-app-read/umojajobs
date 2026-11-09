@@ -1,0 +1,13 @@
+{
+  "required": "This field is required.",
+  "email": "Enter a valid email address.",
+  "minLength": "At least {min} characters.",
+  "maxLength": "{max} characters maximum.",
+  "personName": "Use only letters, spaces, apostrophes or hyphens.",
+  "country": "Choose your country from the list.",
+  "terms": "You must accept the terms to create an account.",
+  "passwordMismatch": "The two passwords do not match.",
+  "totpCode": "The code has 6 digits.",
+  "recoveryCode": "Expected format: XXXXX-XXXXX.",
+  "invalid": "Invalid value."
+}
