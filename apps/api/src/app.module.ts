@@ -19,6 +19,7 @@ import { SecurityEventsModule } from './security-events/security-events.module';
 import { CsrfGuard } from './security/csrf.guard';
 import { RedisThrottlerStorage } from './security/redis-throttler.storage';
 import { SecurityModule } from './security/security.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SecurityModule } from './security/security.module';
     SecurityModule,
     SecurityEventsModule,
     MailModule,
+    StorageModule,
     ThrottlerModule.forRootAsync({
       inject: [RedisThrottlerStorage],
       useFactory: (storage: RedisThrottlerStorage) => ({

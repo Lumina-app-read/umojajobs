@@ -47,6 +47,23 @@ services:
       - '127.0.0.1:${MAILPIT_SMTP_PORT:-1025}:1025'
       - '127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025'
 
+  # Stockage objet privé compatible S3 (documents des offres). Aucun accès public : les fichiers
+  # ne sont servis que par des URLs signées de courte durée. Initialisation : pnpm storage:init
+  garage:
+    image: dxflrs/garage:v2.5.0
+    restart: unless-stopped
+    environment:
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET:?GARAGE_RPC_SECRET manquant dans .env}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN:?GARAGE_ADMIN_TOKEN manquant dans .env}
+    ports:
+      - '127.0.0.1:${GARAGE_S3_PORT:-3900}:3900'
+    volumes:
+      - ../garage/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+
 volumes:
   postgres-data:
   redis-data:
+  garage-meta:
+  garage-data:

@@ -53,6 +53,45 @@ export class EnvironmentVariables {
   @Matches(/^rediss?:\/\/\S+$/)
   REDIS_URL!: string;
 
+  /** Stockage objet privé compatible S3 (Garage en développement). Point d'accès facultatif sur AWS. */
+  @IsOptional()
+  @IsUrl({ require_tld: false, protocols: ['http', 'https'], require_protocol: true })
+  S3_ENDPOINT?: string;
+
+  @IsString()
+  @MinLength(1)
+  S3_REGION!: string;
+
+  @Matches(/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/)
+  S3_BUCKET!: string;
+
+  @IsString()
+  @MinLength(1)
+  S3_ACCESS_KEY_ID!: string;
+
+  @IsString()
+  @MinLength(1)
+  S3_SECRET_ACCESS_KEY!: string;
+
+  /** Adressage « point d'accès/bucket » (Garage, MinIO) plutôt que « bucket.point d'accès ». */
+  @Transform(toBoolean)
+  @IsBoolean()
+  S3_FORCE_PATH_STYLE = false;
+
+  /** Durée de validité des liens de téléchargement signés, en secondes. */
+  @Type(() => Number)
+  @IsInt()
+  @Min(10)
+  @Max(900)
+  FILE_URL_TTL_SECONDS = 60;
+
+  /** Taille maximale d'un document d'offre, en mégaoctets. */
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  JOB_FILE_MAX_MB = 10;
+
   /** Clé de chiffrement AES-256 (32 octets encodés en base64) pour les secrets TOTP. */
   @Matches(/^[A-Za-z0-9+/]{43}=$/)
   APP_ENCRYPTION_KEY!: string;

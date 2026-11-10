@@ -7,7 +7,9 @@ import {
   type EducationLevel,
   EXPERIENCE_LEVELS,
   type ExperienceLevel,
+  JOB_FILE_KINDS,
   JOB_LIMITS,
+  type JobFileKind,
   JOB_OFFER_STATUSES,
   JOB_SOURCE_TYPES,
   type JobOfferInput,
@@ -325,4 +327,23 @@ export class ModerationQueueQueryDto {
   @Min(1)
   @Max(100)
   limit?: number;
+}
+
+export class JobOfferFileParamDto {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  id!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  fileId!: string;
+}
+
+export class JobOfferFileUploadDto {
+  @ApiProperty({
+    enum: JOB_FILE_KINDS,
+    description: 'Annonce originale ou document complémentaire.',
+  })
+  @IsIn(JOB_FILE_KINDS)
+  kind!: JobFileKind;
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -9,10 +10,14 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
+  type FileDownloadResponse,
   type JobCategoryResponse,
   type JobOfferResponse,
   type JobOfferSummaryResponse,
@@ -23,7 +28,10 @@ import { type AuthContext } from '../auth/auth-context';
 import { type AppRequest, getClientInfo } from '../common/http/app-request';
 import { CurrentAuth, Public, RequirePermissions } from '../security/decorators';
 import { JobModerationService } from './job-moderation.service';
+import { JobOfferFilesService, type UploadedPdf } from './job-offer-files.service';
 import {
+  JobOfferFileParamDto,
+  JobOfferFileUploadDto,
   JobOfferIdParamDto,
   JobOfferInputDto,
   JobOfferSubmitDto,
@@ -34,6 +42,16 @@ import {
 import { JobOffersService } from './job-offers.service';
 
 const HOUR = 60 * 60 * 1000;
+
+/**
+ * Réception d'un document : en mémoire (sans destination, multer n'écrit jamais sur le disque
+ * du serveur), un seul fichier.
+ * Le plafond technique (50 Mo) est le maximum autorisé par la configuration ; la limite réelle
+ * (JOB_FILE_MAX_MB) est vérifiée par le service.
+ */
+const UPLOAD = FileInterceptor('file', {
+  limits: { fileSize: 50 * 1024 * 1024, files: 1, fields: 5 },
+});
 
 /** Catégories professionnelles actives (formulaires et filtres). */
 @ApiTags('job-offers')
@@ -53,7 +71,10 @@ export class JobCategoriesController {
 @ApiTags('job-offers')
 @Controller('me/job-offers')
 export class MyJobOffersController {
-  constructor(private readonly jobOffers: JobOffersService) {}
+  constructor(
+    private readonly jobOffers: JobOffersService,
+    private readonly files: JobOfferFilesService,
+  ) {}
 
   @Post()
   @Throttle({ default: { limit: 30, ttl: HOUR } })
@@ -104,6 +125,52 @@ export class MyJobOffersController {
   ): Promise<JobOfferResponse> {
     return this.jobOffers.submit(auth, params.id, dto, getClientInfo(req));
   }
+
+  @Post(':id/files')
+  @Throttle({ default: { limit: 30, ttl: HOUR } })
+  @UseInterceptors(UPLOAD)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file', 'kind'],
+      properties: {
+        file: { type: 'string', format: 'binary', description: 'PDF, sans élément actif.' },
+        kind: { type: 'string', enum: ['original', 'attachment'] },
+      },
+    },
+  })
+  @ApiOkResponse({ description: 'Document ajouté ; renvoie l’offre à jour.' })
+  uploadFile(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: JobOfferIdParamDto,
+    @Body() dto: JobOfferFileUploadDto,
+    @UploadedFile() file: UploadedPdf | undefined,
+    @Req() req: AppRequest,
+  ): Promise<JobOfferResponse> {
+    return this.files.upload(auth, params.id, dto.kind, file, getClientInfo(req));
+  }
+
+  @Delete(':id/files/:fileId')
+  @ApiOkResponse({ description: 'Document retiré (conservé pour la modération).' })
+  removeFile(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: JobOfferFileParamDto,
+  ): Promise<JobOfferResponse> {
+    return this.files.remove(auth, params.id, params.fileId);
+  }
+
+  @Post(':id/files/:fileId/download')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 120, ttl: HOUR } })
+  @ApiOkResponse({ description: 'Lien de téléchargement signé, valable quelques secondes.' })
+  downloadFile(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: JobOfferFileParamDto,
+    @Req() req: AppRequest,
+  ): Promise<FileDownloadResponse> {
+    return this.files.ownerDownload(auth, params.id, params.fileId, getClientInfo(req));
+  }
 }
 
 /** Modération des offres : réservée aux comptes ayant la permission jobs.moderate. */
@@ -111,7 +178,23 @@ export class MyJobOffersController {
 @RequirePermissions(PERMISSIONS.ADMIN_ACCESS, PERMISSIONS.JOBS_MODERATE)
 @Controller('admin/job-offers')
 export class JobModerationController {
-  constructor(private readonly moderation: JobModerationService) {}
+  constructor(
+    private readonly moderation: JobModerationService,
+    private readonly files: JobOfferFilesService,
+  ) {}
+
+  @Post(':id/files/:fileId/download')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    description: 'Lien signé pour examiner un document (téléchargement journalisé).',
+  })
+  downloadFile(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: JobOfferFileParamDto,
+    @Req() req: AppRequest,
+  ): Promise<FileDownloadResponse> {
+    return this.files.moderationDownload(auth, params.id, params.fileId, getClientInfo(req));
+  }
 
   @Get()
   @ApiOkResponse({ description: 'File de modération (par défaut : en attente de vérification).' })

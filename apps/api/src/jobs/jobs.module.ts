@@ -5,6 +5,7 @@ import {
   JobModerationController,
   MyJobOffersController,
 } from './job-offers.controller';
+import { JobOfferFilesService } from './job-offer-files.service';
 import { JobOfferLifecycleService } from './job-offer-lifecycle.service';
 import { JobOfferSchedulerService } from './job-offer-scheduler.service';
 import { JobOffersService } from './job-offers.service';
@@ -17,6 +18,7 @@ import { JobOffersService } from './job-offers.service';
     JobModerationService,
     JobOfferLifecycleService,
     JobOfferSchedulerService,
+    JobOfferFilesService,
   ],
   exports: [JobOffersService, JobOfferLifecycleService],
 })

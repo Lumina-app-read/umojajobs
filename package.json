@@ -25,7 +25,8 @@
     "role:grant": "pnpm --filter @opportinities/api role:grant",
     "docker:up": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env up -d",
     "docker:down": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env down",
-    "docker:config": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env config --quiet"
+    "docker:config": "docker compose -f infrastructure/compose/docker-compose.dev.yml --env-file .env config --quiet",
+    "storage:init": "node scripts/storage-init.mjs"
   },
   "devDependencies": {
     "prettier": "3.9.10",

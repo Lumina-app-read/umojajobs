@@ -75,7 +75,7 @@ export class JobModerationService {
       throw new NotFoundException({ code: ERROR_CODES.JOB_OFFER_NOT_FOUND });
     }
     return {
-      ...toJobOfferResponse(offer),
+      ...toJobOfferResponse(offer, { includeDeletedFiles: true }),
       contributor: offer.contributor,
       duplicates: await this.findDuplicates(offer),
       revisionCount: offer._count.revisions,
@@ -176,6 +176,9 @@ export class JobModerationService {
     const criteria: Prisma.JobOfferWhereInput[] = [];
     if (offer.duplicateKey) criteria.push({ duplicateKey: offer.duplicateKey });
     if (offer.sourceUrl) criteria.push({ sourceUrl: offer.sourceUrl });
+    // Même document déposé sur une autre offre (empreinte SHA-256 identique).
+    const hashes = offer.files.map((file) => file.sha256);
+    if (hashes.length > 0) criteria.push({ files: { some: { sha256: { in: hashes } } } });
     if (criteria.length === 0) return [];
     const duplicates = await this.prisma.jobOffer.findMany({
       where: { id: { not: offer.id }, status: { not: 'draft' }, OR: criteria },

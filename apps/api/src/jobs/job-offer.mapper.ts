@@ -12,6 +12,7 @@ export const JOB_OFFER_INCLUDE = {
   city: { select: { id: true, name: true } },
   category: { select: { id: true, slug: true, nameFr: true, nameEn: true } },
   statusHistory: { orderBy: { createdAt: 'asc' } },
+  files: { orderBy: { createdAt: 'asc' } },
 } satisfies Prisma.JobOfferInclude;
 
 export type JobOfferWithRelations = Prisma.JobOfferGetPayload<{
@@ -69,7 +70,10 @@ function toHistory(offer: JobOfferWithRelations): JobOfferStatusChangeResponse[]
  * Offre complète, champs privés compris. Réservée au contributeur propriétaire et à la
  * modération : jamais utilisée pour l'affichage public (phase 2d).
  */
-export function toJobOfferResponse(offer: JobOfferWithRelations): JobOfferResponse {
+export function toJobOfferResponse(
+  offer: JobOfferWithRelations,
+  { includeDeletedFiles = false }: { includeDeletedFiles?: boolean } = {},
+): JobOfferResponse {
   const salaryMin = offer.salaryMin?.toString() ?? null;
   const salaryMax = offer.salaryMax?.toString() ?? null;
   return {
@@ -133,5 +137,16 @@ export function toJobOfferResponse(offer: JobOfferWithRelations): JobOfferRespon
     publishedAt: iso(offer.publishedAt),
     expiredAt: iso(offer.expiredAt),
     history: toHistory(offer),
+    files: offer.files
+      .filter((file) => includeDeletedFiles || file.deletedAt === null)
+      .map((file) => ({
+        id: file.id,
+        kind: file.kind,
+        originalName: file.originalName,
+        sizeBytes: file.sizeBytes,
+        sha256: file.sha256,
+        createdAt: file.createdAt.toISOString(),
+        deletedAt: iso(file.deletedAt),
+      })),
   };
 }

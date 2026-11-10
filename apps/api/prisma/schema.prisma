@@ -181,6 +181,8 @@ model User {
   reviewedJobOffers  JobOffer[]              @relation("JobOfferReviewer")
   jobStatusChanges   JobOfferStatusHistory[] @relation("JobOfferStatusActor")
   jobRevisions       JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
+  jobFiles           JobOfferFile[]          @relation("JobOfferFileUploader")
+  fileDownloads      FileDownloadLog[]       @relation("FileDownloader")
 
   @@index([countryId])
   @@map("users")
@@ -450,6 +452,7 @@ model JobOffer {
   category      JobCategory?            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   statusHistory JobOfferStatusHistory[]
   revisions     JobOfferRevision[]
+  files         JobOfferFile[]
 
   @@index([contributorId, createdAt(sort: Desc)])
   @@index([status, submittedAt])
@@ -496,4 +499,73 @@ model JobOfferRevision {
 
   @@unique([jobOfferId, number])
   @@map("job_offer_revisions")
+}
+
+// --- Fichiers des offres (phase 2c) --------------------------------------------------------
+
+enum JobOfferFileKind {
+  /// Annonce originale (PDF), une seule par offre.
+  original
+  /// Document complémentaire (formulaire, fiche de poste…).
+  attachment
+
+  @@map("job_offer_file_kind")
+}
+
+enum FileDownloadPurpose {
+  /// Le contributeur consulte son propre document.
+  owner
+  /// Un modérateur examine le document.
+  moderation
+  /// Un utilisateur ayant déverrouillé l'offre (phase 3).
+  unlock
+
+  @@map("file_download_purpose")
+}
+
+/// Document privé d'une offre : stocké hors accès public, servi par URL signée de courte durée.
+/// Index partiel « job_offer_files_one_original_idx » (une seule annonce originale par offre) créé
+/// en SQL dans la migration add_job_offer_files : à conserver si une migration générée le supprime.
+model JobOfferFile {
+  id           String           @id @default(uuid(7)) @db.Uuid
+  jobOfferId   String           @map("job_offer_id") @db.Uuid
+  uploadedById String           @map("uploaded_by_id") @db.Uuid
+  kind         JobOfferFileKind
+  /// Clé dans le stockage objet privé (jamais exposée).
+  storageKey   String           @unique @map("storage_key") @db.VarChar(300)
+  originalName String           @map("original_name") @db.VarChar(255)
+  mimeType     String           @map("mime_type") @db.VarChar(100)
+  sizeBytes    Int              @map("size_bytes")
+  /// Empreinte SHA-256 du contenu : détection des doublons et intégrité.
+  sha256       String           @db.Char(64)
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// Retrait par le contributeur (brouillon ou correction) : la ligne est conservée.
+  deletedAt    DateTime?        @map("deleted_at") @db.Timestamptz(3)
+
+  jobOffer   JobOffer          @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
+  uploadedBy User              @relation("JobOfferFileUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
+  downloads  FileDownloadLog[]
+
+  @@index([jobOfferId, deletedAt])
+  @@index([sha256])
+  @@map("job_offer_files")
+}
+
+/// Journal des téléchargements (cahier des charges §8.4), en ajout seul.
+model FileDownloadLog {
+  id        String              @id @default(uuid(7)) @db.Uuid
+  fileId    String              @map("file_id") @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  purpose   FileDownloadPurpose
+  ip        String?             @db.VarChar(45)
+  userAgent String?             @map("user_agent") @db.VarChar(512)
+  requestId String?             @map("request_id") @db.VarChar(64)
+  createdAt DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  file JobOfferFile @relation(fields: [fileId], references: [id], onDelete: Restrict)
+  user User         @relation("FileDownloader", fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([fileId, createdAt])
+  @@index([userId, createdAt])
+  @@map("file_download_logs")
 }

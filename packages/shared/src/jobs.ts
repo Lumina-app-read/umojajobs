@@ -76,7 +76,12 @@ export const JOB_LIMITS = {
   reasonMax: 2_000,
   /** Durée de validité maximale d'une offre, en jours. */
   validityMaxDays: 366,
+  /** Documents complémentaires par offre (en plus de l'annonce originale). */
+  attachmentsMax: 4,
 } as const;
+
+export const JOB_FILE_KINDS = ['original', 'attachment'] as const;
+export type JobFileKind = (typeof JOB_FILE_KINDS)[number];
 
 /** Statuts dans lesquels le contributeur peut encore modifier son offre. */
 export const EDITABLE_JOB_STATUSES: readonly JobOfferStatus[] = ['draft', 'needs_correction'];
@@ -138,6 +143,24 @@ export interface JobCategoryResponse {
   nameEn: string;
 }
 
+/** Document privé d'une offre (jamais d'URL permanente : téléchargement par lien signé). */
+export interface JobOfferFileResponse {
+  id: string;
+  kind: JobFileKind;
+  originalName: string;
+  sizeBytes: number;
+  sha256: string;
+  createdAt: string;
+  /** Renseigné si le contributeur a retiré le document (visible par la modération seulement). */
+  deletedAt: string | null;
+}
+
+/** Lien de téléchargement signé, valable quelques secondes. */
+export interface FileDownloadResponse {
+  url: string;
+  expiresAt: string;
+}
+
 export interface JobOfferStatusChangeResponse {
   id: string;
   fromStatus: JobOfferStatus | null;
@@ -179,6 +202,7 @@ export interface JobOfferResponse extends Required<Omit<JobOfferInput, 'salaryMi
   publishedAt: string | null;
   expiredAt: string | null;
   history: JobOfferStatusChangeResponse[];
+  files: JobOfferFileResponse[];
 }
 
 /** Vue modérateur : contributeur, doublons potentiels et historique complet. */

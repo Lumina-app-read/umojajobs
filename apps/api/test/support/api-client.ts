@@ -34,6 +34,19 @@ export class ApiClient {
     return this.withCsrf(this.agent.patch(path).send(body));
   }
 
+  /** Envoi multipart d'un fichier (formulaire de dépôt), avec les mêmes protections que le navigateur. */
+  upload(
+    path: string,
+    file: { buffer: Buffer; filename: string; contentType: string },
+    fields: Record<string, string> = {},
+  ): Promise<Response> {
+    let test = this.agent.post(path);
+    for (const [name, value] of Object.entries(fields)) test = test.field(name, value);
+    return this.withCsrf(
+      test.attach('file', file.buffer, { filename: file.filename, contentType: file.contentType }),
+    );
+  }
+
   delete(path: string): Promise<Response> {
     return this.withCsrf(this.agent.delete(path));
   }

@@ -33,5 +33,11 @@
   "JOB_OFFER_INVALID_TRANSITION": "Cette action n'est pas possible dans l'état actuel de l'offre.",
   "JOB_OFFER_SELF_MODERATION": "Vous ne pouvez pas modérer une offre que vous avez partagée.",
   "JOB_OFFER_VERSION_CONFLICT": "L'offre a été modifiée entre-temps. Rechargez la page puis réessayez.",
-  "DECLARATION_REQUIRED": "Vous devez confirmer que les informations sont exactes et que vous pouvez les partager."
+  "DECLARATION_REQUIRED": "Vous devez confirmer que les informations sont exactes et que vous pouvez les partager.",
+  "FILE_REQUIRED": "Choisissez un fichier à envoyer.",
+  "FILE_TOO_LARGE": "Ce fichier est trop volumineux.",
+  "FILE_TYPE_NOT_ALLOWED": "Seuls les documents PDF sont acceptés.",
+  "FILE_UNSAFE": "Ce PDF contient des éléments actifs (scripts, pièces jointes) et ne peut pas être accepté.",
+  "FILE_LIMIT_REACHED": "Le nombre maximal de documents pour cette offre est atteint.",
+  "FILE_NOT_FOUND": "Ce document est introuvable."
 }

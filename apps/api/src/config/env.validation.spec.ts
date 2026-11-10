@@ -9,6 +9,10 @@ const BASE = {
   SMTP_PORT: '1025',
   MAIL_FROM: 'OPPORTINITIES <no-reply@example.test>',
   TERMS_VERSION: '2026-11-09',
+  S3_REGION: 'garage',
+  S3_BUCKET: 'oppo-private',
+  S3_ACCESS_KEY_ID: 'GK0123456789abcdef01234567',
+  S3_SECRET_ACCESS_KEY: 'test-secret-value',
 };
 
 describe('validateEnv', () => {
@@ -44,14 +48,21 @@ describe('validateEnv', () => {
     expect(() => validateEnv({ ...BASE, API_PORT: '70000' })).toThrow(/API_PORT/);
   });
 
-  it.each(['DATABASE_URL', 'REDIS_URL', 'APP_URL', 'APP_ENCRYPTION_KEY', 'SMTP_HOST', 'MAIL_FROM'])(
-    'exige %s',
-    (name) => {
-      const env: Record<string, unknown> = { ...BASE };
-      delete env[name];
-      expect(() => validateEnv(env)).toThrow(new RegExp(name));
-    },
-  );
+  it.each([
+    'DATABASE_URL',
+    'REDIS_URL',
+    'APP_URL',
+    'APP_ENCRYPTION_KEY',
+    'SMTP_HOST',
+    'MAIL_FROM',
+    'S3_BUCKET',
+    'S3_ACCESS_KEY_ID',
+    'S3_SECRET_ACCESS_KEY',
+  ])('exige %s', (name) => {
+    const env: Record<string, unknown> = { ...BASE };
+    delete env[name];
+    expect(() => validateEnv(env)).toThrow(new RegExp(name));
+  });
 
   it('refuse une clé de chiffrement qui ne fait pas 32 octets', () => {
     expect(() =>
