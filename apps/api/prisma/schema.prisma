@@ -134,6 +134,7 @@ enum SecurityEventType {
   mfa_recovery_code_used
   role_granted
   role_revoked
+  profile_updated
 
   @@map("security_event_type")
 }

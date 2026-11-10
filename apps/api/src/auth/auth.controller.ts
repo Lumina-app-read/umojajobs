@@ -8,6 +8,7 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Req,
   Res,
@@ -33,6 +34,7 @@ import {
   ResetPasswordDto,
   SessionDto,
   TokenDto,
+  UpdateProfileDto,
 } from './auth.dto';
 import { AuthService } from './auth.service';
 import { SessionsService } from './sessions.service';
@@ -142,6 +144,18 @@ export class AuthController {
   @ApiOkResponse({ type: MeDto })
   me(@CurrentAuth() auth: AuthContext): MeDto {
     return AuthService.toMe(auth);
+  }
+
+  /** Mise à jour du profil et des préférences ; renvoie le profil à jour. */
+  @Patch('me')
+  @Throttle({ default: { limit: 30, ttl: HOUR } })
+  @ApiOkResponse({ type: MeDto })
+  updateMe(
+    @CurrentAuth() auth: AuthContext,
+    @Body() dto: UpdateProfileDto,
+    @Req() req: AppRequest,
+  ): Promise<MeDto> {
+    return this.authService.updateProfile(auth, dto, getClientInfo(req));
   }
 
   @Get('sessions')

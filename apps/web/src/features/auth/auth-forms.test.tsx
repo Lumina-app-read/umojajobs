@@ -97,7 +97,10 @@ describe('LoginForm', () => {
 
   it('redirige vers l’inscription TOTP pour un administrateur sans TOTP', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      jsonResponse(200, { csrfToken: 'nouveau', user: { mfaState: 'enrollment_required' } }),
+      jsonResponse(200, {
+        csrfToken: 'nouveau',
+        user: { mfaState: 'enrollment_required', theme: 'dark', locale: 'en' },
+      }),
     );
     const user = userEvent.setup();
     renderWithIntl(<LoginForm />);
@@ -105,7 +108,11 @@ describe('LoginForm', () => {
     await user.type(screen.getByLabelText('Mot de passe'), 'une phrase de passe');
     await user.click(screen.getByRole('button', { name: 'Se connecter' }));
 
-    await vi.waitFor(() => expect(routerMock.replace).toHaveBeenCalledWith('/mfa/setup'));
+    await vi.waitFor(() =>
+      expect(routerMock.replace).toHaveBeenCalledWith('/mfa/setup', { locale: 'en' }),
+    );
+    // Le thème du compte est appliqué à l'appareil.
+    expect(document.cookie).toContain('oppo_theme=dark');
   });
 });
 

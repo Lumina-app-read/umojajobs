@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PERMISSIONS } from '@opportinities/shared';
 import { generateToken, sha256Hex } from '../common/crypto/tokens';
 import { type ClientInfo } from '../common/http/app-request';
 import { type EnvironmentVariables } from '../config/env.validation';
@@ -7,9 +8,15 @@ import { type Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { type AuthContext } from './auth-context';
 import { computeMfaState } from './rbac';
+import { isSessionUsable, type SessionLimits } from './session-policy';
 
-/** La date de dernière activité n'est réécrite qu'au-delà de cet intervalle (évite une écriture par requête). */
+/**
+ * La date de dernière activité n'est réécrite qu'au-delà de cet intervalle (évite une écriture par
+ * requête). Plus court pour les sessions d'administration, dont le délai d'inactivité est de quelques
+ * minutes : la précision reste d'une minute.
+ */
 const TOUCH_INTERVAL_MS = 5 * 60 * 1000;
+const PRIVILEGED_TOUCH_INTERVAL_MS = 60 * 1000;
 
 const SESSION_INCLUDE = {
   user: {
@@ -43,6 +50,8 @@ export interface SessionSummary {
 export class SessionsService {
   private readonly ttlMs: number;
   private readonly idleMs: number;
+  /** Limites plus courtes pour les comptes ayant accès à l'administration. */
+  private readonly privileged: SessionLimits;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -50,6 +59,10 @@ export class SessionsService {
   ) {
     this.ttlMs = config.get('SESSION_TTL_DAYS', { infer: true }) * 24 * 60 * 60 * 1000;
     this.idleMs = config.get('SESSION_IDLE_TIMEOUT_HOURS', { infer: true }) * 60 * 60 * 1000;
+    this.privileged = {
+      maxAgeMs: config.get('PRIVILEGED_SESSION_TTL_HOURS', { infer: true }) * 60 * 60 * 1000,
+      idleMs: config.get('PRIVILEGED_SESSION_IDLE_TIMEOUT_MINUTES', { infer: true }) * 60 * 1000,
+    };
   }
 
   async create(
@@ -86,19 +99,10 @@ export class SessionsService {
     if (
       !session ||
       session.revokedAt !== null ||
-      session.expiresAt.getTime() <= now ||
-      session.lastSeenAt.getTime() + this.idleMs <= now ||
       session.user.status !== 'active' ||
       session.user.emailVerifiedAt === null
     ) {
       return null;
-    }
-
-    if (now - session.lastSeenAt.getTime() > TOUCH_INTERVAL_MS) {
-      await this.prisma.session.update({
-        where: { id: session.id },
-        data: { lastSeenAt: new Date(now) },
-      });
     }
 
     const { user } = session;
@@ -106,6 +110,19 @@ export class SessionsService {
     const permissions = new Set(
       user.roles.flatMap((userRole) => userRole.role.permissions.map((rp) => rp.permission.code)),
     );
+    const privileged = permissions.has(PERMISSIONS.ADMIN_ACCESS) ? this.privileged : null;
+    if (!isSessionUsable(session, now, { maxAgeMs: this.ttlMs, idleMs: this.idleMs }, privileged)) {
+      return null;
+    }
+
+    const touchInterval = privileged ? PRIVILEGED_TOUCH_INTERVAL_MS : TOUCH_INTERVAL_MS;
+    if (now - session.lastSeenAt.getTime() > touchInterval) {
+      await this.prisma.session.update({
+        where: { id: session.id },
+        data: { lastSeenAt: new Date(now) },
+      });
+    }
+
     const totpEnabled = user.totpEnabledAt !== null;
 
     return {
@@ -119,6 +136,7 @@ export class SessionsService {
         firstName: user.firstName,
         lastName: user.lastName,
         countryIso2: user.country.iso2,
+        phoneE164: user.phoneE164,
         locale: user.locale,
         theme: user.theme,
         totpEnabled,

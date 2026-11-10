@@ -1,5 +1,10 @@
 import 'server-only';
-import { type CountryResponse, type MeResponse } from '@opportinities/shared';
+import {
+  type CountryResponse,
+  type MeResponse,
+  type SecurityEventResponse,
+  type SessionResponse,
+} from '@opportinities/shared';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
 
@@ -42,4 +47,25 @@ export async function getCountries(): Promise<CountryResponse[]> {
     throw new Error(`Référentiel des pays indisponible (HTTP ${result.status}).`);
   }
   return result.data;
+}
+
+/** Sessions actives de l'utilisateur connecté (liste vide si l'API ne répond pas). */
+export async function getSessions(): Promise<SessionResponse[]> {
+  const result = await serverGet<SessionResponse[]>('/auth/sessions').catch(() => null);
+  return result?.data ?? [];
+}
+
+/** Journal de sécurité (administration). data null si l'API refuse ou ne répond pas. */
+export async function getSecurityEvents(query: {
+  type?: string;
+  before?: string;
+  limit: number;
+}): Promise<SecurityEventResponse[] | null> {
+  const params = new URLSearchParams({ limit: String(query.limit) });
+  if (query.type) params.set('type', query.type);
+  if (query.before) params.set('before', query.before);
+  const result = await serverGet<SecurityEventResponse[]>(
+    `/admin/security-events?${params.toString()}`,
+  ).catch(() => null);
+  return result?.data ?? null;
 }

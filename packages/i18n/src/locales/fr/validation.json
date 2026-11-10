@@ -9,5 +9,6 @@
   "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
   "totpCode": "Le code comporte 6 chiffres.",
   "recoveryCode": "Format attendu : XXXXX-XXXXX.",
-  "invalid": "Valeur invalide."
+  "invalid": "Valeur invalide.",
+  "phone": "Numéro au format international, par exemple +221 77 123 45 67."
 }

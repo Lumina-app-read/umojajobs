@@ -1,7 +1,8 @@
 'use client';
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import { Bell, Globe, Menu, X } from 'lucide-react';
+import { type Locale, PERMISSIONS, type ThemePreference } from '@opportinities/shared';
+import { ArrowLeft, Bell, Globe, Menu, ShieldCheck, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useEffect, useState } from 'react';
 import { LanguageMenu } from '@/components/layout/language-menu';
@@ -13,17 +14,58 @@ import { Avatar } from '@/components/ui/feedback';
 import { LogoutButton } from '@/features/auth/logout-button';
 import { Link, usePathname } from '@/i18n/navigation';
 import { cn } from '@/lib/cn';
-import { APP_NAV_ITEMS, APP_TABS, isActive } from './app-nav';
-import { AppNavList } from './app-nav-list';
+import { visibleAdminNav } from './admin-nav';
+import { APP_NAV, APP_TABS, isActive } from './app-nav';
+import { AppNavList, type NavGroupView } from './app-nav-list';
+import { PreferenceSync } from './preference-sync';
 
 export interface ShellUser {
   firstName: string;
   lastName: string;
   email: string;
+  theme: ThemePreference;
+  locale: Locale;
+  permissions: string[];
 }
+
+/** Espace affiché : personnel (`user`) ou administration (`admin`). */
+export type ShellVariant = 'user' | 'admin';
 
 const DESKTOP_QUERY = '(min-width: 1024px)';
 const iconButton = cn(buttonClasses('ghost', 'md'), 'size-9 px-0');
+
+/** Navigation traduite de l'espace demandé, limitée aux permissions de l'utilisateur. */
+function useNavGroups(variant: ShellVariant, permissions: string[]): NavGroupView[] {
+  const t = useTranslations('common');
+
+  if (variant === 'admin') {
+    const groups: NavGroupView[] = visibleAdminNav(permissions).map((group) => ({
+      key: group.key,
+      label: group.key === 'main' ? null : t(`admin.nav.groups.${group.key}`),
+      items: group.items.map((item) => ({ ...item, label: t(`admin.nav.${item.key}`) })),
+    }));
+    groups.push({
+      key: 'back',
+      label: null,
+      items: [{ key: 'back', href: '/dashboard', icon: ArrowLeft, label: t('admin.nav.back') }],
+    });
+    return groups;
+  }
+
+  const groups: NavGroupView[] = APP_NAV.map((group) => ({
+    key: group.key,
+    label: group.key === 'main' ? null : t(`app.nav.groups.${group.key}`),
+    items: group.items.map((item) => ({ ...item, label: t(`app.nav.${item.key}`) })),
+  }));
+  if (permissions.includes(PERMISSIONS.ADMIN_ACCESS)) {
+    groups.push({
+      key: 'admin',
+      label: null,
+      items: [{ key: 'admin', href: '/admin', icon: ShieldCheck, label: t('admin.nav.enter') }],
+    });
+  }
+  return groups;
+}
 
 /** Bloc utilisateur (bas de la barre latérale et du tiroir) : identité et déconnexion. */
 function UserBlock({ user }: { user: ShellUser }) {
@@ -42,22 +84,38 @@ function UserBlock({ user }: { user: ShellUser }) {
   );
 }
 
-function Brand({ onNavigate }: { onNavigate?: () => void }) {
-  const t = useTranslations('common.nav');
+function Brand({ variant, onNavigate }: { variant: ShellVariant; onNavigate?: () => void }) {
+  const t = useTranslations('common');
+  const admin = variant === 'admin';
   return (
     <Link
-      href="/dashboard"
+      href={admin ? '/admin' : '/dashboard'}
       onClick={onNavigate}
-      className="-ml-1 rounded-md p-1"
-      aria-label={t('dashboard')}
+      className="-ml-1 flex items-center gap-2 rounded-md p-1"
+      aria-label={admin ? t('admin.nav.enter') : t('nav.dashboard')}
     >
       <Logo size={30} />
+      {admin && (
+        <span className="rounded-md bg-navy px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+          {t('admin.badge')}
+        </span>
+      )}
     </Link>
   );
 }
 
 /** Tiroir de navigation (mobile et tablette). */
-function AppDrawer({ user }: { user: ShellUser }) {
+function AppDrawer({
+  user,
+  variant,
+  groups,
+  label,
+}: {
+  user: ShellUser;
+  variant: ShellVariant;
+  groups: NavGroupView[];
+  label: string;
+}) {
   const t = useTranslations('common');
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -93,7 +151,7 @@ function AppDrawer({ user }: { user: ShellUser }) {
           >
             <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
               <DialogTitle className="sr-only">{t('nav.menu')}</DialogTitle>
-              <Brand onNavigate={close} />
+              <Brand variant={variant} onNavigate={close} />
               <button
                 type="button"
                 onClick={close}
@@ -104,7 +162,7 @@ function AppDrawer({ user }: { user: ShellUser }) {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto px-3 py-4">
-              <AppNavList onNavigate={close} />
+              <AppNavList groups={groups} label={label} onNavigate={close} />
             </div>
             <UserBlock user={user} />
           </DialogPanel>
@@ -114,7 +172,7 @@ function AppDrawer({ user }: { user: ShellUser }) {
   );
 }
 
-/** Barre d'onglets en bas de l'écran (mobile) : cinq destinations fréquentes. */
+/** Barre d'onglets en bas de l'écran (mobile, espace personnel) : cinq destinations fréquentes. */
 function AppTabBar() {
   const t = useTranslations('common.app');
   const pathname = usePathname();
@@ -149,21 +207,33 @@ function AppTabBar() {
 
 /**
  * Structure de l'espace connecté : barre latérale de 256 px (ordinateur), barre supérieure,
- * tiroir et barre d'onglets (mobile). Le contenu de chaque page est rendu dans <main>.
+ * tiroir et, dans l'espace personnel, barre d'onglets (mobile). Le contenu est rendu dans <main>.
  */
-export function AppShell({ user, children }: { user: ShellUser; children: ReactNode }) {
+export function AppShell({
+  user,
+  variant = 'user',
+  children,
+}: {
+  user: ShellUser;
+  variant?: ShellVariant;
+  children: ReactNode;
+}) {
   const t = useTranslations('common');
   const pathname = usePathname();
-  const current = APP_NAV_ITEMS.find((item) => isActive(pathname, item.href));
+  const groups = useNavGroups(variant, user.permissions);
+  const navLabel = variant === 'admin' ? t('admin.nav.label') : t('app.nav.label');
+  const current = groups
+    .flatMap((group) => group.items)
+    .find((item) => isActive(pathname, item.href));
 
   return (
     <div className="flex min-h-dvh flex-1">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-line bg-surface lg:flex">
         <div className="flex h-16 shrink-0 items-center px-5">
-          <Brand />
+          <Brand variant={variant} />
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-4">
-          <AppNavList dense />
+          <AppNavList groups={groups} label={navLabel} dense />
         </div>
         <UserBlock user={user} />
       </aside>
@@ -171,12 +241,12 @@ export function AppShell({ user, children }: { user: ShellUser; children: ReactN
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
           <div className="flex h-16 items-center gap-2 px-4 sm:px-6 lg:px-8">
-            <AppDrawer user={user} />
+            <AppDrawer user={user} variant={variant} groups={groups} label={navLabel} />
             <div className="lg:hidden">
-              <Brand />
+              <Brand variant={variant} />
             </div>
             <p className="truncate text-sm font-semibold text-fg max-lg:hidden">
-              {current ? t(`app.nav.${current.key}`) : null}
+              {current?.label ?? null}
             </p>
             <div className="ml-auto flex items-center gap-1">
               <ButtonLink href="/" variant="ghost" icon={Globe} className="max-md:hidden">
@@ -202,12 +272,19 @@ export function AppShell({ user, children }: { user: ShellUser; children: ReactN
           </div>
         </header>
 
-        <main id="main" className="flex-1 px-4 pt-6 pb-28 sm:px-6 lg:px-8 lg:pt-8 lg:pb-12">
+        <main
+          id="main"
+          className={cn(
+            'flex-1 px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8 lg:pb-12',
+            variant === 'user' ? 'pb-28' : 'pb-12',
+          )}
+        >
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>
 
-      <AppTabBar />
+      {variant === 'user' && <AppTabBar />}
+      <PreferenceSync theme={user.theme} locale={user.locale} />
     </div>
   );
 }

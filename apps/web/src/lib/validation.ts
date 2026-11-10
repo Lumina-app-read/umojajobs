@@ -3,6 +3,7 @@ import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
   PERSON_NAME_MAX_LENGTH,
+  PHONE_E164,
 } from '@opportinities/shared';
 
 /**
@@ -21,6 +22,7 @@ export interface FieldError {
     | 'passwordMismatch'
     | 'totpCode'
     | 'recoveryCode'
+    | 'phone'
     | 'invalid';
   values?: Record<string, number>;
 }
@@ -115,6 +117,17 @@ export function passwordContainsIdentity(
     .map((part) => part.toLowerCase().trim())
     .filter((part) => part.length >= 4)
     .some((part) => lower.includes(part));
+}
+
+/** Téléphone saisi librement (« +221 77 123 45 67 ») ramené au format E.164 ; vide : aucun numéro. */
+export function normalizePhone(value: string): string | null {
+  const compact = value.replace(/[\s.()-]/g, '');
+  return compact === '' ? null : compact;
+}
+
+export function validatePhone(value: string): FieldError | undefined {
+  const phone = normalizePhone(value);
+  return phone === null || PHONE_E164.test(phone) ? undefined : { key: 'phone' };
 }
 
 export function validateTotpCode(value: string): FieldError | undefined {

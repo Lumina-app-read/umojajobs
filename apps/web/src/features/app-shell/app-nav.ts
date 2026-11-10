@@ -105,8 +105,11 @@ export const APP_TABS: {
   { key: 'account', href: '/dashboard/settings', icon: UserRound },
 ];
 
-/** Rubrique active : la vue d'ensemble seulement sur sa propre adresse, les autres par préfixe. */
+/** Racines des espaces : actives seulement sur leur propre adresse. */
+const ROOTS = new Set(['/dashboard', '/admin']);
+
+/** Rubrique active : une racine sur sa propre adresse, les autres rubriques par préfixe. */
 export function isActive(pathname: string, href: string): boolean {
-  if (href === '/dashboard') return pathname === '/dashboard';
+  if (ROOTS.has(href)) return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }

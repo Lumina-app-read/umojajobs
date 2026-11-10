@@ -26,6 +26,7 @@ import {
   type MeDto,
   type RegisterDto,
   type ResetPasswordDto,
+  type UpdateProfileDto,
 } from './auth.dto';
 import { LoginThrottleService } from './login-throttle.service';
 import { PasswordService } from './password.service';
@@ -67,6 +68,7 @@ export class AuthService {
       firstName: auth.user.firstName,
       lastName: auth.user.lastName,
       countryIso2: auth.user.countryIso2,
+      phoneE164: auth.user.phoneE164,
       locale: auth.user.locale,
       theme: auth.user.theme,
       roles: [...auth.roles].sort(),
@@ -442,6 +444,84 @@ export class AuthService {
   }
 
   /** Changement de mot de passe (session active) : les autres sessions sont révoquées. */
+  /**
+   * Mise à jour du profil et des préférences (langue, thème). Les changements d'identité
+   * (nom, pays, téléphone) sont inscrits au journal de sécurité, sans les valeurs.
+   */
+  async updateProfile(
+    auth: AuthContext,
+    dto: UpdateProfileDto,
+    client: ClientInfo,
+  ): Promise<MeDto> {
+    let countryId: string | undefined;
+    if (dto.countryIso2 !== undefined && dto.countryIso2 !== auth.user.countryIso2) {
+      const country = await this.prisma.country.findFirst({
+        where: { iso2: dto.countryIso2, isActive: true },
+        select: { id: true },
+      });
+      if (!country) {
+        throw new BadRequestException({
+          code: ERROR_CODES.VALIDATION_FAILED,
+          details: [{ field: 'countryIso2', rules: ['isIn'] }],
+        });
+      }
+      countryId = country.id;
+    }
+
+    const data: Prisma.UserUpdateInput = {
+      ...(dto.firstName !== undefined ? { firstName: dto.firstName } : {}),
+      ...(dto.lastName !== undefined ? { lastName: dto.lastName } : {}),
+      ...(countryId ? { country: { connect: { id: countryId } } } : {}),
+      ...(dto.phoneE164 !== undefined ? { phoneE164: dto.phoneE164 } : {}),
+      ...(dto.locale !== undefined ? { locale: dto.locale } : {}),
+      ...(dto.theme !== undefined ? { theme: dto.theme } : {}),
+    };
+    const identityFields: string[] = (['firstName', 'lastName', 'phoneE164'] as const).filter(
+      (field) => dto[field] !== undefined && dto[field] !== auth.user[field],
+    );
+    if (countryId) identityFields.push('countryIso2');
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.update({
+        where: { id: auth.user.id },
+        data,
+        select: {
+          firstName: true,
+          lastName: true,
+          phoneE164: true,
+          locale: true,
+          theme: true,
+          country: { select: { iso2: true } },
+        },
+      });
+      if (identityFields.length > 0) {
+        await this.securityEvents.record(
+          {
+            type: 'profile_updated',
+            userId: auth.user.id,
+            client,
+            metadata: { fields: [...identityFields] },
+          },
+          tx,
+        );
+      }
+      return user;
+    });
+
+    return AuthService.toMe({
+      ...auth,
+      user: {
+        ...auth.user,
+        firstName: updated.firstName,
+        lastName: updated.lastName,
+        countryIso2: updated.country.iso2,
+        phoneE164: updated.phoneE164,
+        locale: updated.locale,
+        theme: updated.theme,
+      },
+    });
+  }
+
   async changePassword(
     auth: AuthContext,
     dto: ChangePasswordDto,

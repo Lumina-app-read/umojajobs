@@ -1,10 +1,15 @@
-import { AFRICAN_COUNTRIES, flagEmoji, ROLE_CODES, type RoleCode } from '@opportinities/shared';
+import { ROLE_CODES, type RoleCode } from '@opportinities/shared';
 import { ShieldCheck, ShieldOff } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
+import { type ReactNode } from 'react';
 import { PreferenceControls } from '@/components/layout/preference-controls';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Avatar } from '@/components/ui/feedback';
+import { PasswordForm } from '@/features/settings/password-form';
+import { ProfileForm } from '@/features/settings/profile-form';
+import { SessionsList } from '@/features/settings/sessions-list';
+import { getCountries, getSessions } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,100 +21,114 @@ function isRoleCode(value: string): value is RoleCode {
   return (ROLE_CODES as readonly string[]).includes(value);
 }
 
-/** Paramètres : informations du compte (lecture seule pour l'instant) et préférences d'affichage. */
+/** Section de la page : titre, explication courte, contenu. */
+function SettingsSection({
+  id,
+  title,
+  hint,
+  aside,
+  children,
+}: {
+  id: string;
+  title: string;
+  hint?: string;
+  aside?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      aria-labelledby={id}
+      className="rounded-xl border border-line bg-surface p-5 shadow-xs sm:p-6"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 id={id} className="text-base font-semibold text-fg">
+            {title}
+          </h2>
+          {hint && <p className="mt-1 text-[13px] text-fg-muted">{hint}</p>}
+        </div>
+        {aside}
+      </div>
+      <div className="mt-5">{children}</div>
+    </section>
+  );
+}
+
+/** Paramètres : profil, préférences synchronisées, mot de passe, double authentification, sessions. */
 export default async function SettingsPage() {
   const user = await requireUser();
   const t = await getTranslations('common');
-  const locale = await getLocale();
-  const country = AFRICAN_COUNTRIES.find((entry) => entry.iso2 === user.countryIso2);
-  const countryLabel = country
-    ? locale === 'fr'
-      ? country.nameFr
-      : country.nameEn
-    : user.countryIso2;
-  const fullName = `${user.firstName} ${user.lastName}`;
+  const tErrors = await getTranslations('errors');
+  const [countries, sessions] = await Promise.all([
+    getCountries().catch(() => null),
+    getSessions(),
+  ]);
   const roles = (user.roles as string[]).filter(isRoleCode);
 
-  const rows: { label: string; value: React.ReactNode }[] = [
-    { label: t('dashboard.email'), value: user.email },
-    {
-      label: t('dashboard.country'),
-      value: (
-        <span className="flex items-center gap-2">
-          <span aria-hidden="true">{flagEmoji(user.countryIso2)}</span>
-          {countryLabel}
-        </span>
-      ),
-    },
-    {
-      label: t('dashboard.roles'),
-      value: (
-        <span className="flex flex-wrap gap-1.5">
-          {roles.map((role) => (
-            <Badge key={role} tone="primary">
-              {t(`roles.${role}`)}
-            </Badge>
-          ))}
-        </span>
-      ),
-    },
-    {
-      label: t('dashboard.security'),
-      value: (
-        <span className="flex items-center gap-2">
-          {user.totpEnabled ? (
-            <ShieldCheck className="size-4 text-success" aria-hidden="true" />
-          ) : (
-            <ShieldOff className="size-4 text-fg-subtle" aria-hidden="true" />
-          )}
-          {user.totpEnabled ? t('dashboard.mfaEnabled') : t('dashboard.mfaDisabled')}
-        </span>
-      ),
-    },
-  ];
-
   return (
-    <div className="grid max-w-3xl gap-8">
+    <div className="grid max-w-3xl gap-6">
       <div>
         <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg">{t('app.nav.settings')}</h1>
         <p className="mt-1.5 text-sm text-fg-muted">{t('app.settings.intro')}</p>
       </div>
 
-      <section
-        aria-labelledby="settings-account"
-        className="rounded-xl border border-line bg-surface shadow-xs"
+      <SettingsSection
+        id="settings-profile"
+        title={t('app.settings.profile')}
+        hint={t('app.settings.profileHint')}
+        aside={
+          <span className="flex flex-wrap gap-1.5">
+            {roles.map((role) => (
+              <Badge key={role} tone="primary">
+                {t(`roles.${role}`)}
+              </Badge>
+            ))}
+          </span>
+        }
       >
-        <div className="flex items-center gap-4 border-b border-line p-5">
-          <Avatar name={fullName} size="lg" />
-          <div className="min-w-0">
-            <h2 id="settings-account" className="truncate text-base font-semibold text-fg">
-              {fullName}
-            </h2>
-            <p className="text-[13px] text-fg-muted">{t('app.settings.account')}</p>
-          </div>
-        </div>
-        <dl className="divide-y divide-line">
-          {rows.map(({ label, value }) => (
-            <div key={label} className="grid gap-1 px-5 py-4 sm:grid-cols-[200px_1fr] sm:gap-4">
-              <dt className="text-sm text-fg-muted">{label}</dt>
-              <dd className="text-sm font-medium text-fg">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+        {countries ? (
+          <ProfileForm user={user} countries={countries} />
+        ) : (
+          <Alert tone="error">{tErrors('SERVICE_UNAVAILABLE')}</Alert>
+        )}
+      </SettingsSection>
 
-      <section
-        aria-labelledby="settings-preferences"
-        className="rounded-xl border border-line bg-surface p-5 shadow-xs"
+      <SettingsSection
+        id="settings-preferences"
+        title={t('app.settings.preferences')}
+        hint={t('app.settings.preferencesHint')}
       >
-        <h2 id="settings-preferences" className="text-base font-semibold text-fg">
-          {t('app.settings.preferences')}
-        </h2>
-        <p className="mt-1 text-[13px] text-fg-muted">{t('app.settings.preferencesHint')}</p>
-        <div className="mt-5 max-w-sm">
+        <div className="max-w-sm">
           <PreferenceControls />
         </div>
-      </section>
+      </SettingsSection>
+
+      <SettingsSection
+        id="settings-security"
+        title={t('app.settings.security')}
+        aside={
+          <span className="flex items-center gap-2 text-[13px] font-medium text-fg-muted">
+            {user.totpEnabled ? (
+              <ShieldCheck className="size-4 text-success" aria-hidden="true" />
+            ) : (
+              <ShieldOff className="size-4 text-fg-subtle" aria-hidden="true" />
+            )}
+            {user.totpEnabled ? t('dashboard.mfaEnabled') : t('dashboard.mfaDisabled')}
+          </span>
+        }
+      >
+        <h3 className="text-sm font-semibold text-fg">{t('app.settings.passwordTitle')}</h3>
+        <p className="mt-1 mb-4 text-[13px] text-fg-muted">{t('app.settings.passwordHint')}</p>
+        <PasswordForm />
+      </SettingsSection>
+
+      <SettingsSection
+        id="settings-sessions"
+        title={t('app.settings.sessions')}
+        hint={t('app.settings.sessionsHint')}
+      >
+        <SessionsList sessions={sessions} />
+      </SettingsSection>
     </div>
   );
 }

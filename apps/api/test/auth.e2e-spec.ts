@@ -360,6 +360,75 @@ describe('Authentification (intégration)', () => {
     });
   });
 
+  describe('profil et préférences', () => {
+    it('met à jour le nom, le pays, le téléphone, la langue et le thème', async () => {
+      const { api } = await registerVerifiedUser();
+      const response = await api.patch('/api/v1/auth/me', {
+        firstName: '  Aminata ',
+        countryIso2: 'ci',
+        phoneE164: '+225 07 12 34 56 78',
+        locale: 'en',
+        theme: 'dark',
+      });
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        firstName: 'Aminata',
+        lastName: 'Diallo',
+        countryIso2: 'CI',
+        phoneE164: '+2250712345678',
+        locale: 'en',
+        theme: 'dark',
+      });
+      const me = await api.get('/api/v1/auth/me');
+      expect(me.body).toMatchObject({ countryIso2: 'CI', phoneE164: '+2250712345678' });
+    });
+
+    it('journalise les changements d’identité sans leurs valeurs, pas les préférences', async () => {
+      const { email, api } = await registerVerifiedUser();
+      const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+      await api.patch('/api/v1/auth/me', { theme: 'light' });
+      expect(
+        await prisma.securityEvent.count({ where: { userId: user.id, type: 'profile_updated' } }),
+      ).toBe(0);
+
+      await api.patch('/api/v1/auth/me', { lastName: 'Konaté', phoneE164: '+221771234567' });
+      const event = await prisma.securityEvent.findFirstOrThrow({
+        where: { userId: user.id, type: 'profile_updated' },
+      });
+      expect(event.metadata).toEqual({ fields: ['lastName', 'phoneE164'] });
+      expect(JSON.stringify(event.metadata)).not.toContain('771234567');
+    });
+
+    it('retire le téléphone avec null', async () => {
+      const { api } = await registerVerifiedUser();
+      await api.patch('/api/v1/auth/me', { phoneE164: '+221771234567' });
+      const response = await api.patch('/api/v1/auth/me', { phoneE164: null });
+      expect(response.status).toBe(200);
+      expect((response.body as { phoneE164: string | null }).phoneE164).toBeNull();
+    });
+
+    it('refuse un téléphone, un pays ou un thème invalides', async () => {
+      const { api } = await registerVerifiedUser();
+      const response = await api.patch('/api/v1/auth/me', {
+        phoneE164: '77123',
+        countryIso2: 'FR',
+        theme: 'rose',
+      });
+      expect(response.status).toBe(400);
+      expect((response.body as ErrorBody).details?.map((d) => d.field)).toEqual(
+        expect.arrayContaining(['phoneE164', 'countryIso2', 'theme']),
+      );
+    });
+
+    it('ne permet pas de changer l’email par ce biais', async () => {
+      const { email, api } = await registerVerifiedUser();
+      const response = await api.patch('/api/v1/auth/me', { email: 'autre@example.test' });
+      expect(response.status).toBe(400);
+      const me = await api.get('/api/v1/auth/me');
+      expect((me.body as { email: string }).email).toBe(email);
+    });
+  });
+
   describe('mot de passe', () => {
     it('réinitialisation : lien à usage unique, sessions révoquées, email de confirmation', async () => {
       const { email, api: session } = await registerVerifiedUser();

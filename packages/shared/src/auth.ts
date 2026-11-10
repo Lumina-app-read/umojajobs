@@ -40,3 +40,32 @@ export type MfaState = (typeof MFA_STATES)[number];
 
 export const THEME_PREFERENCES = ['light', 'dark', 'system'] as const;
 export type ThemePreference = (typeof THEME_PREFERENCES)[number];
+
+/** Numéro de téléphone au format international E.164 : « + », indicatif puis numéro (8 à 15 chiffres). */
+export const PHONE_E164 = /^\+[1-9]\d{7,14}$/;
+
+/** Types d'événements du journal de sécurité (alignés sur l'énumération de la base, vérifié par test). */
+export const SECURITY_EVENT_TYPES = [
+  'user_registered',
+  'registration_attempt_existing_email',
+  'email_verification_sent',
+  'email_verified',
+  'login_succeeded',
+  'login_failed',
+  'account_locked',
+  'logout',
+  'logout_all',
+  'session_revoked',
+  'password_reset_requested',
+  'password_reset_completed',
+  'password_changed',
+  'mfa_enrollment_started',
+  'mfa_enabled',
+  'mfa_verified',
+  'mfa_failed',
+  'mfa_recovery_code_used',
+  'role_granted',
+  'role_revoked',
+  'profile_updated',
+] as const;
+export type SecurityEventTypeCode = (typeof SECURITY_EVENT_TYPES)[number];

@@ -9,7 +9,16 @@ export const metadata: Metadata = { robots: { index: false } };
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
   return (
-    <AppShell user={{ firstName: user.firstName, lastName: user.lastName, email: user.email }}>
+    <AppShell
+      user={{
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        theme: user.theme,
+        locale: user.locale,
+        permissions: user.permissions,
+      }}
+    >
       {children}
     </AppShell>
   );

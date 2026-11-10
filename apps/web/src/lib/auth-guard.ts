@@ -1,6 +1,7 @@
 import 'server-only';
 import { type MeResponse } from '@opportinities/shared';
 import { getLocale } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 import { redirect } from '@/i18n/navigation';
 import { getCurrentUser } from './api/server';
 
@@ -45,4 +46,25 @@ export async function requireMfaStep(page: MfaPage): Promise<MeResponse> {
     return redirect({ href: expected, locale });
   }
   return result.data;
+}
+
+/**
+ * Espace d'administration : exige une session complète et la permission demandée.
+ * Sans elle, la page répond « introuvable » pour ne pas révéler son existence.
+ * L'API applique ses propres contrôles : cette vérification ne fait qu'éviter un écran inutile.
+ */
+export async function requirePermission(permission: string): Promise<MeResponse> {
+  const user = await requireUser();
+  if (!user.permissions.includes(permission)) notFound();
+  return user;
+}
+
+/** La session courante dispose-t-elle de cette permission ? (Sans redirection : pour les métadonnées.) */
+export async function hasPermission(permission: string): Promise<boolean> {
+  const result = await getCurrentUser().catch(() => null);
+  return Boolean(
+    result?.data &&
+    !result.data.mfaState.endsWith('_required') &&
+    result.data.permissions.includes(permission),
+  );
 }

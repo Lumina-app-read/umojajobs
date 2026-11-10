@@ -114,6 +114,20 @@ export class EnvironmentVariables {
   @Max(720)
   SESSION_IDLE_TIMEOUT_HOURS = 168;
 
+  /** Durée maximale d'une session donnant accès à l'administration (modérateur, admin, super admin). */
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(72)
+  PRIVILEGED_SESSION_TTL_HOURS = 6;
+
+  /** Inactivité maximale d'une session donnant accès à l'administration. */
+  @Type(() => Number)
+  @IsInt()
+  @Min(5)
+  @Max(480)
+  PRIVILEGED_SESSION_IDLE_TIMEOUT_MINUTES = 15;
+
   @Type(() => Number)
   @IsInt()
   @Min(3)

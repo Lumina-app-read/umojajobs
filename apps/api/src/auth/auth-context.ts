@@ -6,6 +6,7 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   countryIso2: string;
+  phoneE164: string | null;
   locale: 'fr' | 'en';
   theme: 'light' | 'dark' | 'system';
   totpEnabled: boolean;

@@ -3,7 +3,9 @@ import {
   validateConfirmation,
   validateEmail,
   validateNewPassword,
+  normalizePhone,
   validatePersonName,
+  validatePhone,
   validateRecoveryCode,
   passwordContainsIdentity,
   validateRegister,
@@ -92,5 +94,23 @@ describe('inscription en deux étapes', () => {
     expect(passwordContainsIdentity('awa.d et la mer', identity)).toBe(true);
     // « Awa » fait moins de 4 caractères : il n'est pas pris en compte, comme dans l'API.
     expect(passwordContainsIdentity('awa aime la mer', identity)).toBe(false);
+  });
+});
+
+describe('téléphone (E.164)', () => {
+  it('accepte un numéro international saisi avec espaces, points ou tirets', () => {
+    expect(normalizePhone('+221 77 123 45 67')).toBe('+221771234567');
+    expect(normalizePhone('+225.07-12-34-56-78')).toBe('+2250712345678');
+    expect(validatePhone('+221 77 123 45 67')).toBeUndefined();
+  });
+
+  it('considère un champ vide comme « pas de numéro »', () => {
+    expect(normalizePhone('   ')).toBeNull();
+    expect(validatePhone('')).toBeUndefined();
+  });
+
+  it('refuse un numéro local ou trop court', () => {
+    expect(validatePhone('77 123 45 67')).toEqual({ key: 'phone' });
+    expect(validatePhone('+2217')).toEqual({ key: 'phone' });
   });
 });

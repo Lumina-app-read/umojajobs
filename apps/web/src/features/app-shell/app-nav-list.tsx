@@ -1,35 +1,53 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { type LucideIcon } from 'lucide-react';
 import { Link, usePathname } from '@/i18n/navigation';
 import { cn } from '@/lib/cn';
-import { APP_NAV, isActive } from './app-nav';
+import { isActive } from './app-nav';
+
+/** Rubrique prête à afficher (libellé déjà traduit). */
+export interface NavItemView {
+  key: string;
+  href: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+export interface NavGroupView {
+  key: string;
+  /** null : groupe principal, sans titre. */
+  label: string | null;
+  items: NavItemView[];
+}
 
 /**
  * Liste de navigation groupée, partagée par la barre latérale (dense : liens de 32 px) et le
- * tiroir mobile (liens de 40 px, adaptés au toucher).
+ * tiroir mobile (liens de 40 px, adaptés au toucher). Sert à l'espace personnel et à l'administration.
  */
 export function AppNavList({
+  groups,
+  label,
   onNavigate,
   dense = false,
 }: {
+  groups: NavGroupView[];
+  label: string;
   onNavigate?: () => void;
   dense?: boolean;
 }) {
-  const t = useTranslations('common.app');
   const pathname = usePathname();
 
   return (
-    <nav aria-label={t('nav.label')} className="grid gap-4">
-      {APP_NAV.map((group) => (
+    <nav aria-label={label} className="grid gap-4">
+      {groups.map((group) => (
         <div key={group.key}>
-          {group.key !== 'main' && (
+          {group.label && (
             <p className="mb-1 px-3 text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
-              {t(`nav.groups.${group.key}`)}
+              {group.label}
             </p>
           )}
           <ul className="grid gap-0.5">
-            {group.items.map(({ key, href, icon: Icon }) => {
+            {group.items.map(({ key, href, icon: Icon, label: itemLabel }) => {
               const active = isActive(pathname, href);
               return (
                 <li key={key}>
@@ -46,7 +64,7 @@ export function AppNavList({
                     )}
                   >
                     <Icon className="size-[18px]" aria-hidden="true" />
-                    <span className="truncate">{t(`nav.${key}`)}</span>
+                    <span className="truncate">{itemLabel}</span>
                   </Link>
                 </li>
               );

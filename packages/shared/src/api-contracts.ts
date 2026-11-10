@@ -48,6 +48,41 @@ export interface ChangePasswordRequest {
   newPasswordConfirmation: string;
 }
 
+/**
+ * Mise à jour du profil et des préférences. Tous les champs sont facultatifs ;
+ * `phoneE164: null` retire le numéro (format E.164, par exemple « +221771234567 »).
+ */
+export interface UpdateProfileRequest {
+  firstName?: string;
+  lastName?: string;
+  countryIso2?: string;
+  phoneE164?: string | null;
+  locale?: Locale;
+  theme?: ThemePreference;
+}
+
+/** Session active (appareil connecté). Les dates sont au format ISO 8601. */
+export interface SessionResponse {
+  id: string;
+  createdAt: string;
+  lastSeenAt: string;
+  ip: string | null;
+  userAgent: string | null;
+  current: boolean;
+}
+
+/** Événement du journal de sécurité (administration, lecture seule). */
+export interface SecurityEventResponse {
+  id: string;
+  type: string;
+  userId: string | null;
+  ip: string | null;
+  userAgent: string | null;
+  requestId: string | null;
+  metadata: unknown;
+  createdAt: string;
+}
+
 export interface TotpCodeRequest {
   code: string;
 }
@@ -63,6 +98,7 @@ export interface MeResponse {
   firstName: string;
   lastName: string;
   countryIso2: string;
+  phoneE164: string | null;
   locale: Locale;
   theme: ThemePreference;
   roles: RoleCode[] | string[];

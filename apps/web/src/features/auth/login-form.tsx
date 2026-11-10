@@ -10,6 +10,7 @@ import { FormField, PasswordField } from '@/components/ui/form-field';
 import { Link, useRouter } from '@/i18n/navigation';
 import { api, setCsrfToken } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
+import { saveThemePreference } from '@/lib/theme';
 import { useFormErrors } from '@/lib/use-form-errors';
 import { compact, type FieldErrors, hasErrors, validateEmail } from '@/lib/validation';
 
@@ -51,7 +52,11 @@ export function LoginForm() {
         email: values.email.trim(),
       });
       setCsrfToken(response.csrfToken);
-      router.replace(destinationAfterLogin(response.user.mfaState));
+      // Les préférences du compte s'appliquent à l'appareil : thème et langue d'interface.
+      saveThemePreference(response.user.theme);
+      router.replace(destinationAfterLogin(response.user.mfaState), {
+        locale: response.user.locale,
+      });
       router.refresh();
     } catch (error) {
       setFormError(fromApiError(error).message);

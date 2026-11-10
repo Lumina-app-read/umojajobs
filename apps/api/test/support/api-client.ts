@@ -30,6 +30,10 @@ export class ApiClient {
     return this.withCsrf(this.agent.post(path).send(body));
   }
 
+  patch(path: string, body: object = {}): Promise<Response> {
+    return this.withCsrf(this.agent.patch(path).send(body));
+  }
+
   delete(path: string): Promise<Response> {
     return this.withCsrf(this.agent.delete(path));
   }

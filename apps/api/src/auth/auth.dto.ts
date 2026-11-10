@@ -21,7 +21,10 @@ import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
   PERSON_NAME_MAX_LENGTH,
+  PHONE_E164,
   SUPPORTED_LOCALES,
+  THEME_PREFERENCES,
+  type UpdateProfileRequest,
 } from '@opportinities/shared';
 import { Transform } from 'class-transformer';
 import {
@@ -34,6 +37,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 const trim = ({ value }: { value: unknown }): unknown =>
@@ -152,6 +156,56 @@ export class ChangePasswordDto implements ChangePasswordRequest {
   newPasswordConfirmation!: string;
 }
 
+/** Mise à jour partielle du profil et des préférences. L'email n'est pas modifiable ici. */
+export class UpdateProfileDto implements UpdateProfileRequest {
+  @ApiPropertyOptional({ example: 'Awa' })
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @Length(1, PERSON_NAME_MAX_LENGTH)
+  @Matches(PERSON_NAME)
+  firstName?: string;
+
+  @ApiPropertyOptional({ example: 'Diallo' })
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @Length(1, PERSON_NAME_MAX_LENGTH)
+  @Matches(PERSON_NAME)
+  lastName?: string;
+
+  @ApiPropertyOptional({ example: 'SN' })
+  @IsOptional()
+  @Transform(toUpper)
+  @IsIn(AFRICAN_ISO2)
+  countryIso2?: string;
+
+  @ApiPropertyOptional({
+    example: '+221771234567',
+    nullable: true,
+    type: String,
+    description: 'Format E.164. null retire le numéro.',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.replace(/[\s.()-]/g, '') : value,
+  )
+  @IsString()
+  @Matches(PHONE_E164)
+  phoneE164?: string | null;
+
+  @ApiPropertyOptional({ enum: SUPPORTED_LOCALES })
+  @IsOptional()
+  @IsIn(SUPPORTED_LOCALES)
+  locale?: 'fr' | 'en';
+
+  @ApiPropertyOptional({ enum: THEME_PREFERENCES })
+  @IsOptional()
+  @IsIn(THEME_PREFERENCES)
+  theme?: 'light' | 'dark' | 'system';
+}
+
 export class TotpCodeDto implements TotpCodeRequest {
   @ApiProperty({ example: '123456' })
   @IsString()
@@ -191,6 +245,8 @@ export class MeDto implements MeResponse {
   @ApiProperty() firstName!: string;
   @ApiProperty() lastName!: string;
   @ApiProperty({ example: 'SN' }) countryIso2!: string;
+  @ApiProperty({ nullable: true, type: String, example: '+221771234567' }) phoneE164!:
+    string | null;
   @ApiProperty({ enum: SUPPORTED_LOCALES }) locale!: 'fr' | 'en';
   @ApiProperty({ enum: ['light', 'dark', 'system'] }) theme!: 'light' | 'dark' | 'system';
   @ApiProperty({ type: [String] }) roles!: string[];
