@@ -24,5 +24,14 @@
   "MFA_INVALID_CODE": "Incorrect or already used code.",
   "MFA_ALREADY_ENABLED": "Two-factor authentication is already enabled.",
   "MFA_SETUP_NOT_STARTED": "Two-factor authentication setup has not started.",
-  "NETWORK": "Unable to connect. Please check your Internet access."
+  "NETWORK": "Unable to connect. Please check your Internet access.",
+  "JOB_OFFER_NOT_FOUND": "This offer could not be found.",
+  "JOB_OFFER_NOT_EDITABLE": "This offer can no longer be edited in its current state.",
+  "JOB_OFFER_INCOMPLETE": "Some required information is missing before submission.",
+  "JOB_OFFER_INVALID_DATES": "The validity dates are inconsistent: the end date must follow the start date.",
+  "JOB_OFFER_ALREADY_ENDED": "The validity end date has already passed.",
+  "JOB_OFFER_INVALID_TRANSITION": "This action is not possible in the offer's current state.",
+  "JOB_OFFER_SELF_MODERATION": "You cannot moderate an offer you shared.",
+  "JOB_OFFER_VERSION_CONFLICT": "The offer was changed in the meantime. Reload the page and try again.",
+  "DECLARATION_REQUIRED": "You must confirm that the information is accurate and that you may share it."
 }

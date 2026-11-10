@@ -24,5 +24,14 @@
   "MFA_INVALID_CODE": "Code incorrect ou déjà utilisé.",
   "MFA_ALREADY_ENABLED": "La double authentification est déjà activée.",
   "MFA_SETUP_NOT_STARTED": "La configuration de la double authentification n'a pas commencé.",
-  "NETWORK": "Connexion impossible. Vérifiez votre accès à Internet."
+  "NETWORK": "Connexion impossible. Vérifiez votre accès à Internet.",
+  "JOB_OFFER_NOT_FOUND": "Cette offre est introuvable.",
+  "JOB_OFFER_NOT_EDITABLE": "Cette offre ne peut plus être modifiée dans son état actuel.",
+  "JOB_OFFER_INCOMPLETE": "Certaines informations obligatoires manquent avant la soumission.",
+  "JOB_OFFER_INVALID_DATES": "Les dates de validité sont incohérentes : la date de fin doit suivre la date de début.",
+  "JOB_OFFER_ALREADY_ENDED": "La date de fin de validité est déjà dépassée.",
+  "JOB_OFFER_INVALID_TRANSITION": "Cette action n'est pas possible dans l'état actuel de l'offre.",
+  "JOB_OFFER_SELF_MODERATION": "Vous ne pouvez pas modérer une offre que vous avez partagée.",
+  "JOB_OFFER_VERSION_CONFLICT": "L'offre a été modifiée entre-temps. Rechargez la page puis réessayez.",
+  "DECLARATION_REQUIRED": "Vous devez confirmer que les informations sont exactes et que vous pouvez les partager."
 }

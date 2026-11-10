@@ -30,8 +30,9 @@ model Country {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  cities City[]
-  users  User[]
+  cities    City[]
+  users     User[]
+  jobOffers JobOffer[]
 
   @@map("countries")
 }
@@ -64,7 +65,8 @@ model City {
   createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  country Country @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  country   Country    @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  jobOffers JobOffer[]
 
   @@index([countryId, population(sort: Desc)])
   @@index([searchName(ops: raw("gin_trgm_ops"))], type: Gin, map: "cities_search_name_trgm_idx")
@@ -168,13 +170,17 @@ model User {
   createdAt                  DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                  DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  country            Country             @relation(fields: [countryId], references: [id], onDelete: Restrict)
-  roles              UserRole[]          @relation("UserRoles")
-  rolesAssigned      UserRole[]          @relation("RoleAssignedBy")
+  country            Country                 @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  roles              UserRole[]              @relation("UserRoles")
+  rolesAssigned      UserRole[]              @relation("RoleAssignedBy")
   sessions           Session[]
   verificationTokens VerificationToken[]
   recoveryCodes      MfaRecoveryCode[]
   securityEvents     SecurityEvent[]
+  jobOffers          JobOffer[]              @relation("JobOfferContributor")
+  reviewedJobOffers  JobOffer[]              @relation("JobOfferReviewer")
+  jobStatusChanges   JobOfferStatusHistory[] @relation("JobOfferStatusActor")
+  jobRevisions       JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
 
   @@index([countryId])
   @@map("users")
@@ -287,4 +293,207 @@ model SecurityEvent {
   @@index([userId, createdAt(sort: Desc)])
   @@index([type, createdAt(sort: Desc)])
   @@map("security_events")
+}
+
+// --- Offres d'emploi (phase 2) -------------------------------------------------------------
+
+/// Cycle de vie d'une offre (cahier des charges §7.5). Aucune offre n'est publiée sans modération.
+enum JobOfferStatus {
+  draft
+  pending_review
+  needs_correction
+  scheduled
+  active
+  expired
+  rejected
+  suspended
+  archived
+
+  @@map("job_offer_status")
+}
+
+enum ContractType {
+  permanent
+  fixed_term
+  internship
+  apprenticeship
+  freelance
+  consultancy
+  temporary
+  volunteer
+  other
+
+  @@map("contract_type")
+}
+
+enum WorkMode {
+  on_site
+  remote
+  hybrid
+
+  @@map("work_mode")
+}
+
+enum EducationLevel {
+  none
+  secondary
+  vocational
+  bachelor
+  master
+  doctorate
+
+  @@map("education_level")
+}
+
+enum ExperienceLevel {
+  none
+  junior
+  intermediate
+  senior
+  expert
+
+  @@map("experience_level")
+}
+
+enum SalaryPeriod {
+  hour
+  day
+  month
+  year
+
+  @@map("salary_period")
+}
+
+/// Sources possibles d'une annonce (cahier des charges §7.3).
+enum JobSourceType {
+  company_website
+  whatsapp
+  facebook
+  telegram
+  linkedin
+  newspaper
+  other_website
+  other
+
+  @@map("job_source_type")
+}
+
+/// Catégories professionnelles, administrables (noms en français et en anglais).
+model JobCategory {
+  id        String     @id @default(uuid(7)) @db.Uuid
+  slug      String     @unique @db.VarChar(80)
+  nameFr    String     @map("name_fr") @db.VarChar(120)
+  nameEn    String     @map("name_en") @db.VarChar(120)
+  sortOrder Int        @default(0) @map("sort_order")
+  isActive  Boolean    @default(true) @map("is_active")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+  offers    JobOffer[]
+
+  @@map("job_categories")
+}
+
+/// Offre partagée par un contributeur. Les champs « application » sont privés : révélés seulement
+/// après déverrouillage (phase 3). Les dates de validité sont des dates calendaires interprétées
+/// dans le fuseau « timezone » ; starts_at et ends_at en sont l'équivalent UTC (fin exclusive).
+model JobOffer {
+  id                      String           @id @default(uuid(7)) @db.Uuid
+  contributorId           String           @map("contributor_id") @db.Uuid
+  status                  JobOfferStatus   @default(draft)
+  title                   String?          @db.VarChar(200)
+  companyName             String?          @map("company_name") @db.VarChar(200)
+  countryId               String?          @map("country_id") @db.Uuid
+  cityId                  String?          @map("city_id") @db.Uuid
+  categoryId              String?          @map("category_id") @db.Uuid
+  contractType            ContractType?    @map("contract_type")
+  workMode                WorkMode?        @map("work_mode")
+  educationLevel          EducationLevel?  @map("education_level")
+  experienceLevel         ExperienceLevel? @map("experience_level")
+  salaryMin               Decimal?         @map("salary_min") @db.Decimal(14, 2)
+  salaryMax               Decimal?         @map("salary_max") @db.Decimal(14, 2)
+  salaryCurrency          String?          @map("salary_currency") @db.Char(3)
+  salaryPeriod            SalaryPeriod?    @map("salary_period")
+  description             String?
+  requirements            String?
+  skills                  String[]         @default([]) @db.VarChar(80)
+  /// Langue de rédaction de l'annonce (conservée telle quelle, jamais traduite).
+  contentLanguage         Locale?          @map("content_language")
+  startDate               DateTime?        @map("start_date") @db.Date
+  endDate                 DateTime?        @map("end_date") @db.Date
+  timezone                String?          @db.VarChar(64)
+  startsAt                DateTime?        @map("starts_at") @db.Timestamptz(3)
+  endsAt                  DateTime?        @map("ends_at") @db.Timestamptz(3)
+  sourceType              JobSourceType?   @map("source_type")
+  sourceUrl               String?          @map("source_url") @db.VarChar(2048)
+  sourceDetails           String?          @map("source_details") @db.VarChar(300)
+  applicationInstructions String?          @map("application_instructions")
+  applicationEmail        String?          @map("application_email") @db.Citext
+  applicationUrl          String?          @map("application_url") @db.VarChar(2048)
+  applicationAddress      String?          @map("application_address") @db.VarChar(500)
+  /// Empreinte de détection des doublons (entreprise, intitulé, pays normalisés).
+  duplicateKey            String?          @map("duplicate_key") @db.Char(64)
+  declarationAcceptedAt   DateTime?        @map("declaration_accepted_at") @db.Timestamptz(3)
+  submittedAt             DateTime?        @map("submitted_at") @db.Timestamptz(3)
+  reviewedAt              DateTime?        @map("reviewed_at") @db.Timestamptz(3)
+  reviewedById            String?          @map("reviewed_by_id") @db.Uuid
+  publishedAt             DateTime?        @map("published_at") @db.Timestamptz(3)
+  expiredAt               DateTime?        @map("expired_at") @db.Timestamptz(3)
+  /// Incrémenté à chaque modification : protège contre les écritures concurrentes.
+  version                 Int              @default(1)
+  createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  contributor   User                    @relation("JobOfferContributor", fields: [contributorId], references: [id], onDelete: Restrict)
+  reviewedBy    User?                   @relation("JobOfferReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  country       Country?                @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  city          City?                   @relation(fields: [cityId], references: [id], onDelete: Restrict)
+  category      JobCategory?            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  statusHistory JobOfferStatusHistory[]
+  revisions     JobOfferRevision[]
+
+  @@index([contributorId, createdAt(sort: Desc)])
+  @@index([status, submittedAt])
+  @@index([status, startsAt])
+  @@index([status, endsAt])
+  @@index([duplicateKey])
+  @@index([sourceUrl])
+  @@map("job_offers")
+}
+
+/// Historique des changements de statut, en ajout seul (acteur, rôles, motif, contexte réseau).
+model JobOfferStatusHistory {
+  id         String          @id @default(uuid(7)) @db.Uuid
+  jobOfferId String          @map("job_offer_id") @db.Uuid
+  fromStatus JobOfferStatus? @map("from_status")
+  toStatus   JobOfferStatus  @map("to_status")
+  /// null : changement automatique (activation ou expiration planifiée).
+  actorId    String?         @map("actor_id") @db.Uuid
+  actorRoles String[]        @default([]) @map("actor_roles") @db.VarChar(32)
+  reason     String?
+  ip         String?         @db.VarChar(45)
+  userAgent  String?         @map("user_agent") @db.VarChar(512)
+  requestId  String?         @map("request_id") @db.VarChar(64)
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  jobOffer JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
+  actor    User?    @relation("JobOfferStatusActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([jobOfferId, createdAt])
+  @@map("job_offer_status_history")
+}
+
+/// Version soumise d'une offre (instantané figé à chaque soumission), en ajout seul.
+model JobOfferRevision {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  jobOfferId String   @map("job_offer_id") @db.Uuid
+  number     Int
+  authorId   String   @map("author_id") @db.Uuid
+  snapshot   Json
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  jobOffer JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
+  author   User     @relation("JobOfferRevisionAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@unique([jobOfferId, number])
+  @@map("job_offer_revisions")
 }
