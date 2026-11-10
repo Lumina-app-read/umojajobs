@@ -60,6 +60,8 @@ export default async function globalSetup(): Promise<void> {
     TRUST_PROXY: '0',
     AUTH_MAX_FAILED_LOGINS: '5',
     AUTH_LOCKOUT_MINUTES: '15',
+    // Le cycle de vie des offres est testé directement, sans minuterie.
+    SCHEDULED_TASKS_ENABLED: 'false',
   });
 
   runNodeScript(resolve(API_ROOT, 'node_modules/prisma/build/index.js'), ['migrate', 'deploy']);

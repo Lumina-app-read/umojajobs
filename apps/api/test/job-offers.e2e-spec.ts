@@ -1,6 +1,7 @@
 import { type INestApplication } from '@nestjs/common';
 import { type JobOfferResponse, type ModerationJobOfferResponse } from '@opportinities/shared';
 import type Redis from 'ioredis';
+import { JobOfferLifecycleService } from '../src/jobs/job-offer-lifecycle.service';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { REDIS_CLIENT } from '../src/redis/redis.module';
 import { createTestApp } from './create-test-app';
@@ -359,6 +360,74 @@ describe('Offres d’emploi : publication et modération (intégration)', () => 
       await expect(
         prisma.jobOfferRevision.deleteMany({ where: { jobOfferId: offer.id } }),
       ).rejects.toThrow(/ajout seul/);
+    });
+  });
+
+  describe('cycle de vie automatique', () => {
+    async function approved(startOffset: number, endOffset: number, title: string) {
+      const contributor = await loggedInUser();
+      const moderator = await loggedInUser('moderator');
+      const offer = await createSubmitted(contributor.api, {
+        title,
+        startDate: day(startOffset),
+        endDate: day(endOffset),
+      });
+      return (
+        await moderator.api.post(`/api/v1/admin/job-offers/${offer.id}/approve`, {
+          version: offer.version,
+        })
+      ).body as ModerationJobOfferResponse;
+    }
+
+    const statusOf = async (id: string) =>
+      (await prisma.jobOffer.findUniqueOrThrow({ where: { id }, select: { status: true } })).status;
+
+    it('active une offre programmée à sa date de début, sans jamais activer une offre terminée', async () => {
+      const offer = await approved(3, 10, 'Technicien réseau');
+      expect(offer.status).toBe('scheduled');
+      const lifecycle = app.get(JobOfferLifecycleService);
+
+      await lifecycle.run(new Date(Date.parse(offer.startsAt as string) - 60_000));
+      expect(await statusOf(offer.id)).toBe('scheduled');
+
+      await lifecycle.run(new Date(Date.parse(offer.startsAt as string) + 60_000));
+      expect(await statusOf(offer.id)).toBe('active');
+      const row = await prisma.jobOffer.findUniqueOrThrow({ where: { id: offer.id } });
+      expect(row.publishedAt).not.toBeNull();
+    });
+
+    it('expire une offre active ou suspendue à la fin de sa validité, et conserve l’historique', async () => {
+      const active = await approved(0, 5, 'Gestionnaire de stock');
+      const suspendedOffer = await approved(0, 5, 'Agent de sécurité');
+      const moderator = await loggedInUser('moderator');
+      await moderator.api.post(`/api/v1/admin/job-offers/${suspendedOffer.id}/suspend`, {
+        version: suspendedOffer.version,
+        reason: 'Vérification de la source en cours.',
+      });
+      const lifecycle = app.get(JobOfferLifecycleService);
+      const end = new Date(Date.parse(active.endsAt as string) + 1_000);
+
+      await lifecycle.run(end);
+      expect(await statusOf(active.id)).toBe('expired');
+      expect(await statusOf(suspendedOffer.id)).toBe('expired');
+      const last = await prisma.jobOfferStatusHistory.findFirstOrThrow({
+        where: { jobOfferId: active.id },
+        orderBy: { createdAt: 'desc' },
+      });
+      expect(last).toMatchObject({ fromStatus: 'active', toStatus: 'expired', actorId: null });
+    });
+
+    it('est idempotent, même avec deux exécutions simultanées', async () => {
+      const offer = await approved(0, 2, 'Assistant comptable');
+      const lifecycle = app.get(JobOfferLifecycleService);
+      const end = new Date(Date.parse(offer.endsAt as string) + 1_000);
+
+      await Promise.all([lifecycle.run(end), lifecycle.run(end)]);
+      await lifecycle.run(end);
+      const expirations = await prisma.jobOfferStatusHistory.count({
+        where: { jobOfferId: offer.id, toStatus: 'expired' },
+      });
+      expect(expirations).toBe(1);
     });
   });
 

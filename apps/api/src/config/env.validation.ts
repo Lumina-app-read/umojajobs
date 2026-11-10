@@ -95,6 +95,11 @@ export class EnvironmentVariables {
   @IsBoolean()
   COOKIE_SECURE = true;
 
+  /** Tâches planifiées (activation et expiration des offres). Désactivées dans les tests. */
+  @Transform(toBoolean)
+  @IsBoolean()
+  SCHEDULED_TASKS_ENABLED = true;
+
   /** Nombre de proxys de confiance devant l'API (Nginx : 1). Sert à lire la véritable IP du client. */
   @Type(() => Number)
   @IsInt()
