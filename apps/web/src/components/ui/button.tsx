@@ -8,7 +8,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-primary-fg shadow-xs hover:bg-primary-hover inset-shadow-[0_1px_0_rgb(255_255_255/0.12)]',
+    'bg-primary text-primary-fg shadow-xs hover:bg-primary-hover hover:shadow-sm inset-shadow-[0_1px_0_rgb(255_255_255/0.12)]',
   secondary: 'border border-line-strong bg-surface text-fg shadow-xs hover:bg-surface-2',
   ghost: 'text-fg-muted hover:bg-surface-2 hover:text-fg',
   danger: 'bg-danger-solid text-white shadow-xs hover:brightness-110',

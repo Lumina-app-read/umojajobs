@@ -23,6 +23,7 @@ import { CookiesService } from '../security/cookies.service';
 import { AllowPendingMfa, CurrentAuth, Public } from '../security/decorators';
 import { type AuthContext } from './auth-context';
 import {
+  AcceptContributorTermsDto,
   AcceptedDto,
   ChangePasswordDto,
   CsrfTokenDto,
@@ -156,6 +157,18 @@ export class AuthController {
     @Req() req: AppRequest,
   ): Promise<MeDto> {
     return this.authService.updateProfile(auth, dto, getClientInfo(req));
+  }
+
+  /** Acceptation des conditions de publication (préalable au partage d'offres). */
+  @Post('me/contributor-terms')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: MeDto })
+  acceptContributorTerms(
+    @CurrentAuth() auth: AuthContext,
+    @Body() dto: AcceptContributorTermsDto,
+    @Req() req: AppRequest,
+  ): Promise<MeDto> {
+    return this.authService.acceptContributorTerms(auth, dto.version, getClientInfo(req));
   }
 
   @Get('sessions')

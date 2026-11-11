@@ -127,7 +127,7 @@
     "overview": {
       "greeting": "Bonjour {firstName}",
       "intro": "Bienvenue dans votre espace. Voici où en est votre compte.",
-      "primaryAction": "Rechercher une offre",
+      "primaryAction": "Publier une offre",
       "gettingStarted": "Premiers pas",
       "stepAccount": "Créer votre compte",
       "stepExplore": "Trouver une offre vérifiée",
@@ -138,13 +138,18 @@
       "unlocked": "Offres débloquées",
       "earnings": "Gains disponibles",
       "documents": "Documents",
-      "statSoon": "Disponible prochainement",
       "recommended": "Offres recommandées",
       "recommendedEmpty": "Aucune offre pour le moment",
       "recommendedEmptyBody": "Les offres vérifiées apparaîtront ici dès l'ouverture du module Offres.",
       "notifications": "Notifications",
       "notificationsEmpty": "Aucune notification",
-      "notificationsEmptyBody": "Les validations, déverrouillages et paiements vous seront signalés ici."
+      "notificationsEmptyBody": "Les validations, déverrouillages et paiements vous seront signalés ici.",
+      "creditsHint": "Solde de votre portefeuille",
+      "unlockedHint": "Offres dont vous avez obtenu les coordonnées",
+      "earningsHint": "Commissions prêtes à être retirées",
+      "documentsHint": "Créés avec le Career Studio",
+      "documentsNone": "Aucun",
+      "start": "Commencer"
     },
     "settings": {
       "intro": "Votre profil, votre sécurité et vos préférences d'affichage.",
@@ -235,7 +240,10 @@
       "emptyBody": "Aucun événement ne correspond à ce filtre.",
       "older": "Événements plus anciens",
       "newest": "Revenir aux plus récents",
-      "unavailable": "Le journal est momentanément indisponible."
+      "unavailable": "Le journal est momentanément indisponible.",
+      "systemActor": "Système",
+      "unknownIp": "Non renseignée",
+      "noRequest": "Non disponible"
     },
     "events": {
       "user_registered": "Inscription",
@@ -258,7 +266,8 @@
       "mfa_recovery_code_used": "Code de secours utilisé",
       "role_granted": "Rôle attribué",
       "role_revoked": "Rôle retiré",
-      "profile_updated": "Profil modifié"
+      "profile_updated": "Profil modifié",
+      "contributor_terms_accepted": "Conditions de publication acceptées"
     },
     "badge": "Admin"
   }

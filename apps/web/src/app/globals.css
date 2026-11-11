@@ -164,10 +164,11 @@
       opacity: 0;
     }
   }
+  /* « translate » (et non « transform ») : se combine avec l'élévation au survol (.lift). */
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      translate: 0 8px;
     }
   }
   @keyframes step-forward {
@@ -250,7 +251,7 @@
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    translate: 0 16px;
   }
 }
 
@@ -265,6 +266,81 @@
 
   @media (prefers-reduced-motion: reduce) {
     .reveal {
+      animation: none;
+    }
+  }
+}
+
+/*
+ * Système de mouvement. Des effets courts et discrets, jamais décoratifs :
+ * - page-enter : apparition du contenu à chaque navigation (rejouée par template.tsx) ;
+ * - stagger : apparition échelonnée des éléments d'une liste ou d'une grille ;
+ * - lift : élévation au survol des cartes (appareils à pointeur uniquement) ;
+ * - header-elevate : ombre de l'en-tête qui apparaît au défilement.
+ * Tout est neutralisé par la règle « prefers-reduced-motion » de la couche de base.
+ */
+@keyframes header-elevate {
+  to {
+    box-shadow:
+      0 1px 0 var(--line),
+      0 10px 24px -14px rgb(13 27 76 / 0.22);
+  }
+}
+
+@layer components {
+  .page-enter {
+    animation: fade-up 360ms var(--ease-emphasized) both;
+  }
+
+  .stagger > * {
+    animation: fade-up 420ms var(--ease-emphasized) both;
+  }
+  .stagger > :nth-child(2) {
+    animation-delay: 50ms;
+  }
+  .stagger > :nth-child(3) {
+    animation-delay: 100ms;
+  }
+  .stagger > :nth-child(4) {
+    animation-delay: 150ms;
+  }
+  .stagger > :nth-child(5) {
+    animation-delay: 200ms;
+  }
+  .stagger > :nth-child(6) {
+    animation-delay: 250ms;
+  }
+  .stagger > :nth-child(n + 7) {
+    animation-delay: 300ms;
+  }
+
+  .lift {
+    transition:
+      transform 220ms var(--ease-emphasized),
+      box-shadow 220ms var(--ease-emphasized),
+      border-color 220ms var(--ease-emphasized);
+  }
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--line-strong);
+    }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .header-elevate {
+      animation: header-elevate linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 48px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lift:hover {
+      transform: none;
+    }
+    .header-elevate {
       animation: none;
     }
   }

@@ -105,6 +105,8 @@ export interface MeResponse {
   permissions: string[];
   mfaState: MfaState;
   totpEnabled: boolean;
+  /** Conditions de publication acceptées dans leur version en vigueur. */
+  contributorTermsAccepted: boolean;
 }
 
 export interface LoginResponse {

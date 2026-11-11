@@ -107,7 +107,7 @@ export async function Hero() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_60%_at_80%_0%,var(--primary-soft),transparent_70%)]"
       />
       <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-4 pt-12 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pt-16 lg:pb-24">
-        <div className="animate-fade-up">
+        <div className="stagger">
           <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-fg-muted shadow-xs">
             <Globe2 className="size-4 text-brand" aria-hidden="true" />
             {t('eyebrow')}

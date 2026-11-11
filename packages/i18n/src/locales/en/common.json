@@ -127,7 +127,7 @@
     "overview": {
       "greeting": "Hello {firstName}",
       "intro": "Welcome to your space. Here is where your account stands.",
-      "primaryAction": "Search for an offer",
+      "primaryAction": "Post an offer",
       "gettingStarted": "Getting started",
       "stepAccount": "Create your account",
       "stepExplore": "Find a verified offer",
@@ -138,13 +138,18 @@
       "unlocked": "Unlocked offers",
       "earnings": "Available earnings",
       "documents": "Documents",
-      "statSoon": "Available soon",
       "recommended": "Recommended offers",
       "recommendedEmpty": "No offers yet",
       "recommendedEmptyBody": "Verified offers will appear here as soon as the Offers module opens.",
       "notifications": "Notifications",
       "notificationsEmpty": "No notifications",
-      "notificationsEmptyBody": "Approvals, unlocks and payments will be reported here."
+      "notificationsEmptyBody": "Approvals, unlocks and payments will be reported here.",
+      "creditsHint": "Your wallet balance",
+      "unlockedHint": "Offers whose contact details you obtained",
+      "earningsHint": "Commissions ready to withdraw",
+      "documentsHint": "Created with the Career Studio",
+      "documentsNone": "None",
+      "start": "Start"
     },
     "settings": {
       "intro": "Your profile, security and display preferences.",
@@ -235,7 +240,10 @@
       "emptyBody": "No event matches this filter.",
       "older": "Older events",
       "newest": "Back to latest",
-      "unavailable": "The log is temporarily unavailable."
+      "unavailable": "The log is temporarily unavailable.",
+      "systemActor": "System",
+      "unknownIp": "Not provided",
+      "noRequest": "Not available"
     },
     "events": {
       "user_registered": "Sign-up",
@@ -258,7 +266,8 @@
       "mfa_recovery_code_used": "Recovery code used",
       "role_granted": "Role granted",
       "role_revoked": "Role revoked",
-      "profile_updated": "Profile updated"
+      "profile_updated": "Profile updated",
+      "contributor_terms_accepted": "Publishing conditions accepted"
     },
     "badge": "Admin"
   }

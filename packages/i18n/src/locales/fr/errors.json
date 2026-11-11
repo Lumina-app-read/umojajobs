@@ -39,5 +39,6 @@
   "FILE_TYPE_NOT_ALLOWED": "Seuls les documents PDF sont acceptés.",
   "FILE_UNSAFE": "Ce PDF contient des éléments actifs (scripts, pièces jointes) et ne peut pas être accepté.",
   "FILE_LIMIT_REACHED": "Le nombre maximal de documents pour cette offre est atteint.",
-  "FILE_NOT_FOUND": "Ce document est introuvable."
+  "FILE_NOT_FOUND": "Ce document est introuvable.",
+  "CONTRIBUTOR_TERMS_REQUIRED": "Acceptez les conditions de publication avant de partager une offre."
 }

@@ -1,10 +1,12 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import {
+  CONTRIBUTOR_TERMS_VERSION,
   EDITABLE_JOB_STATUSES,
   ERROR_CODES,
   type JobCategoryResponse,
@@ -16,6 +18,7 @@ import { type ClientInfo } from '../common/http/app-request';
 import { type JobOfferStatus, type Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  buildSearchText,
   checkValidityDates,
   type DatesProblem,
   duplicateKey,
@@ -120,6 +123,7 @@ export class JobOffersService {
     dto: JobOfferInputDto,
     client: ClientInfo,
   ): Promise<JobOfferResponse> {
+    this.assertContributorTerms(auth);
     const data = await this.buildData(dto, null);
     const offer = await this.prisma.$transaction(async (tx) => {
       const created = await tx.jobOffer.create({
@@ -155,6 +159,7 @@ export class JobOffersService {
     dto: JobOfferSubmitDto,
     client: ClientInfo,
   ): Promise<JobOfferResponse> {
+    this.assertContributorTerms(auth);
     const current = await this.findOwned(auth, id);
     this.assertEditable(current);
     const response = toJobOfferResponse(current);
@@ -218,6 +223,13 @@ export class JobOffersService {
     });
     if (!offer) throw new NotFoundException({ code: ERROR_CODES.JOB_OFFER_NOT_FOUND });
     return offer;
+  }
+
+  /** Les conditions de publication en vigueur doivent avoir été acceptées. */
+  private assertContributorTerms(auth: AuthContext): void {
+    if (auth.user.contributorTermsVersion !== CONTRIBUTOR_TERMS_VERSION) {
+      throw new ForbiddenException({ code: ERROR_CODES.CONTRIBUTOR_TERMS_REQUIRED });
+    }
   }
 
   private assertEditable(offer: { status: JobOfferStatus }): void {
@@ -332,6 +344,18 @@ export class JobOffersService {
       dto.companyName !== undefined ? dto.companyName : (current?.companyName ?? null);
     data.duplicateKey =
       title && company && country ? duplicateKey(company, title, country.iso2) : null;
+
+    // Texte de recherche : intitulé, entreprise, compétences, exigences et description.
+    const merged = <K extends 'description' | 'requirements'>(key: K): string | null =>
+      dto[key] !== undefined ? (dto[key] ?? null) : (current?.[key] ?? null);
+    const skills = dto.skills ?? current?.skills ?? [];
+    data.searchText = buildSearchText([
+      title,
+      company,
+      ...skills,
+      merged('requirements'),
+      merged('description'),
+    ]);
 
     return data;
   }

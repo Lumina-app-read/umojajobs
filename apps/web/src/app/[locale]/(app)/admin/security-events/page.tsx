@@ -110,14 +110,16 @@ export default async function SecurityEventsPage({
                   </Badge>
                 </Td>
                 <Td className="font-mono text-xs text-fg-muted" title={event.userId ?? undefined}>
-                  {event.userId ? event.userId.slice(-8) : '—'}
+                  {event.userId ? event.userId.slice(-8) : t('security.systemActor')}
                 </Td>
-                <Td className="font-mono text-xs text-fg-muted">{event.ip ?? '—'}</Td>
+                <Td className="font-mono text-xs text-fg-muted">
+                  {event.ip ?? t('security.unknownIp')}
+                </Td>
                 <Td
                   className="font-mono text-xs text-fg-subtle"
                   title={event.requestId ?? undefined}
                 >
-                  {event.requestId ? event.requestId.slice(-8) : '—'}
+                  {event.requestId ? event.requestId.slice(-8) : t('security.noRequest')}
                 </Td>
               </Tr>
             ))}

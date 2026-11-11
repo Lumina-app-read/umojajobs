@@ -1,0 +1,225 @@
+{
+  "terms": {
+    "title": "Conditions de publication des offres",
+    "intro": "Partager une offre est gratuit. Pour que chaque candidat puisse s'y fier, toute publication sur OPPORTINITIES respecte les règles suivantes. Lisez-les attentivement avant de continuer.",
+    "version": "Version du {date}",
+    "rules": {
+      "authentic": {
+        "title": "Une offre authentique",
+        "body": "L'offre existe réellement et provient d'une source vérifiable : site officiel de l'employeur, institution, journal, réseau professionnel ou canal de diffusion identifiable."
+      },
+      "valid": {
+        "title": "Une offre encore valable",
+        "body": "La date limite de candidature n'est pas dépassée et les informations sont à jour au moment du partage."
+      },
+      "accurate": {
+        "title": "Une reproduction fidèle",
+        "body": "Les informations sont recopiées sans modification : intitulé, exigences, salaire, conditions et instructions. Rien n'est ajouté ni embelli."
+      },
+      "rights": {
+        "title": "Le droit de partager",
+        "body": "L'annonce est publique ou sa diffusion est autorisée. Aucun document confidentiel, interne ou soumis à restriction n'est transmis."
+      },
+      "free": {
+        "title": "Aucun paiement demandé aux candidats",
+        "body": "Une offre qui exige des candidats des frais de dossier, de formation, de visa ou toute autre somme est interdite : il s'agit le plus souvent d'une arnaque."
+      },
+      "lawful": {
+        "title": "Un contenu licite et respectueux",
+        "body": "Sont interdites les offres frauduleuses, trompeuses, discriminatoires, les systèmes pyramidaux et toute activité illégale. Aucune donnée personnelle d'un tiers n'est publiée en dehors des coordonnées officielles de candidature."
+      },
+      "moderation": {
+        "title": "Une vérification systématique",
+        "body": "Chaque offre est examinée par notre équipe avant publication. Elle peut vous être renvoyée pour correction, être refusée ou suspendue. Les doublons sont détectés."
+      },
+      "commissions": {
+        "title": "Des commissions conditionnelles",
+        "body": "Une commission vous revient sur les déverrouillages éligibles de vos offres validées. Elle est annulée en cas de fraude, de doublon ou d'auto-achat. Les taux et délais sont affichés dans votre espace."
+      },
+      "sanctions": {
+        "title": "Des sanctions en cas d'abus",
+        "body": "Le non-respect de ces règles peut entraîner le retrait des offres, l'annulation des commissions concernées et la suspension du compte."
+      }
+    },
+    "certify": "Je certifie que les offres que je partagerai sont authentiques, valables et reproduites fidèlement.",
+    "accept": "J'ai lu et j'accepte les conditions de publication ainsi que les <terms>conditions d'utilisation</terms> d'OPPORTINITIES.",
+    "submit": "Accepter et continuer",
+    "required": "Cochez les deux cases pour continuer.",
+    "review": "Relire les conditions de publication",
+    "close": "Fermer"
+  },
+  "form": {
+    "newTitle": "Publier une offre",
+    "newIntro": "Renseignez l'offre telle qu'elle a été publiée par sa source. Vous pouvez enregistrer un brouillon et le compléter plus tard.",
+    "editTitle": "Modifier l'offre",
+    "sections": {
+      "job": "Le poste",
+      "jobHint": "Les informations principales, visibles par tous.",
+      "location": "Lieu",
+      "locationHint": "Les dates de validité sont interprétées dans le fuseau horaire de la ville ou du pays.",
+      "content": "Description",
+      "contentHint": "Recopiez le texte de l'annonce, sans le modifier.",
+      "salary": "Rémunération",
+      "salaryHint": "Facultatif : uniquement si l'annonce l'indique.",
+      "validity": "Validité",
+      "validityHint": "L'offre devient visible à la date de début et expire automatiquement après la date de fin.",
+      "source": "Source",
+      "sourceHint": "Où avez-vous trouvé cette offre ? La modération vérifie la source.",
+      "application": "Candidature",
+      "applicationHint": "Informations privées : elles ne seront révélées qu'aux personnes qui déverrouillent l'offre. Indiquez au moins un moyen de candidater.",
+      "documents": "Documents",
+      "documentsHint": "PDF uniquement. L'annonce originale reste privée et n'est accessible qu'après déverrouillage."
+    },
+    "fields": {
+      "title": "Intitulé du poste",
+      "companyName": "Entreprise ou organisation",
+      "category": "Catégorie",
+      "contractType": "Type de contrat",
+      "workMode": "Mode de travail",
+      "educationLevel": "Niveau d'études",
+      "experienceLevel": "Expérience requise",
+      "country": "Pays",
+      "city": "Ville",
+      "description": "Description du poste",
+      "requirements": "Profil recherché",
+      "skills": "Compétences",
+      "salaryMin": "Salaire minimum",
+      "salaryMax": "Salaire maximum",
+      "salaryCurrency": "Devise",
+      "salaryPeriod": "Période",
+      "startDate": "Date de début",
+      "endDate": "Date limite",
+      "sourceType": "Type de source",
+      "sourceUrl": "Lien de l'annonce",
+      "sourceDetails": "Précision sur la source",
+      "applicationInstructions": "Instructions de candidature",
+      "applicationEmail": "Email de candidature",
+      "applicationUrl": "Lien de candidature",
+      "applicationAddress": "Adresse de dépôt"
+    },
+    "placeholders": {
+      "title": "Ex. : Comptable confirmé",
+      "companyName": "Ex. : Logistique Ouest SA",
+      "category": "Choisissez une catégorie",
+      "contractType": "Choisissez un type de contrat",
+      "workMode": "Choisissez un mode de travail",
+      "educationLevel": "Non précisé",
+      "experienceLevel": "Non précisé",
+      "city": "Rechercher une ville",
+      "description": "Missions, responsabilités, conditions de travail…",
+      "requirements": "Diplômes, expérience, qualités attendues…",
+      "skills": "Ex. : Excel, puis Entrée",
+      "salaryMin": "Ex. : 350000",
+      "salaryMax": "Ex. : 500000",
+      "salaryCurrency": "Ex. : XOF",
+      "salaryPeriod": "Choisissez une période",
+      "startDate": "AAAA-MM-JJ",
+      "endDate": "AAAA-MM-JJ",
+      "sourceType": "Choisissez la source",
+      "sourceUrl": "Ex. : https://entreprise.com/carrieres/42",
+      "sourceDetails": "Ex. : Le Soleil, édition du 10 novembre",
+      "applicationInstructions": "Ex. : Envoyer CV et lettre de motivation en précisant la référence RH-42",
+      "applicationEmail": "Ex. : recrutement@entreprise.com",
+      "applicationUrl": "Ex. : https://entreprise.com/postuler",
+      "applicationAddress": "Ex. : Immeuble Fahd, avenue Pompidou, Dakar"
+    },
+    "hints": {
+      "skills": "Jusqu'à 20 compétences. Appuyez sur Entrée ou une virgule pour ajouter.",
+      "noCity": "Facultatif : laissez vide si l'offre concerne plusieurs villes.",
+      "city": "Choisissez d'abord le pays."
+    },
+    "removeSkill": "Retirer {skill}",
+    "saveDraft": "Enregistrer le brouillon",
+    "saved": "Brouillon enregistré",
+    "submit": "Soumettre à la modération",
+    "submitted": "Offre soumise à la modération",
+    "submittedBody": "Vous serez prévenu dès qu'elle aura été examinée.",
+    "declaration": "Je certifie que cette offre est authentique, valable et reproduite fidèlement, et que je suis autorisé à la partager.",
+    "missing": "Avant de soumettre, complétez : {fields}.",
+    "conflict": "L'offre a été modifiée ailleurs. Rechargez la page pour récupérer la dernière version.",
+    "draftFirst": "Enregistrez le brouillon pour pouvoir ajouter des documents.",
+    "upload": {
+      "original": "Ajouter l'annonce originale",
+      "attachment": "Ajouter un document complémentaire",
+      "uploading": "Envoi du document…",
+      "done": "Document ajouté",
+      "remove": "Retirer le document",
+      "removed": "Document retiré",
+      "originalLabel": "Annonce originale",
+      "attachmentLabel": "Document complémentaire",
+      "size": "{size} Mo"
+    }
+  },
+  "enums": {
+    "contractType": {
+      "permanent": "CDI",
+      "fixed_term": "CDD",
+      "internship": "Stage",
+      "apprenticeship": "Alternance",
+      "freelance": "Indépendant",
+      "consultancy": "Consultance",
+      "temporary": "Intérim",
+      "volunteer": "Volontariat",
+      "other": "Autre"
+    },
+    "workMode": {
+      "on_site": "Sur site",
+      "remote": "Télétravail",
+      "hybrid": "Hybride"
+    },
+    "educationLevel": {
+      "none": "Aucun diplôme requis",
+      "secondary": "Niveau secondaire (BAC)",
+      "vocational": "Formation professionnelle",
+      "bachelor": "Licence (BAC+3)",
+      "master": "Master (BAC+5)",
+      "doctorate": "Doctorat"
+    },
+    "experienceLevel": {
+      "none": "Débutant accepté",
+      "junior": "1 à 2 ans",
+      "intermediate": "3 à 5 ans",
+      "senior": "6 à 10 ans",
+      "expert": "Plus de 10 ans"
+    },
+    "salaryPeriod": {
+      "hour": "Par heure",
+      "day": "Par jour",
+      "month": "Par mois",
+      "year": "Par an"
+    },
+    "sourceType": {
+      "company_website": "Site officiel de l'employeur",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "telegram": "Telegram",
+      "linkedin": "LinkedIn",
+      "newspaper": "Journal",
+      "other_website": "Autre site Internet",
+      "other": "Autre source"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "pending_review": "En vérification",
+      "needs_correction": "Correction demandée",
+      "scheduled": "Programmée",
+      "active": "Publiée",
+      "expired": "Expirée",
+      "rejected": "Refusée",
+      "suspended": "Suspendue",
+      "archived": "Archivée"
+    }
+  },
+  "publications": {
+    "title": "Mes publications",
+    "intro": "Les offres que vous avez partagées et leur état de vérification.",
+    "empty": "Aucune offre partagée pour le moment",
+    "emptyBody": "Partagez une offre trouvée sur un site officiel, un journal ou un réseau professionnel : elle sera vérifiée avant publication.",
+    "publish": "Publier une offre",
+    "edit": "Modifier",
+    "untitled": "Offre sans intitulé",
+    "updated": "Modifiée le {date}",
+    "deadline": "Date limite : {date}",
+    "unavailable": "Vos publications sont momentanément indisponibles."
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "terms": {
+    "title": "Offer publishing conditions",
+    "intro": "Sharing an offer is free. So that every candidate can rely on it, every post on OPPORTINITIES follows the rules below. Please read them carefully before continuing.",
+    "version": "Version of {date}",
+    "rules": {
+      "authentic": {
+        "title": "An authentic offer",
+        "body": "The offer really exists and comes from a verifiable source: the employer's official website, an institution, a newspaper, a professional network or an identifiable distribution channel."
+      },
+      "valid": {
+        "title": "An offer that is still open",
+        "body": "The application deadline has not passed and the information is up to date when you share it."
+      },
+      "accurate": {
+        "title": "A faithful copy",
+        "body": "The information is copied without changes: title, requirements, salary, conditions and instructions. Nothing is added or embellished."
+      },
+      "rights": {
+        "title": "The right to share",
+        "body": "The offer is public or its distribution is authorized. No confidential, internal or restricted document is shared."
+      },
+      "free": {
+        "title": "No payment asked of candidates",
+        "body": "An offer that asks candidates for application, training, visa or any other fees is forbidden: it is most often a scam."
+      },
+      "lawful": {
+        "title": "Lawful and respectful content",
+        "body": "Fraudulent, misleading or discriminatory offers, pyramid schemes and any illegal activity are forbidden. No personal data of third parties is published beyond the official application contact details."
+      },
+      "moderation": {
+        "title": "Systematic review",
+        "body": "Every offer is reviewed by our team before publication. It may be sent back to you for correction, rejected or suspended. Duplicates are detected."
+      },
+      "commissions": {
+        "title": "Conditional commissions",
+        "body": "You earn a commission on eligible unlocks of your approved offers. It is cancelled in case of fraud, duplicates or self-purchase. Rates and timeframes are shown in your account."
+      },
+      "sanctions": {
+        "title": "Sanctions for abuse",
+        "body": "Failing to follow these rules may lead to offers being removed, related commissions being cancelled and the account being suspended."
+      }
+    },
+    "certify": "I certify that the offers I share will be authentic, still open and faithfully copied.",
+    "accept": "I have read and accept the publishing conditions and the OPPORTINITIES <terms>terms of use</terms>.",
+    "submit": "Accept and continue",
+    "required": "Tick both boxes to continue.",
+    "review": "Review the publishing conditions",
+    "close": "Close"
+  },
+  "form": {
+    "newTitle": "Post an offer",
+    "newIntro": "Enter the offer as it was published by its source. You can save a draft and complete it later.",
+    "editTitle": "Edit the offer",
+    "sections": {
+      "job": "The position",
+      "jobHint": "The main information, visible to everyone.",
+      "location": "Location",
+      "locationHint": "Validity dates are interpreted in the city's or country's time zone.",
+      "content": "Description",
+      "contentHint": "Copy the text of the offer without changing it.",
+      "salary": "Pay",
+      "salaryHint": "Optional: only if the offer states it.",
+      "validity": "Validity",
+      "validityHint": "The offer becomes visible on the start date and expires automatically after the end date.",
+      "source": "Source",
+      "sourceHint": "Where did you find this offer? Moderation checks the source.",
+      "application": "Application",
+      "applicationHint": "Private information: only revealed to people who unlock the offer. Provide at least one way to apply.",
+      "documents": "Documents",
+      "documentsHint": "PDF only. The original offer stays private and is only available after unlocking."
+    },
+    "fields": {
+      "title": "Job title",
+      "companyName": "Company or organization",
+      "category": "Category",
+      "contractType": "Contract type",
+      "workMode": "Work mode",
+      "educationLevel": "Education level",
+      "experienceLevel": "Experience required",
+      "country": "Country",
+      "city": "City",
+      "description": "Job description",
+      "requirements": "Candidate profile",
+      "skills": "Skills",
+      "salaryMin": "Minimum salary",
+      "salaryMax": "Maximum salary",
+      "salaryCurrency": "Currency",
+      "salaryPeriod": "Period",
+      "startDate": "Start date",
+      "endDate": "Deadline",
+      "sourceType": "Source type",
+      "sourceUrl": "Offer link",
+      "sourceDetails": "Source details",
+      "applicationInstructions": "Application instructions",
+      "applicationEmail": "Application email",
+      "applicationUrl": "Application link",
+      "applicationAddress": "Drop-off address"
+    },
+    "placeholders": {
+      "title": "e.g. Senior accountant",
+      "companyName": "e.g. West Logistics Ltd",
+      "category": "Choose a category",
+      "contractType": "Choose a contract type",
+      "workMode": "Choose a work mode",
+      "educationLevel": "Not specified",
+      "experienceLevel": "Not specified",
+      "city": "Search for a city",
+      "description": "Duties, responsibilities, working conditions…",
+      "requirements": "Degrees, experience, expected qualities…",
+      "skills": "e.g. Excel, then Enter",
+      "salaryMin": "e.g. 350000",
+      "salaryMax": "e.g. 500000",
+      "salaryCurrency": "e.g. XOF",
+      "salaryPeriod": "Choose a period",
+      "startDate": "YYYY-MM-DD",
+      "endDate": "YYYY-MM-DD",
+      "sourceType": "Choose the source",
+      "sourceUrl": "e.g. https://company.com/careers/42",
+      "sourceDetails": "e.g. Daily Nation, November 10 edition",
+      "applicationInstructions": "e.g. Send your CV and cover letter quoting reference HR-42",
+      "applicationEmail": "e.g. recruitment@company.com",
+      "applicationUrl": "e.g. https://company.com/apply",
+      "applicationAddress": "e.g. 12 Independence Avenue, Accra"
+    },
+    "hints": {
+      "skills": "Up to 20 skills. Press Enter or a comma to add one.",
+      "noCity": "Optional: leave empty if the offer covers several cities.",
+      "city": "Choose the country first."
+    },
+    "removeSkill": "Remove {skill}",
+    "saveDraft": "Save draft",
+    "saved": "Draft saved",
+    "submit": "Submit for review",
+    "submitted": "Offer submitted for review",
+    "submittedBody": "You will be notified as soon as it has been reviewed.",
+    "declaration": "I certify that this offer is authentic, still open and faithfully copied, and that I am allowed to share it.",
+    "missing": "Before submitting, complete: {fields}.",
+    "conflict": "The offer was changed elsewhere. Reload the page to get the latest version.",
+    "draftFirst": "Save the draft to be able to add documents.",
+    "upload": {
+      "original": "Add the original offer",
+      "attachment": "Add a supporting document",
+      "uploading": "Uploading the document…",
+      "done": "Document added",
+      "remove": "Remove the document",
+      "removed": "Document removed",
+      "originalLabel": "Original offer",
+      "attachmentLabel": "Supporting document",
+      "size": "{size} MB"
+    }
+  },
+  "enums": {
+    "contractType": {
+      "permanent": "Permanent",
+      "fixed_term": "Fixed-term",
+      "internship": "Internship",
+      "apprenticeship": "Apprenticeship",
+      "freelance": "Freelance",
+      "consultancy": "Consultancy",
+      "temporary": "Temporary",
+      "volunteer": "Volunteer",
+      "other": "Other"
+    },
+    "workMode": {
+      "on_site": "On site",
+      "remote": "Remote",
+      "hybrid": "Hybrid"
+    },
+    "educationLevel": {
+      "none": "No degree required",
+      "secondary": "Secondary school",
+      "vocational": "Vocational training",
+      "bachelor": "Bachelor's degree",
+      "master": "Master's degree",
+      "doctorate": "Doctorate"
+    },
+    "experienceLevel": {
+      "none": "Entry level",
+      "junior": "1 to 2 years",
+      "intermediate": "3 to 5 years",
+      "senior": "6 to 10 years",
+      "expert": "Over 10 years"
+    },
+    "salaryPeriod": {
+      "hour": "Per hour",
+      "day": "Per day",
+      "month": "Per month",
+      "year": "Per year"
+    },
+    "sourceType": {
+      "company_website": "Employer's official website",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "telegram": "Telegram",
+      "linkedin": "LinkedIn",
+      "newspaper": "Newspaper",
+      "other_website": "Other website",
+      "other": "Other source"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending_review": "Under review",
+      "needs_correction": "Correction requested",
+      "scheduled": "Scheduled",
+      "active": "Published",
+      "expired": "Expired",
+      "rejected": "Rejected",
+      "suspended": "Suspended",
+      "archived": "Archived"
+    }
+  },
+  "publications": {
+    "title": "My posts",
+    "intro": "The offers you have shared and their review status.",
+    "empty": "No offers shared yet",
+    "emptyBody": "Share an offer found on an official website, in a newspaper or on a professional network: it will be reviewed before publication.",
+    "publish": "Post an offer",
+    "edit": "Edit",
+    "untitled": "Untitled offer",
+    "updated": "Updated on {date}",
+    "deadline": "Deadline: {date}",
+    "unavailable": "Your posts are temporarily unavailable."
+  }
+}

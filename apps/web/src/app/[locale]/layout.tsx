@@ -27,7 +27,7 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('common.meta');
   return {
-    title: { default: `${APP_NAME} — ${t('tagline')}`, template: `%s — ${APP_NAME}` },
+    title: { default: `${APP_NAME} · ${t('tagline')}`, template: `%s · ${APP_NAME}` },
     description: t('description'),
   };
 }

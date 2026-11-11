@@ -2,12 +2,14 @@ import enAuth from './locales/en/auth.json';
 import enCommon from './locales/en/common.json';
 import enEmails from './locales/en/emails.json';
 import enErrors from './locales/en/errors.json';
+import enJobs from './locales/en/jobs.json';
 import enLanding from './locales/en/landing.json';
 import enValidation from './locales/en/validation.json';
 import frAuth from './locales/fr/auth.json';
 import frCommon from './locales/fr/common.json';
 import frEmails from './locales/fr/emails.json';
 import frErrors from './locales/fr/errors.json';
+import frJobs from './locales/fr/jobs.json';
 import frLanding from './locales/fr/landing.json';
 import frValidation from './locales/fr/validation.json';
 import { type MessageParams, type MessageTree, translate } from './translate';
@@ -20,7 +22,7 @@ export type I18nLocale = (typeof I18N_LOCALES)[number];
 
 /**
  * Catalogues par langue et par espace de noms :
- * - interface web (next-intl) : common, auth, errors, validation, landing ;
+ * - interface web (next-intl) : common, auth, errors, validation, jobs, landing ;
  * - emails transactionnels (API) : emails.
  * Format des messages : ICU (paramètres `{nom}`, pluriels), compatible next-intl.
  */
@@ -30,6 +32,7 @@ export const CATALOGS = {
     auth: frAuth,
     errors: frErrors,
     validation: frValidation,
+    jobs: frJobs,
     landing: frLanding,
     emails: frEmails,
   },
@@ -38,6 +41,7 @@ export const CATALOGS = {
     auth: enAuth,
     errors: enErrors,
     validation: enValidation,
+    jobs: enJobs,
     landing: enLanding,
     emails: enEmails,
   },
@@ -56,6 +60,7 @@ export function getClientMessages(locale: I18nLocale) {
     auth: catalog.auth,
     errors: catalog.errors,
     validation: catalog.validation,
+    jobs: catalog.jobs,
   };
 }
 

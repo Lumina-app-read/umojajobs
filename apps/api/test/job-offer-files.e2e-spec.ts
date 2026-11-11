@@ -1,5 +1,6 @@
 import { type INestApplication } from '@nestjs/common';
 import {
+  CONTRIBUTOR_TERMS_VERSION,
   type FileDownloadResponse,
   type JobOfferResponse,
   type ModerationJobOfferResponse,
@@ -63,6 +64,7 @@ describe('Documents des offres : stockage privé et liens signés (intégration)
       await prisma.userRole.create({ data: { userId: user.id, roleId: found.id } });
     }
     api.adoptCsrfToken(await api.post('/api/v1/auth/login', { email, password: STRONG_PASSWORD }));
+    await api.post('/api/v1/auth/me/contributor-terms', { version: CONTRIBUTOR_TERMS_VERSION });
     return { userId: user.id, api };
   }
 

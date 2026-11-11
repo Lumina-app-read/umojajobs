@@ -67,5 +67,6 @@ export const SECURITY_EVENT_TYPES = [
   'role_granted',
   'role_revoked',
   'profile_updated',
+  'contributor_terms_accepted',
 ] as const;
 export type SecurityEventTypeCode = (typeof SECURITY_EVENT_TYPES)[number];

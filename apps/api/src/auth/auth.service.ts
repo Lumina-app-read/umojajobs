@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ERROR_CODES } from '@opportinities/shared';
+import { CONTRIBUTOR_TERMS_VERSION, ERROR_CODES } from '@opportinities/shared';
 import { sha256Hex } from '../common/crypto/tokens';
 import { type ClientInfo } from '../common/http/app-request';
 import { type EnvironmentVariables } from '../config/env.validation';
@@ -75,6 +75,7 @@ export class AuthService {
       permissions: [...auth.permissions].sort(),
       mfaState: auth.mfaState,
       totpEnabled: auth.user.totpEnabled,
+      contributorTermsAccepted: auth.user.contributorTermsVersion === CONTRIBUTOR_TERMS_VERSION,
     };
   }
 
@@ -520,6 +521,35 @@ export class AuthService {
         theme: updated.theme,
       },
     });
+  }
+
+  /**
+   * Acceptation des conditions de publication des offres, dans leur version en vigueur.
+   * Conservée sur le compte et inscrite au journal de sécurité (date, IP, navigateur) : preuve
+   * de l'engagement du contributeur sur l'authenticité des offres qu'il partage.
+   */
+  async acceptContributorTerms(
+    auth: AuthContext,
+    version: string,
+    client: ClientInfo,
+  ): Promise<MeDto> {
+    if (version !== CONTRIBUTOR_TERMS_VERSION) {
+      throw new BadRequestException({
+        code: ERROR_CODES.VALIDATION_FAILED,
+        details: [{ field: 'version', rules: ['equals'] }],
+      });
+    }
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: auth.user.id },
+        data: { contributorTermsVersion: version, contributorTermsAcceptedAt: new Date() },
+      });
+      await this.securityEvents.record(
+        { type: 'contributor_terms_accepted', userId: auth.user.id, client, metadata: { version } },
+        tx,
+      );
+    });
+    return AuthService.toMe({ ...auth, user: { ...auth.user, contributorTermsVersion: version } });
   }
 
   async changePassword(

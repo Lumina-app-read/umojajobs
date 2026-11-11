@@ -65,7 +65,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'grid gap-1.5 rounded-xl border border-line bg-surface p-4 shadow-xs',
+        'lift grid gap-1.5 rounded-xl border border-line bg-surface p-4 shadow-xs',
         className,
       )}
     >

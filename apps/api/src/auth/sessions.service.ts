@@ -140,6 +140,7 @@ export class SessionsService {
         locale: user.locale,
         theme: user.theme,
         totpEnabled,
+        contributorTermsVersion: user.contributorTermsVersion,
       },
     };
   }

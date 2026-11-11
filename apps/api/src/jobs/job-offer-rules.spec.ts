@@ -17,12 +17,15 @@ import {
   WorkMode,
 } from '../generated/prisma/client';
 import {
+  buildSearchText,
+  buildSlug,
   canTransition,
   checkValidityDates,
   duplicateKey,
   missingSubmissionFields,
   parseDateOnly,
   statusAfterApproval,
+  searchTerms,
   type SubmissionFields,
   todayInTimezone,
   validityWindow,
@@ -164,5 +167,29 @@ describe('complétude avant soumission', () => {
       'title',
       'categoryId',
     ]);
+  });
+});
+
+describe('recherche et adresses publiques', () => {
+  it('normalise le texte de recherche et les termes de la même façon', () => {
+    expect(buildSearchText(['Ingénieur Génie-Civil', null, 'BTP'])).toBe(
+      'ingenieur genie civil btp',
+    );
+    expect(searchTerms('  INGENIEUR génie a génie ')).toEqual(['ingenieur', 'genie']);
+    expect(searchTerms(undefined)).toEqual([]);
+  });
+
+  it('limite le nombre de termes', () => {
+    expect(searchTerms('un deux trois quatre cinq six sept huit neuf dix')).toHaveLength(8);
+  });
+
+  it('construit une adresse lisible et unique', () => {
+    const id = '01a1c567-48a2-76b9-bfc9-9e35ebc3714b';
+    expect(buildSlug('Comptable confirmé', 'Logistique Ouest SA', 'Dakar', id)).toBe(
+      'comptable-confirme-logistique-ouest-sa-dakar-ebc3714b',
+    );
+    expect(buildSlug('Chargé(e) de projet !', 'ONG « Avenir »', null, id)).toBe(
+      'charge-e-de-projet-ong-avenir-ebc3714b',
+    );
   });
 });

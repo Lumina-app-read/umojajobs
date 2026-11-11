@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  type AcceptContributorTermsRequest,
   type AcceptedResponse,
   AFRICAN_COUNTRIES,
   type ChangePasswordRequest,
@@ -206,6 +207,13 @@ export class UpdateProfileDto implements UpdateProfileRequest {
   theme?: 'light' | 'dark' | 'system';
 }
 
+export class AcceptContributorTermsDto implements AcceptContributorTermsRequest {
+  @ApiProperty({ example: '2026-11-10', description: 'Version des conditions lues et acceptées.' })
+  @IsString()
+  @Length(1, 32)
+  version!: string;
+}
+
 export class TotpCodeDto implements TotpCodeRequest {
   @ApiProperty({ example: '123456' })
   @IsString()
@@ -253,6 +261,7 @@ export class MeDto implements MeResponse {
   @ApiProperty({ type: [String] }) permissions!: string[];
   @ApiProperty({ enum: MFA_STATES }) mfaState!: MfaState;
   @ApiProperty() totpEnabled!: boolean;
+  @ApiProperty() contributorTermsAccepted!: boolean;
 }
 
 export class LoginResponseDto implements LoginResponse {

@@ -239,7 +239,7 @@ export function AppShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
+        <header className="header-elevate sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
           <div className="flex h-16 items-center gap-2 px-4 sm:px-6 lg:px-8">
             <AppDrawer user={user} variant={variant} groups={groups} label={navLabel} />
             <div className="lg:hidden">

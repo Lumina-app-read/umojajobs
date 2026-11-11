@@ -137,6 +137,7 @@ enum SecurityEventType {
   role_granted
   role_revoked
   profile_updated
+  contributor_terms_accepted
 
   @@map("security_event_type")
 }
@@ -158,6 +159,9 @@ model User {
   emailVerifiedAt            DateTime?       @map("email_verified_at") @db.Timestamptz(3)
   termsAcceptedAt            DateTime        @map("terms_accepted_at") @db.Timestamptz(3)
   termsVersion               String          @map("terms_version") @db.VarChar(32)
+  /// Conditions de publication des offres : version acceptée et date (preuve d'acceptation).
+  contributorTermsVersion    String?         @map("contributor_terms_version") @db.VarChar(32)
+  contributorTermsAcceptedAt DateTime?       @map("contributor_terms_accepted_at") @db.Timestamptz(3)
   failedLoginCount           Int             @default(0) @map("failed_login_count")
   lockedUntil                DateTime?       @map("locked_until") @db.Timestamptz(3)
   lastLoginAt                DateTime?       @map("last_login_at") @db.Timestamptz(3)
@@ -183,6 +187,7 @@ model User {
   jobRevisions       JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
   jobFiles           JobOfferFile[]          @relation("JobOfferFileUploader")
   fileDownloads      FileDownloadLog[]       @relation("FileDownloader")
+  savedJobs          SavedJob[]
 
   @@index([countryId])
   @@map("users")
@@ -432,6 +437,11 @@ model JobOffer {
   applicationEmail        String?          @map("application_email") @db.Citext
   applicationUrl          String?          @map("application_url") @db.VarChar(2048)
   applicationAddress      String?          @map("application_address") @db.VarChar(500)
+  /// Identifiant d'URL public (intitulé, entreprise, ville), attribué à la validation. Stable ensuite.
+  slug                    String?          @unique @db.VarChar(180)
+  /// Texte normalisé (minuscules, sans accents) pour la recherche : intitulé, entreprise,
+  /// compétences, exigences et description. Index trigramme (pg_trgm).
+  searchText              String?          @map("search_text")
   /// Empreinte de détection des doublons (entreprise, intitulé, pays normalisés).
   duplicateKey            String?          @map("duplicate_key") @db.Char(64)
   declarationAcceptedAt   DateTime?        @map("declaration_accepted_at") @db.Timestamptz(3)
@@ -453,6 +463,7 @@ model JobOffer {
   statusHistory JobOfferStatusHistory[]
   revisions     JobOfferRevision[]
   files         JobOfferFile[]
+  savedBy       SavedJob[]
 
   @@index([contributorId, createdAt(sort: Desc)])
   @@index([status, submittedAt])
@@ -460,6 +471,9 @@ model JobOffer {
   @@index([status, endsAt])
   @@index([duplicateKey])
   @@index([sourceUrl])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, countryId, categoryId])
+  @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin, map: "job_offers_search_text_trgm_idx")
   @@map("job_offers")
 }
 
@@ -568,4 +582,18 @@ model FileDownloadLog {
   @@index([fileId, createdAt])
   @@index([userId, createdAt])
   @@map("file_download_logs")
+}
+
+/// Offres enregistrées (favoris) d'un utilisateur.
+model SavedJob {
+  userId     String   @map("user_id") @db.Uuid
+  jobOfferId String   @map("job_offer_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobOffer JobOffer @relation(fields: [jobOfferId], references: [id], onDelete: Cascade)
+
+  @@id([userId, jobOfferId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("saved_jobs")
 }

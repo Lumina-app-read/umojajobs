@@ -11,11 +11,14 @@ import {
   JOB_LIMITS,
   type JobFileKind,
   JOB_OFFER_STATUSES,
+  JOB_SEARCH_SORTS,
   JOB_SOURCE_TYPES,
   type JobOfferInput,
   type JobOfferStatus,
   type JobOfferSubmitRequest,
   type JobOfferUpdateRequest,
+  type JobSearchQuery,
+  type JobSearchSort,
   type JobSourceType,
   type ModerationDecisionRequest,
   SALARY_PERIODS,
@@ -346,4 +349,117 @@ export class JobOfferFileUploadDto {
   })
   @IsIn(JOB_FILE_KINDS)
   kind!: JobFileKind;
+}
+
+/** Valeur unique ou répétée dans la chaîne de requête (?workMode=remote&workMode=hybrid). */
+const toArray = ({ value }: { value: unknown }): unknown =>
+  value === undefined ? undefined : Array.isArray(value) ? value : [value];
+
+export class JobSearchQueryDto implements JobSearchQuery {
+  @ApiPropertyOptional({ description: 'Recherche textuelle (intitulé, entreprise, compétences…).' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  q?: string;
+
+  @ApiPropertyOptional({ example: 'SN' })
+  @IsOptional()
+  @Transform(upper)
+  @IsIn(AFRICAN_ISO2)
+  country?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID()
+  cityId?: string;
+
+  @ApiPropertyOptional({ description: 'Identifiant lisible de la catégorie (slug).' })
+  @IsOptional()
+  @Matches(/^[a-z0-9-]{2,80}$/)
+  category?: string;
+
+  @ApiPropertyOptional({ enum: CONTRACT_TYPES, isArray: true })
+  @IsOptional()
+  @Transform(toArray)
+  @IsArray()
+  @ArrayMaxSize(CONTRACT_TYPES.length)
+  @IsIn(CONTRACT_TYPES, { each: true })
+  contractType?: ContractType[];
+
+  @ApiPropertyOptional({ enum: WORK_MODES, isArray: true })
+  @IsOptional()
+  @Transform(toArray)
+  @IsArray()
+  @ArrayMaxSize(WORK_MODES.length)
+  @IsIn(WORK_MODES, { each: true })
+  workMode?: WorkMode[];
+
+  @ApiPropertyOptional({ enum: EDUCATION_LEVELS })
+  @IsOptional()
+  @IsIn(EDUCATION_LEVELS)
+  educationLevel?: EducationLevel;
+
+  @ApiPropertyOptional({ enum: EXPERIENCE_LEVELS })
+  @IsOptional()
+  @IsIn(EXPERIENCE_LEVELS)
+  experienceLevel?: ExperienceLevel;
+
+  @ApiPropertyOptional({ minimum: 1, maximum: 365 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(365)
+  publishedWithinDays?: number;
+
+  @ApiPropertyOptional({ minimum: 1, maximum: 365 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(365)
+  closingWithinDays?: number;
+
+  @ApiPropertyOptional({ enum: JOB_SEARCH_SORTS, default: 'recent' })
+  @IsOptional()
+  @IsIn(JOB_SEARCH_SORTS)
+  sort?: JobSearchSort;
+
+  @ApiPropertyOptional({ minimum: 1, default: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  page?: number;
+
+  @ApiPropertyOptional({ minimum: 1, maximum: 50, default: 20 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  pageSize?: number;
+}
+
+export class PageQueryDto {
+  @ApiPropertyOptional({ minimum: 1, default: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(500)
+  page?: number;
+}
+
+export class JobOfferSlugParamDto {
+  @ApiProperty({ example: 'comptable-confirme-logistique-ouest-dakar-ebc3714b' })
+  @Matches(/^[a-z0-9-]{1,180}$/)
+  slug!: string;
+}
+
+export class JobOfferRefParamDto {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  jobOfferId!: string;
 }

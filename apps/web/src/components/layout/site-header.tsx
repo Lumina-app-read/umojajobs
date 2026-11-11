@@ -31,7 +31,7 @@ export async function SiteHeader() {
   const signedIn = await isSignedIn();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
+    <header className="header-elevate sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:px-6">
         <Link href="/" className="-ml-1 rounded-md p-1" aria-label={t('homeLabel')}>
           <Logo />

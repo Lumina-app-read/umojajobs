@@ -39,5 +39,6 @@
   "FILE_TYPE_NOT_ALLOWED": "Only PDF documents are accepted.",
   "FILE_UNSAFE": "This PDF contains active content (scripts, attachments) and cannot be accepted.",
   "FILE_LIMIT_REACHED": "The maximum number of documents for this offer has been reached.",
-  "FILE_NOT_FOUND": "This document could not be found."
+  "FILE_NOT_FOUND": "This document could not be found.",
+  "CONTRIBUTOR_TERMS_REQUIRED": "Accept the publishing conditions before sharing an offer."
 }

@@ -68,6 +68,26 @@ export async function apiRequest<T>(
   return (await response.json()) as T;
 }
 
+/**
+ * Envoi d'un fichier (multipart). Le navigateur fixe lui-même l'en-tête Content-Type et la
+ * frontière ; le jeton CSRF est ajouté comme pour toute requête qui modifie des données.
+ */
+export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'X-CSRF-Token': await ensureCsrfToken() },
+      credentials: 'same-origin',
+      body: form,
+    });
+  } catch {
+    throw new ApiError(0, 'NETWORK');
+  }
+  if (!response.ok) throw ApiError.fromBody(response.status, await safeJson(response));
+  return (await response.json()) as T;
+}
+
 export const api = {
   get: <T>(path: string) => apiRequest<T>('GET', path),
   post: <T>(path: string, body?: unknown) => apiRequest<T>('POST', path, body ?? {}),

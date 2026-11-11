@@ -83,6 +83,16 @@ export const JOB_LIMITS = {
 export const JOB_FILE_KINDS = ['original', 'attachment'] as const;
 export type JobFileKind = (typeof JOB_FILE_KINDS)[number];
 
+/**
+ * Version des conditions de publication des offres. Toute modification du texte de ces conditions
+ * impose une nouvelle version : chaque contributeur doit alors les accepter de nouveau.
+ */
+export const CONTRIBUTOR_TERMS_VERSION = '2026-11-10';
+
+export interface AcceptContributorTermsRequest {
+  version: string;
+}
+
 /** Statuts dans lesquels le contributeur peut encore modifier son offre. */
 export const EDITABLE_JOB_STATUSES: readonly JobOfferStatus[] = ['draft', 'needs_correction'];
 
@@ -210,4 +220,89 @@ export interface ModerationJobOfferResponse extends JobOfferResponse {
   contributor: { id: string; firstName: string; lastName: string; email: string };
   duplicates: JobOfferSummaryResponse[];
   revisionCount: number;
+}
+
+// --- Consultation publique (cahier des charges §8.1 et §15) ---------------------------------
+
+export const JOB_SEARCH_SORTS = ['recent', 'deadline'] as const;
+export type JobSearchSort = (typeof JOB_SEARCH_SORTS)[number];
+
+/** Paramètres de recherche (chaîne de requête). Les listes acceptent plusieurs valeurs. */
+export interface JobSearchQuery {
+  q?: string;
+  country?: string;
+  cityId?: string;
+  category?: string;
+  contractType?: ContractType[];
+  workMode?: WorkMode[];
+  educationLevel?: EducationLevel;
+  experienceLevel?: ExperienceLevel;
+  /** Publiées depuis moins de N jours. */
+  publishedWithinDays?: number;
+  /** Date limite dans moins de N jours. */
+  closingWithinDays?: number;
+  sort?: JobSearchSort;
+  page?: number;
+  pageSize?: number;
+}
+
+/**
+ * Offre telle que tout le monde peut la voir. Jamais de coordonnées de candidature, de
+ * document ni d'identité du contributeur : ces informations relèvent du déverrouillage.
+ */
+export interface PublicJobOfferSummary {
+  id: string;
+  slug: string;
+  status: 'active' | 'expired';
+  title: string;
+  companyName: string;
+  countryIso2: string;
+  city: { id: string; name: string } | null;
+  category: JobCategoryResponse;
+  contractType: ContractType;
+  workMode: WorkMode;
+  educationLevel: EducationLevel | null;
+  experienceLevel: ExperienceLevel | null;
+  salaryMin: string | null;
+  salaryMax: string | null;
+  salaryCurrency: string | null;
+  salaryPeriod: SalaryPeriod | null;
+  endDate: string;
+  endsAt: string;
+  publishedAt: string;
+  /** Toujours vrai : seules les offres validées par la modération sont publiques. */
+  verified: true;
+}
+
+/** Ce que le déverrouillage donnera, sans rien en révéler (ne jamais promettre l'absent). */
+export interface UnlockContents {
+  applicationEmail: boolean;
+  applicationUrl: boolean;
+  applicationAddress: boolean;
+  applicationInstructions: boolean;
+  originalDocument: boolean;
+  attachments: number;
+}
+
+export interface PublicJobOfferDetail extends PublicJobOfferSummary {
+  description: string;
+  requirements: string | null;
+  skills: string[];
+  contentLanguage: 'fr' | 'en' | null;
+  startDate: string;
+  sourceType: JobSourceType;
+  expiredAt: string | null;
+  unlockContents: UnlockContents;
+}
+
+export interface JobSearchResponse {
+  items: PublicJobOfferSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface SavedJobResponse {
+  savedAt: string;
+  offer: PublicJobOfferSummary;
 }

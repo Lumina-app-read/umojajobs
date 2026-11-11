@@ -53,7 +53,12 @@ export async function TrustBand() {
   ];
   return (
     <section aria-label={t('label')} className="border-y border-line bg-surface">
-      <ul className={cn(container, 'grid grid-cols-1 gap-5 py-8 sm:grid-cols-2 lg:grid-cols-4')}>
+      <ul
+        className={cn(
+          container,
+          'stagger grid grid-cols-1 gap-5 py-8 sm:grid-cols-2 lg:grid-cols-4',
+        )}
+      >
         {items.map(({ icon, label }) => (
           <li key={label} className="flex items-center gap-3 text-sm font-semibold text-fg">
             <IconChip icon={icon} />
@@ -86,7 +91,7 @@ export async function HowItWorks() {
           {steps.map(({ icon, title, body }, index) => (
             <li
               key={title}
-              className="reveal relative rounded-xl border border-line bg-surface p-6 shadow-xs"
+              className="reveal lift relative rounded-xl border border-line bg-surface p-6 shadow-xs"
             >
               <div className="flex items-center justify-between">
                 <IconChip icon={icon} />
@@ -281,7 +286,7 @@ export async function ShareSection() {
         />
         <ol className="mt-14 grid gap-5 md:grid-cols-3">
           {steps.map(({ icon, title, body }) => (
-            <li key={title} className="reveal rounded-xl border border-line bg-canvas p-6">
+            <li key={title} className="reveal lift rounded-xl border border-line bg-canvas p-6">
               <IconChip icon={icon} />
               <h3 className="mt-5 text-base font-bold text-fg">{title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-fg-muted">{body}</p>

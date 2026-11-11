@@ -14,7 +14,12 @@ import { type AuthContext } from '../auth/auth-context';
 import { type ClientInfo } from '../common/http/app-request';
 import { type JobOfferStatus, type Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { canTransition, checkValidityDates, statusAfterApproval } from './job-offer-rules';
+import {
+  buildSlug,
+  canTransition,
+  checkValidityDates,
+  statusAfterApproval,
+} from './job-offer-rules';
 import {
   dateOnly,
   JOB_OFFER_INCLUDE,
@@ -100,6 +105,10 @@ export class JobModerationService {
         endDate: true,
         timezone: true,
         startsAt: true,
+        slug: true,
+        title: true,
+        companyName: true,
+        city: { select: { name: true } },
       },
     });
     if (!offer || offer.status === 'draft') {
@@ -125,6 +134,10 @@ export class JobModerationService {
       if (problem) throw datesError(problem);
       to = statusAfterApproval(offer.startsAt ?? now, now);
       if (to === 'active') data.publishedAt = now;
+      // Adresse publique attribuée à la première validation, puis conservée (liens et référencement).
+      if (!offer.slug && offer.title && offer.companyName) {
+        data.slug = buildSlug(offer.title, offer.companyName, offer.city?.name ?? null, offer.id);
+      }
     } else {
       const decision = DECISIONS[action];
       if (!decision.from.includes(offer.status)) throw this.invalidTransition(offer.status);

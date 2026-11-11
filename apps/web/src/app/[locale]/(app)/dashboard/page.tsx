@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Bell,
   Briefcase,
   CircleCheck,
@@ -7,12 +8,13 @@ import {
   HandCoins,
   type LucideIcon,
   Search,
+  SquarePlus,
   Share2,
   Sparkles,
   Unlock,
 } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getFormatter, getTranslations } from 'next-intl/server';
 import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState, StatCard } from '@/components/ui/feedback';
@@ -25,23 +27,47 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * Vue d'ensemble. Aucune donnée inventée : tant que le portefeuille, les offres et le Career Studio
- * n'existent pas, les indicateurs affichent « — » et les listes un état vide explicite.
+ * n'existent pas, les indicateurs affichent les valeurs réelles du compte (zéro, aucun) et les
+ * listes un état vide explicite.
  */
 export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const t = await getTranslations('common.app');
+  const format = await getFormatter();
 
-  const steps: { icon: LucideIcon; label: string; done: boolean }[] = [
+  const steps: { icon: LucideIcon; label: string; done: boolean; href?: string }[] = [
     { icon: CircleCheck, label: t('overview.stepAccount'), done: true },
     { icon: Search, label: t('overview.stepExplore'), done: false },
     { icon: Sparkles, label: t('overview.stepStudio'), done: false },
-    { icon: Share2, label: t('overview.stepShare'), done: false },
+    { icon: Share2, label: t('overview.stepShare'), done: false, href: '/dashboard/publish' },
   ];
-  const stats: { icon: LucideIcon; label: string }[] = [
-    { icon: Coins, label: t('overview.credits') },
-    { icon: Unlock, label: t('overview.unlocked') },
-    { icon: HandCoins, label: t('overview.earnings') },
-    { icon: Files, label: t('overview.documents') },
+  // Valeurs réelles du compte : aucun crédit, offre, gain ni document tant que ces modules
+  // (phases 3 et 4) ne sont pas ouverts. Elles seront lues dans le portefeuille ensuite.
+  const stats: { icon: LucideIcon; label: string; value: string; hint: string }[] = [
+    {
+      icon: Coins,
+      label: t('overview.credits'),
+      value: format.number(0),
+      hint: t('overview.creditsHint'),
+    },
+    {
+      icon: Unlock,
+      label: t('overview.unlocked'),
+      value: format.number(0),
+      hint: t('overview.unlockedHint'),
+    },
+    {
+      icon: HandCoins,
+      label: t('overview.earnings'),
+      value: format.number(0, { style: 'currency', currency: 'USD' }),
+      hint: t('overview.earningsHint'),
+    },
+    {
+      icon: Files,
+      label: t('overview.documents'),
+      value: t('overview.documentsNone'),
+      hint: t('overview.documentsHint'),
+    },
   ];
 
   return (
@@ -53,7 +79,7 @@ export default async function DashboardOverviewPage() {
           </h1>
           <p className="mt-1.5 text-sm text-fg-muted">{t('overview.intro')}</p>
         </div>
-        <ButtonLink href="/dashboard/jobs" size="lg" icon={Search}>
+        <ButtonLink href="/dashboard/publish" size="lg" icon={SquarePlus}>
           {t('overview.primaryAction')}
         </ButtonLink>
       </div>
@@ -65,8 +91,8 @@ export default async function DashboardOverviewPage() {
         <h2 id="getting-started" className="text-base font-semibold text-fg">
           {t('overview.gettingStarted')}
         </h2>
-        <ol className="mt-4 grid gap-2 sm:grid-cols-2">
-          {steps.map(({ icon: Icon, label, done }) => (
+        <ol className="stagger mt-4 grid gap-2 sm:grid-cols-2">
+          {steps.map(({ icon: Icon, label, done, href }) => (
             <li
               key={label}
               className="flex items-center gap-3 rounded-lg border border-line bg-canvas px-3.5 py-3"
@@ -76,23 +102,23 @@ export default async function DashboardOverviewPage() {
                 aria-hidden="true"
               />
               <span className="flex-1 text-sm font-medium text-fg">{label}</span>
-              <Badge tone={done ? 'success' : 'neutral'}>
-                {done ? t('overview.done') : t('soon.badge')}
-              </Badge>
+              {href && !done ? (
+                <ButtonLink href={href} variant="secondary" size="sm" trailingIcon={ArrowRight}>
+                  {t('overview.start')}
+                </ButtonLink>
+              ) : (
+                <Badge tone={done ? 'success' : 'neutral'}>
+                  {done ? t('overview.done') : t('soon.badge')}
+                </Badge>
+              )}
             </li>
           ))}
         </ol>
       </section>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map(({ icon, label }) => (
-          <StatCard
-            key={label}
-            icon={icon}
-            label={label}
-            value={<span className="text-fg-subtle">—</span>}
-            hint={t('overview.statSoon')}
-          />
+      <div className="stagger grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {stats.map(({ icon, label, value, hint }) => (
+          <StatCard key={label} icon={icon} label={label} value={value} hint={hint} />
         ))}
       </div>
 

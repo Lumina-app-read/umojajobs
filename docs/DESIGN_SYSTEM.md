@@ -194,6 +194,10 @@ Tous les composants sont construits une fois dans `apps/web/src/components/ui`, 
 
 ---
 
+> **Mouvement** : `page-enter` (apparition à chaque navigation, via `template.tsx`), `stagger` (listes et grilles), `lift` (élévation des cartes au survol), `header-elevate` (ombre de l'en-tête au défilement), squelettes `loading.tsx`. Tout est neutralisé si l'utilisateur réduit les animations.
+>
+> **Textes** : jamais de tiret long. Titres d'onglet « Page · OPPORTINITIES » ; valeur absente remplacée par une valeur réelle (« 0 », « 0,00 $US », « Aucun ») ou une formule explicite.
+>
 > **Règle (imposée par le typage)** : chaque champ a une icône Lucide à gauche et un placeholder d'exemple (`FormField`, `PasswordField`) ; chaque bouton porte une icône (`Button`, `ButtonLink`). Un lien présenté comme un bouton utilise toujours `ButtonLink`.
 
 ## 8. Landing : recommandations

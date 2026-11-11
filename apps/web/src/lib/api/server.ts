@@ -1,6 +1,9 @@
 import 'server-only';
 import {
   type CountryResponse,
+  type JobCategoryResponse,
+  type JobOfferResponse,
+  type JobOfferSummaryResponse,
   type MeResponse,
   type SecurityEventResponse,
   type SessionResponse,
@@ -67,5 +70,23 @@ export async function getSecurityEvents(query: {
   const result = await serverGet<SecurityEventResponse[]>(
     `/admin/security-events?${params.toString()}`,
   ).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Catégories actives des offres (liste vide si l'API ne répond pas). */
+export async function getJobCategories(): Promise<JobCategoryResponse[]> {
+  const result = await serverGet<JobCategoryResponse[]>('/job-categories').catch(() => null);
+  return result?.data ?? [];
+}
+
+/** Offres du contributeur connecté. null si l'API ne répond pas. */
+export async function getMyJobOffers(): Promise<JobOfferSummaryResponse[] | null> {
+  const result = await serverGet<JobOfferSummaryResponse[]>('/me/job-offers').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Une offre du contributeur connecté (null si elle n'existe pas ou ne lui appartient pas). */
+export async function getMyJobOffer(id: string): Promise<JobOfferResponse | null> {
+  const result = await serverGet<JobOfferResponse>(`/me/job-offers/${id}`).catch(() => null);
   return result?.data ?? null;
 }

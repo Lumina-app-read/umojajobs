@@ -207,3 +207,47 @@ export function missingSubmissionFields(offer: SubmissionFields): string[] {
   }
   return missing;
 }
+
+// --- Recherche et adresses publiques --------------------------------------------------------
+
+const SEARCH_TEXT_MAX = 20_000;
+const SLUG_BODY_MAX = 140;
+
+/**
+ * Texte de recherche normalisé (minuscules, sans accents ni ponctuation) : la même
+ * normalisation est appliquée aux termes recherchés, ce qui rend la recherche insensible
+ * aux accents (« ingenieur » trouve « Ingénieur »).
+ */
+export function buildSearchText(parts: readonly (string | null | undefined)[]): string | null {
+  const text = toSearchName(parts.filter(Boolean).join(' '));
+  return text ? text.slice(0, SEARCH_TEXT_MAX) : null;
+}
+
+/** Termes d'une recherche : normalisés, deux caractères au moins, huit au plus. */
+export function searchTerms(query: string | undefined): string[] {
+  if (!query) return [];
+  const unique = new Set(
+    toSearchName(query)
+      .split(' ')
+      .filter((term) => term.length >= 2),
+  );
+  return [...unique].slice(0, 8);
+}
+
+/**
+ * Adresse publique lisible et stable : « comptable-confirme-logistique-ouest-dakar-3f9a2c1b ».
+ * Le suffixe (fin aléatoire de l'identifiant UUID v7) garantit l'unicité.
+ */
+export function buildSlug(
+  title: string,
+  companyName: string,
+  cityName: string | null,
+  id: string,
+): string {
+  const body = toSearchName([title, companyName, cityName].filter(Boolean).join(' '))
+    .replace(/ /g, '-')
+    .slice(0, SLUG_BODY_MAX)
+    .replace(/-+$/g, '');
+  const suffix = id.replace(/-/g, '').slice(-8);
+  return body ? `${body}-${suffix}` : suffix;
+}

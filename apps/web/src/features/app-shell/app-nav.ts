@@ -59,8 +59,8 @@ export const APP_NAV: AppNavGroup[] = [
   {
     key: 'contribute',
     items: [
-      { key: 'publications', href: '/dashboard/publications', icon: Megaphone, phase: 2 },
-      { key: 'publish', href: '/dashboard/publish', icon: SquarePlus, phase: 2 },
+      { key: 'publications', href: '/dashboard/publications', icon: Megaphone, phase: null },
+      { key: 'publish', href: '/dashboard/publish', icon: SquarePlus, phase: null },
     ],
   },
   {

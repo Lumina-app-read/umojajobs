@@ -1,5 +1,9 @@
 import { type INestApplication } from '@nestjs/common';
-import { type JobOfferResponse, type ModerationJobOfferResponse } from '@opportinities/shared';
+import {
+  CONTRIBUTOR_TERMS_VERSION,
+  type JobOfferResponse,
+  type ModerationJobOfferResponse,
+} from '@opportinities/shared';
 import type Redis from 'ioredis';
 import { JobOfferLifecycleService } from '../src/jobs/job-offer-lifecycle.service';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -53,6 +57,7 @@ describe('Offres d’emploi : publication et modération (intégration)', () => 
       await prisma.userRole.create({ data: { userId: user.id, roleId: found.id } });
     }
     api.adoptCsrfToken(await api.post('/api/v1/auth/login', { email, password: STRONG_PASSWORD }));
+    await api.post('/api/v1/auth/me/contributor-terms', { version: CONTRIBUTOR_TERMS_VERSION });
     return { userId: user.id, api };
   }
 
@@ -87,6 +92,46 @@ describe('Offres d’emploi : publication et modération (intégration)', () => 
     expect(submitted.status).toBe(200);
     return submitted.body as JobOfferResponse;
   }
+
+  describe('conditions de publication', () => {
+    it('refuse de créer une offre tant que les conditions ne sont pas acceptées', async () => {
+      const email = uniqueEmail('terms');
+      const api = await new ApiClient(app).init();
+      await api.post('/api/v1/auth/register', registrationPayload(email));
+      await api.post('/api/v1/auth/verify-email', {
+        token: extractToken(await waitForEmail(email, 'Confirmez')),
+      });
+      api.adoptCsrfToken(
+        await api.post('/api/v1/auth/login', { email, password: STRONG_PASSWORD }),
+      );
+
+      expect((await api.get('/api/v1/auth/me')).body).toMatchObject({
+        contributorTermsAccepted: false,
+      });
+      const refused = await api.post('/api/v1/me/job-offers', { title: 'Comptable' });
+      expect(refused.status).toBe(403);
+      expect((refused.body as ErrorBody).code).toBe('CONTRIBUTOR_TERMS_REQUIRED');
+
+      const outdated = await api.post('/api/v1/auth/me/contributor-terms', {
+        version: '2020-01-01',
+      });
+      expect(outdated.status).toBe(400);
+
+      const accepted = await api.post('/api/v1/auth/me/contributor-terms', {
+        version: CONTRIBUTOR_TERMS_VERSION,
+      });
+      expect(accepted.body).toMatchObject({ contributorTermsAccepted: true });
+      expect((await api.post('/api/v1/me/job-offers', { title: 'Comptable' })).status).toBe(201);
+
+      const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+      expect(user.contributorTermsVersion).toBe(CONTRIBUTOR_TERMS_VERSION);
+      expect(
+        await prisma.securityEvent.count({
+          where: { userId: user.id, type: 'contributor_terms_accepted' },
+        }),
+      ).toBe(1);
+    });
+  });
 
   describe('contributeur', () => {
     it('crée un brouillon incomplet et indique les champs manquants', async () => {

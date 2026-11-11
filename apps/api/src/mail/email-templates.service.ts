@@ -135,7 +135,7 @@ export class EmailTemplatesService {
 
     return {
       to: to.email,
-      subject: `${content.subject} — ${APP_NAME}`,
+      subject: `${content.subject} · ${APP_NAME}`,
       text: textParts.join('\n'),
       html,
     };

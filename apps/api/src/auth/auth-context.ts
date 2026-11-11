@@ -10,6 +10,8 @@ export interface AuthUser {
   locale: 'fr' | 'en';
   theme: 'light' | 'dark' | 'system';
   totpEnabled: boolean;
+  /** Version des conditions de publication acceptée (null : jamais acceptées). */
+  contributorTermsVersion: string | null;
 }
 
 /** Contexte d'authentification attaché à la requête par le guard de session. */
