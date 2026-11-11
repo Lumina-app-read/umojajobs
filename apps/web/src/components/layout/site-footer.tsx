@@ -50,9 +50,9 @@ export async function SiteFooter() {
           </div>
           <Column
             title={t('footer.platform')}
-            links={PRIMARY_NAV.map(({ key, hash }) => ({
+            links={PRIMARY_NAV.map(({ key, href }) => ({
               label: t(`nav.${key}`),
-              href: { pathname: '/', hash },
+              href,
             }))}
           />
           <Column

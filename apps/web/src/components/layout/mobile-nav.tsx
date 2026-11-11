@@ -74,10 +74,10 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
             <div className="flex-1 overflow-y-auto px-3 py-4">
               <nav aria-label={t('nav.main')}>
                 <ul className="grid gap-0.5">
-                  {PRIMARY_NAV.map(({ key, hash, icon: Icon }) => (
+                  {PRIMARY_NAV.map(({ key, href, icon: Icon }) => (
                     <li key={key}>
                       <Link
-                        href={{ pathname: '/', hash }}
+                        href={href}
                         onClick={close}
                         className="flex h-11 items-center gap-3 rounded-lg px-3 text-[15px] font-medium text-fg transition-colors hover:bg-surface-2"
                       >

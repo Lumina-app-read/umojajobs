@@ -79,7 +79,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
         href: '/admin/moderation',
         icon: ShieldCheck,
         permission: JOBS_MODERATE,
-        phase: 2,
+        phase: null,
       },
       {
         key: 'catalog',

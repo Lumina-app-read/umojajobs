@@ -641,6 +641,13 @@ export function flagEmoji(iso2: string): string {
   );
 }
 
+/** Nom usuel d'un pays dans la langue de l'interface ; le code ISO si le pays est inconnu. */
+export function countryName(iso2: string, locale: string): string {
+  const country = AFRICAN_COUNTRIES.find((entry) => entry.iso2 === iso2);
+  if (!country) return iso2;
+  return locale === 'fr' ? country.nameFr : country.nameEn;
+}
+
 export function isAfricanCountryIso2(value: string): value is CountryIso2 {
   return AFRICAN_COUNTRIES.some((country) => country.iso2 === value);
 }

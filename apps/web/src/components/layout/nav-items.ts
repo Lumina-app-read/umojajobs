@@ -1,17 +1,18 @@
 import { Briefcase, FileText, type LucideIcon, Route, Share2 } from 'lucide-react';
 
+type NavHref = string | { pathname: '/'; hash: string };
+
 /**
  * Navigation principale du site public, partagée par l'en-tête, le tiroir mobile et le pied de page.
- * Tant que les pages dédiées n'existent pas, chaque entrée mène à la section correspondante de
- * l'accueil (construite à l'étape D4). Remplacer `hash` par une route quand la page existe.
+ * Une entrée mène à sa page quand elle existe, sinon à la section correspondante de l'accueil.
  */
 export const PRIMARY_NAV: readonly {
   key: 'jobs' | 'share' | 'careerStudio' | 'howItWorks';
-  hash: string;
+  href: NavHref;
   icon: LucideIcon;
 }[] = [
-  { key: 'jobs', hash: 'jobs', icon: Briefcase },
-  { key: 'share', hash: 'share', icon: Share2 },
-  { key: 'careerStudio', hash: 'career-studio', icon: FileText },
-  { key: 'howItWorks', hash: 'how-it-works', icon: Route },
+  { key: 'jobs', href: '/jobs', icon: Briefcase },
+  { key: 'share', href: { pathname: '/', hash: 'share' }, icon: Share2 },
+  { key: 'careerStudio', href: { pathname: '/', hash: 'career-studio' }, icon: FileText },
+  { key: 'howItWorks', href: { pathname: '/', hash: 'how-it-works' }, icon: Route },
 ];

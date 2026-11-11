@@ -68,3 +68,14 @@ export async function hasPermission(permission: string): Promise<boolean> {
     result.data.permissions.includes(permission),
   );
 }
+
+/**
+ * Pages publiques des offres : un utilisateur connecté (même s'il lui reste l'étape de double
+ * authentification) est renvoyé vers la page équivalente de son espace personnel, qui gère la suite.
+ */
+export async function redirectSignedIn(href: string): Promise<void> {
+  const result = await getCurrentUser().catch(() => null);
+  if (result?.data) {
+    redirect({ href, locale: await getLocale() });
+  }
+}

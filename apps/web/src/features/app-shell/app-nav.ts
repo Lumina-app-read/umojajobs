@@ -2,12 +2,12 @@ import {
   ArrowDownToLine,
   Bell,
   Bookmark,
+  Briefcase,
   Files,
   HandCoins,
   LayoutDashboard,
   type LucideIcon,
   Megaphone,
-  Search,
   Settings,
   SquarePlus,
   Sparkles,
@@ -51,8 +51,8 @@ export const APP_NAV: AppNavGroup[] = [
   {
     key: 'offers',
     items: [
-      { key: 'jobs', href: '/dashboard/jobs', icon: Search, phase: 2 },
-      { key: 'saved', href: '/dashboard/saved', icon: Bookmark, phase: 2 },
+      { key: 'jobs', href: '/dashboard/jobs', icon: Briefcase, phase: null },
+      { key: 'saved', href: '/dashboard/saved', icon: Bookmark, phase: null },
       { key: 'unlocked', href: '/dashboard/unlocked', icon: Unlock, phase: 2 },
     ],
   },
@@ -99,7 +99,7 @@ export const APP_TABS: {
   icon: LucideIcon;
 }[] = [
   { key: 'home', href: '/dashboard', icon: LayoutDashboard },
-  { key: 'offers', href: '/dashboard/jobs', icon: Search },
+  { key: 'offers', href: '/dashboard/jobs', icon: Briefcase },
   { key: 'publish', href: '/dashboard/publish', icon: SquarePlus },
   { key: 'studio', href: '/dashboard/studio', icon: Sparkles },
   { key: 'account', href: '/dashboard/settings', icon: UserRound },

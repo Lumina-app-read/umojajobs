@@ -4,6 +4,10 @@ import {
   type JobCategoryResponse,
   type JobOfferResponse,
   type JobOfferSummaryResponse,
+  type JobSearchResponse,
+  type PublicJobOfferDetail,
+  type SavedJobResponse,
+  type ModerationJobOfferResponse,
   type MeResponse,
   type SecurityEventResponse,
   type SessionResponse,
@@ -88,5 +92,51 @@ export async function getMyJobOffers(): Promise<JobOfferSummaryResponse[] | null
 /** Une offre du contributeur connecté (null si elle n'existe pas ou ne lui appartient pas). */
 export async function getMyJobOffer(id: string): Promise<JobOfferResponse | null> {
   const result = await serverGet<JobOfferResponse>(`/me/job-offers/${id}`).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** File de modération pour un statut (null si l'API refuse ou ne répond pas). */
+export async function getModerationQueue(
+  status: string,
+): Promise<JobOfferSummaryResponse[] | null> {
+  const result = await serverGet<JobOfferSummaryResponse[]>(
+    `/admin/job-offers?status=${encodeURIComponent(status)}&limit=100`,
+  ).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Offre vue par la modération (null si introuvable ou non autorisée). */
+export async function getModerationOffer(id: string): Promise<ModerationJobOfferResponse | null> {
+  const result = await serverGet<ModerationJobOfferResponse>(`/admin/job-offers/${id}`).catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Recherche publique (chaîne de requête déjà construite). null si l'API ne répond pas. */
+export async function searchJobs(query: string): Promise<JobSearchResponse | null> {
+  const result = await serverGet<JobSearchResponse>(`/job-offers?${query}`).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Archives publiques des offres expirées. */
+export async function getJobArchives(page: number): Promise<JobSearchResponse | null> {
+  const result = await serverGet<JobSearchResponse>(`/job-offers/archives?page=${page}`).catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Fiche publique d'une offre (null si introuvable ou non publique). */
+export const getPublicJob = cache(async (slug: string): Promise<PublicJobOfferDetail | null> => {
+  const result = await serverGet<PublicJobOfferDetail>(
+    `/job-offers/${encodeURIComponent(slug)}`,
+  ).catch(() => null);
+  return result?.data ?? null;
+});
+
+/** Offres enregistrées de l'utilisateur connecté (null si l'API ne répond pas). */
+export async function getSavedJobs(): Promise<SavedJobResponse[] | null> {
+  const result = await serverGet<SavedJobResponse[]>('/me/saved-jobs').catch(() => null);
   return result?.data ?? null;
 }

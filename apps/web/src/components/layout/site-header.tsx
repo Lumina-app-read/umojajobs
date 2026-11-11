@@ -39,10 +39,10 @@ export async function SiteHeader() {
 
         <nav aria-label={t('main')} className="ml-6 max-lg:hidden">
           <ul className="flex items-center gap-1">
-            {PRIMARY_NAV.map(({ key, hash }) => (
+            {PRIMARY_NAV.map(({ key, href }) => (
               <li key={key}>
                 <Link
-                  href={{ pathname: '/', hash }}
+                  href={href}
                   className="rounded-md px-3 py-2 text-sm font-medium text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
                 >
                   {t(key)}
