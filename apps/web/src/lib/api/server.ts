@@ -1,6 +1,11 @@
 import 'server-only';
 import {
+  type CommissionResponse,
   type CountryResponse,
+  type CreditBalanceResponse,
+  type CreditCostResponse,
+  type UnlockedContentsResponse,
+  type UnlockSummaryResponse,
   type JobCategoryResponse,
   type JobOfferResponse,
   type JobOfferSummaryResponse,
@@ -138,5 +143,39 @@ export const getPublicJob = cache(async (slug: string): Promise<PublicJobOfferDe
 /** Offres enregistrées de l'utilisateur connecté (null si l'API ne répond pas). */
 export async function getSavedJobs(): Promise<SavedJobResponse[] | null> {
   const result = await serverGet<SavedJobResponse[]>('/me/saved-jobs').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Solde et derniers mouvements de crédits (null si l'API ne répond pas). */
+export const getCreditBalance = cache(async (): Promise<CreditBalanceResponse | null> => {
+  const result = await serverGet<CreditBalanceResponse>('/me/credits').catch(() => null);
+  return result?.data ?? null;
+});
+
+/** Coûts publics des services en crédits (liste vide si l'API ne répond pas). */
+export const getCreditCosts = cache(async (): Promise<CreditCostResponse[]> => {
+  const result = await serverGet<CreditCostResponse[]>('/credit-costs').catch(() => null);
+  return result?.data ?? [];
+});
+
+/** Coordonnées d'une offre déverrouillée par l'utilisateur (null : pas déverrouillée). */
+export async function getUnlockedContents(
+  jobOfferId: string,
+): Promise<UnlockedContentsResponse | null> {
+  const result = await serverGet<UnlockedContentsResponse>(
+    `/me/unlocks/${encodeURIComponent(jobOfferId)}`,
+  ).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Offres déverrouillées par l'utilisateur connecté (null si l'API ne répond pas). */
+export const getUnlocks = cache(async (): Promise<UnlockSummaryResponse[] | null> => {
+  const result = await serverGet<UnlockSummaryResponse[]>('/me/unlocks').catch(() => null);
+  return result?.data ?? null;
+});
+
+/** Commissions du contributeur connecté (null si l'API ne répond pas). */
+export async function getCommissions(): Promise<CommissionResponse[] | null> {
+  const result = await serverGet<CommissionResponse[]>('/me/commissions').catch(() => null);
   return result?.data ?? null;
 }

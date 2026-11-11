@@ -72,6 +72,7 @@ export const JOB_LIMITS = {
   sourceDetailsMax: 300,
   urlMax: 2048,
   addressMax: 500,
+  tipsMax: 3_000,
   reasonMin: 10,
   reasonMax: 2_000,
   /** Durée de validité maximale d'une offre, en jours. */
@@ -88,6 +89,9 @@ export type JobFileKind = (typeof JOB_FILE_KINDS)[number];
  * impose une nouvelle version : chaque contributeur doit alors les accepter de nouveau.
  */
 export const CONTRIBUTOR_TERMS_VERSION = '2026-11-10';
+
+/** Version du règlement des candidats, accepté après le premier déverrouillage. */
+export const CANDIDATE_TERMS_VERSION = '2026-11-11';
 
 export interface AcceptContributorTermsRequest {
   version: string;
@@ -127,6 +131,10 @@ export interface JobOfferInput {
   applicationEmail?: string | null;
   applicationUrl?: string | null;
   applicationAddress?: string | null;
+  /** Numéro de contact au format international E.164, si l'employeur en communique un. */
+  applicationPhone?: string | null;
+  /** Conseils du contributeur pour réussir sa candidature (révélés après déverrouillage). */
+  contributorTips?: string | null;
 }
 
 /** Modification : la version lue est renvoyée pour détecter une écriture concurrente. */
@@ -280,6 +288,8 @@ export interface UnlockContents {
   applicationUrl: boolean;
   applicationAddress: boolean;
   applicationInstructions: boolean;
+  applicationPhone: boolean;
+  contributorTips: boolean;
   originalDocument: boolean;
   attachments: number;
 }

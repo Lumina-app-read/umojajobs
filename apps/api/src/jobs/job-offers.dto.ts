@@ -21,6 +21,7 @@ import {
   type JobSearchSort,
   type JobSourceType,
   type ModerationDecisionRequest,
+  PHONE_E164,
   SALARY_PERIODS,
   type SalaryPeriod,
   SUPPORTED_LOCALES,
@@ -265,6 +266,23 @@ export class JobOfferInputDto implements JobOfferInput {
   @IsString()
   @MaxLength(JOB_LIMITS.addressMax)
   applicationAddress?: string | null;
+
+  @ApiPropertyOptional({ description: 'Privé : numéro E.164 révélé après déverrouillage.' })
+  @IsOptional()
+  @Transform(clean)
+  @ValidateIf(present)
+  @Matches(PHONE_E164)
+  applicationPhone?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Privé : conseils du contributeur, révélés après déverrouillage.',
+  })
+  @IsOptional()
+  @Transform(clean)
+  @ValidateIf(present)
+  @IsString()
+  @MaxLength(JOB_LIMITS.tipsMax)
+  contributorTips?: string | null;
 }
 
 export class JobOfferUpdateDto extends JobOfferInputDto implements JobOfferUpdateRequest {

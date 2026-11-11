@@ -207,7 +207,8 @@ export class UpdateProfileDto implements UpdateProfileRequest {
   theme?: 'light' | 'dark' | 'system';
 }
 
-export class AcceptContributorTermsDto implements AcceptContributorTermsRequest {
+/** Acceptation d'un règlement versionné (conditions de publication, règlement des candidats). */
+export class AcceptTermsDto implements AcceptContributorTermsRequest {
   @ApiProperty({ example: '2026-11-10', description: 'Version des conditions lues et acceptées.' })
   @IsString()
   @Length(1, 32)
@@ -262,6 +263,7 @@ export class MeDto implements MeResponse {
   @ApiProperty({ enum: MFA_STATES }) mfaState!: MfaState;
   @ApiProperty() totpEnabled!: boolean;
   @ApiProperty() contributorTermsAccepted!: boolean;
+  @ApiProperty() candidateTermsAccepted!: boolean;
 }
 
 export class LoginResponseDto implements LoginResponse {

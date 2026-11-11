@@ -107,6 +107,7 @@ export interface MeResponse {
   totpEnabled: boolean;
   /** Conditions de publication acceptées dans leur version en vigueur. */
   contributorTermsAccepted: boolean;
+  candidateTermsAccepted: boolean;
 }
 
 export interface LoginResponse {

@@ -18,7 +18,7 @@ const DEFAULT_PAGE_SIZE = 20;
 const ARCHIVE_PAGE_SIZE = 20;
 
 /** Colonnes publiques uniquement : la requête ne lit jamais les champs privés. */
-const PUBLIC_SELECT = {
+export const PUBLIC_SELECT = {
   id: true,
   slug: true,
   status: true,
@@ -40,10 +40,10 @@ const PUBLIC_SELECT = {
   category: { select: { id: true, slug: true, nameFr: true, nameEn: true } },
 } satisfies Prisma.JobOfferSelect;
 
-type PublicRow = Prisma.JobOfferGetPayload<{ select: typeof PUBLIC_SELECT }>;
+export type PublicRow = Prisma.JobOfferGetPayload<{ select: typeof PUBLIC_SELECT }>;
 
 /** Présentation publique. Une ligne incomplète (impossible après validation) est écartée. */
-function toPublicSummary(row: PublicRow): PublicJobOfferSummary | null {
+export function toPublicSummary(row: PublicRow): PublicJobOfferSummary | null {
   if (
     !row.slug ||
     !row.title ||
@@ -176,6 +176,8 @@ export class JobSearchService {
         applicationUrl: true,
         applicationAddress: true,
         applicationInstructions: true,
+        applicationPhone: true,
+        contributorTips: true,
         files: { where: { deletedAt: null }, select: { kind: true } },
       },
     });
@@ -197,6 +199,8 @@ export class JobSearchService {
         applicationUrl: Boolean(row.applicationUrl),
         applicationAddress: Boolean(row.applicationAddress),
         applicationInstructions: Boolean(row.applicationInstructions),
+        applicationPhone: Boolean(row.applicationPhone),
+        contributorTips: Boolean(row.contributorTips),
         originalDocument: row.files.some((file) => file.kind === 'original'),
         attachments: row.files.filter((file) => file.kind === 'attachment').length,
       },

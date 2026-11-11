@@ -23,6 +23,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1156.0",
     "@aws-sdk/s3-request-presigner": "3.1156.0",
+    "@napi-rs/canvas": "1.0.12",
     "@nestjs/common": "12.4.1",
     "@nestjs/config": "12.1.1",
     "@nestjs/core": "12.4.1",
@@ -41,6 +42,7 @@
     "helmet": "8.3.0",
     "ioredis": "5.11.1",
     "nodemailer": "10.4.0",
+    "pdfjs-dist": "6.4.299",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
   },

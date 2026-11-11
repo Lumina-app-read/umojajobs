@@ -10,7 +10,9 @@ import { CryptoModule } from './common/crypto/crypto.module';
 import { AllExceptionsFilter } from './common/http/all-exceptions.filter';
 import { validateEnv } from './config/env.validation';
 import { HealthModule } from './health/health.module';
+import { FinanceModule } from './finance/finance.module';
 import { JobsModule } from './jobs/jobs.module';
+import { UnlocksModule } from './unlocks/unlocks.module';
 import { LocationsModule } from './locations/locations.module';
 import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -52,6 +54,8 @@ import { StorageModule } from './storage/storage.module';
     LocationsModule,
     AuthModule,
     JobsModule,
+    FinanceModule,
+    UnlocksModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

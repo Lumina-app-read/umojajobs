@@ -34,7 +34,9 @@ import {
   Layers,
   Link2,
   ListChecks,
+  Lightbulb,
   MapPinned,
+  Phone,
   Newspaper,
   Save,
   ScrollText,
@@ -86,6 +88,8 @@ interface FormValues {
   applicationEmail: string;
   applicationUrl: string;
   applicationAddress: string;
+  applicationPhone: string;
+  contributorTips: string;
 }
 
 type FieldKey = keyof FormValues;
@@ -117,6 +121,8 @@ function initialValues(offer: JobOfferResponse | null): FormValues {
     applicationEmail: offer?.applicationEmail ?? '',
     applicationUrl: offer?.applicationUrl ?? '',
     applicationAddress: offer?.applicationAddress ?? '',
+    applicationPhone: offer?.applicationPhone ?? '',
+    contributorTips: offer?.contributorTips ?? '',
   };
 }
 
@@ -266,6 +272,9 @@ export function JobOfferForm({
       applicationEmail: text(values.applicationEmail),
       applicationUrl: text(values.applicationUrl),
       applicationAddress: text(values.applicationAddress),
+      // Le numéro est saisi librement (« +243 81 234 5678 ») puis envoyé au format E.164.
+      applicationPhone: text(values.applicationPhone.replace(/[\s.()-]/g, '')),
+      contributorTips: text(values.contributorTips),
     };
   }
 
@@ -327,10 +336,22 @@ export function JobOfferForm({
       if (!saved) return;
       if (saved.missingFields.length > 0) {
         const missing = saved.missingFields.map((field) => toFieldKey(field));
+        // Le lien ou l'email : l'un des deux suffit, les deux champs sont signalés.
+        const flagged = missing.includes('applicationUrl')
+          ? [...missing, 'applicationEmail' as const]
+          : missing;
         setErrors(
-          Object.fromEntries(missing.map((key) => [key, { key: 'required' } as FieldError])),
+          Object.fromEntries(flagged.map((key) => [key, { key: 'required' } as FieldError])),
         );
-        setFormError(t('form.missing', { fields: missing.map(label).join(', ') }));
+        setFormError(
+          t('form.missing', {
+            fields: missing
+              .map((key) =>
+                key === 'applicationUrl' ? t('form.fields.applicationChannel') : label(key),
+              )
+              .join(', '),
+          }),
+        );
         return;
       }
       await api.post(`/me/job-offers/${saved.id}/submit`, {
@@ -694,8 +715,18 @@ export function JobOfferForm({
         />
         <div className="grid gap-5 sm:grid-cols-2">
           <FormField
+            label={label('applicationUrl')}
+            name="applicationUrl"
+            type="url"
+            icon={Link2}
+            placeholder={t('form.placeholders.applicationUrl')}
+            hint={t('form.hints.applicationChannel')}
+            value={values.applicationUrl}
+            onChange={(event) => set('applicationUrl', event.target.value)}
+            error={error('applicationUrl')}
+          />
+          <FormField
             label={label('applicationEmail')}
-            optionalLabel={optional}
             name="applicationEmail"
             type="email"
             icon={AtSign}
@@ -704,28 +735,45 @@ export function JobOfferForm({
             onChange={(event) => set('applicationEmail', event.target.value)}
             error={error('applicationEmail')}
           />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
           <FormField
-            label={label('applicationUrl')}
+            label={label('applicationPhone')}
             optionalLabel={optional}
-            name="applicationUrl"
-            type="url"
-            icon={Link2}
-            placeholder={t('form.placeholders.applicationUrl')}
-            value={values.applicationUrl}
-            onChange={(event) => set('applicationUrl', event.target.value)}
-            error={error('applicationUrl')}
+            name="applicationPhone"
+            type="tel"
+            autoComplete="off"
+            icon={Phone}
+            placeholder={t('form.placeholders.applicationPhone')}
+            hint={t('form.hints.applicationPhone')}
+            value={values.applicationPhone}
+            onChange={(event) => set('applicationPhone', event.target.value)}
+            error={error('applicationPhone')}
+          />
+          <FormField
+            label={label('applicationAddress')}
+            optionalLabel={optional}
+            name="applicationAddress"
+            icon={MapPinned}
+            placeholder={t('form.placeholders.applicationAddress')}
+            maxLength={JOB_LIMITS.addressMax}
+            value={values.applicationAddress}
+            onChange={(event) => set('applicationAddress', event.target.value)}
+            error={error('applicationAddress')}
           />
         </div>
-        <FormField
-          label={label('applicationAddress')}
+        <TextAreaField
+          label={label('contributorTips')}
           optionalLabel={optional}
-          name="applicationAddress"
-          icon={MapPinned}
-          placeholder={t('form.placeholders.applicationAddress')}
-          maxLength={JOB_LIMITS.addressMax}
-          value={values.applicationAddress}
-          onChange={(event) => set('applicationAddress', event.target.value)}
-          error={error('applicationAddress')}
+          name="contributorTips"
+          icon={Lightbulb}
+          placeholder={t('form.placeholders.contributorTips')}
+          hint={t('form.hints.contributorTips')}
+          value={values.contributorTips}
+          maxLength={JOB_LIMITS.tipsMax}
+          rows={4}
+          onChange={(event) => set('contributorTips', event.target.value)}
+          error={error('contributorTips')}
         />
       </Section>
 

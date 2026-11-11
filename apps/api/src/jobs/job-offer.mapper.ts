@@ -111,6 +111,8 @@ export function toJobOfferResponse(
     applicationEmail: offer.applicationEmail,
     applicationUrl: offer.applicationUrl,
     applicationAddress: offer.applicationAddress,
+    applicationPhone: offer.applicationPhone,
+    contributorTips: offer.contributorTips,
     missingFields: missingSubmissionFields({
       title: offer.title,
       companyName: offer.companyName,

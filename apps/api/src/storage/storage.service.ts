@@ -51,6 +51,13 @@ export class StorageService implements OnModuleDestroy {
     );
   }
 
+  /** Contenu d'un objet, lu côté serveur (rendu des documents ; jamais transmis tel quel). */
+  async read(key: string): Promise<Buffer> {
+    const result = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+    if (!result.Body) throw new Error(`Objet vide : ${key}`);
+    return Buffer.from(await result.Body.transformToByteArray());
+  }
+
   async remove(key: string): Promise<void> {
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
   }

@@ -6,7 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CONTRIBUTOR_TERMS_VERSION, ERROR_CODES } from '@opportinities/shared';
+import {
+  CANDIDATE_TERMS_VERSION,
+  CONTRIBUTOR_TERMS_VERSION,
+  ERROR_CODES,
+} from '@opportinities/shared';
 import { sha256Hex } from '../common/crypto/tokens';
 import { type ClientInfo } from '../common/http/app-request';
 import { type EnvironmentVariables } from '../config/env.validation';
@@ -76,6 +80,7 @@ export class AuthService {
       mfaState: auth.mfaState,
       totpEnabled: auth.user.totpEnabled,
       contributorTermsAccepted: auth.user.contributorTermsVersion === CONTRIBUTOR_TERMS_VERSION,
+      candidateTermsAccepted: auth.user.candidateTermsVersion === CANDIDATE_TERMS_VERSION,
     };
   }
 
@@ -550,6 +555,34 @@ export class AuthService {
       );
     });
     return AuthService.toMe({ ...auth, user: { ...auth.user, contributorTermsVersion: version } });
+  }
+
+  /**
+   * Acceptation du règlement des candidats (présenté après le premier déverrouillage) :
+   * conservée sur le compte et inscrite au journal de sécurité.
+   */
+  async acceptCandidateTerms(
+    auth: AuthContext,
+    version: string,
+    client: ClientInfo,
+  ): Promise<MeDto> {
+    if (version !== CANDIDATE_TERMS_VERSION) {
+      throw new BadRequestException({
+        code: ERROR_CODES.VALIDATION_FAILED,
+        details: [{ field: 'version', rules: ['equals'] }],
+      });
+    }
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: auth.user.id },
+        data: { candidateTermsVersion: version, candidateTermsAcceptedAt: new Date() },
+      });
+      await this.securityEvents.record(
+        { type: 'candidate_terms_accepted', userId: auth.user.id, client, metadata: { version } },
+        tx,
+      );
+    });
+    return AuthService.toMe({ ...auth, user: { ...auth.user, candidateTermsVersion: version } });
   }
 
   async changePassword(

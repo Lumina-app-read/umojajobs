@@ -61,6 +61,8 @@ const PLAIN_FIELDS = [
   'applicationEmail',
   'applicationUrl',
   'applicationAddress',
+  'applicationPhone',
+  'contributorTips',
 ] as const;
 
 function validationError(field: string, rule: string): BadRequestException {

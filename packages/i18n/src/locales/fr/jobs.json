@@ -66,7 +66,7 @@
       "source": "Source",
       "sourceHint": "Où avez-vous trouvé cette offre ? La modération vérifie la source.",
       "application": "Candidature",
-      "applicationHint": "Informations privées : elles ne seront révélées qu'aux personnes qui déverrouillent l'offre. Indiquez au moins un moyen de candidater.",
+      "applicationHint": "Informations privées : elles ne seront révélées qu'aux personnes qui déverrouillent l'offre.",
       "documents": "Documents",
       "documentsHint": "PDF uniquement. L'annonce originale reste privée et n'est accessible qu'après déverrouillage."
     },
@@ -95,7 +95,10 @@
       "applicationInstructions": "Instructions de candidature",
       "applicationEmail": "Email de candidature",
       "applicationUrl": "Lien de candidature",
-      "applicationAddress": "Adresse de dépôt"
+      "applicationAddress": "Adresse de dépôt",
+      "applicationPhone": "Numéro de contact",
+      "contributorTips": "Vos conseils pour être retenu",
+      "applicationChannel": "lien ou email de candidature"
     },
     "placeholders": {
       "title": "Ex. : Comptable confirmé",
@@ -121,12 +124,17 @@
       "applicationInstructions": "Ex. : Envoyer CV et lettre de motivation en précisant la référence RH-42",
       "applicationEmail": "Ex. : recrutement@entreprise.com",
       "applicationUrl": "Ex. : https://entreprise.com/postuler",
-      "applicationAddress": "Ex. : Immeuble Fahd, avenue Pompidou, Dakar"
+      "applicationAddress": "Ex. : Immeuble Fahd, avenue Pompidou, Dakar",
+      "applicationPhone": "Ex. : +243 812 345 678",
+      "contributorTips": "Ex. : Mentionnez la référence COM-12 en objet, joignez vos attestations : le recruteur les exige."
     },
     "hints": {
       "skills": "Jusqu'à 20 compétences. Appuyez sur Entrée ou une virgule pour ajouter.",
       "noCity": "Facultatif : laissez vide si l'offre concerne plusieurs villes.",
-      "city": "Choisissez d'abord le pays."
+      "city": "Choisissez d'abord le pays.",
+      "applicationChannel": "Indiquez au moins un lien ou un email de candidature.",
+      "applicationPhone": "Seulement si l'employeur communique un numéro.",
+      "contributorTips": "Partagez votre expérience : ce qui compte pour ce recruteur, les pièces à ne pas oublier."
     },
     "removeSkill": "Retirer {skill}",
     "saveDraft": "Enregistrer le brouillon",
@@ -323,22 +331,84 @@
       "unlockUrl": "Lien de candidature",
       "unlockAddress": "Adresse de dépôt",
       "unlockInstructions": "Instructions de candidature",
-      "unlockDocument": "Annonce originale (PDF)",
+      "unlockDocument": "Annonce originale, consultable en ligne",
       "unlockAttachments": "{count, plural, one {# document complémentaire} other {# documents complémentaires}}",
-      "unlockSoon": "Le déverrouillage ouvrira avec le portefeuille de crédits.",
-      "unlockButton": "Déverrouiller l'offre",
       "save": "Enregistrer",
       "saved": "Enregistrée",
       "savedToast": "Offre enregistrée",
       "removedToast": "Offre retirée de vos enregistrements",
-      "loginToSave": "Connectez-vous pour enregistrer"
+      "loginToSave": "Connectez-vous pour enregistrer",
+      "unlockPhone": "Numéro de contact",
+      "unlockTips": "Conseils d'un contributeur pour être retenu"
     },
-    "archivesEmpty": "Aucune offre archivée pour le moment"
+    "archivesEmpty": "Aucune offre archivée pour le moment",
+    "timing": {
+      "open": "En cours",
+      "closing": "{count, plural, one {Expire dans # jour} other {Expire dans # jours}}",
+      "closingToday": "Expire aujourd'hui",
+      "expired": "Expirée",
+      "endsOn": "Ouverte jusqu'au {date}",
+      "endedOn": "Expirée depuis le {date}"
+    }
   },
   "saved": {
     "intro": "Les offres que vous avez mises de côté pour plus tard.",
     "browse": "Voir les offres",
     "empty": "Aucune offre enregistrée",
     "emptyBody": "Enregistrez une offre depuis sa fiche pour la retrouver ici."
+  },
+  "unlock": {
+    "title": "Coordonnées de candidature",
+    "button": "Déverrouiller l'offre",
+    "buttonWithCost": "{credits, plural, one {Déverrouiller · # crédit} other {Déverrouiller · # crédits}}",
+    "balance": "{balance, plural, =0 {Votre solde : aucun crédit} one {Votre solde : # crédit} other {Votre solde : # crédits}}",
+    "insufficient": "{missing, plural, one {Il vous manque # crédit. La recharge de crédits ouvrira prochainement.} other {Il vous manque # crédits. La recharge de crédits ouvrira prochainement.}}",
+    "notConfigured": "Le déverrouillage est momentanément indisponible.",
+    "loginToUnlock": "Connectez-vous pour déverrouiller",
+    "own": "Votre offre : voir vos publications",
+    "confirmTitle": "Déverrouiller cette offre ?",
+    "confirmBody": "{credits, plural, one {# crédit sera débité.} other {# crédits seront débités.}} Solde après l'opération : {after, plural, =0 {aucun crédit} one {# crédit} other {# crédits}}.",
+    "confirmNote": "Les coordonnées restent accessibles dans « Déverrouillées », même après l'expiration de l'offre.",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "unlockedToast": "Félicitations !",
+    "alreadyToast": "Offre déjà déverrouillée : aucun crédit débité",
+    "unlockedOn": "Déverrouillée le {date}",
+    "email": "Email de candidature",
+    "url": "Lien de candidature",
+    "address": "Adresse de dépôt",
+    "instructions": "Instructions",
+    "original": "Annonce originale (PDF)",
+    "unlockedToastBody": "L'offre est déverrouillée : ses coordonnées vous attendent.",
+    "phone": "Numéro de contact",
+    "tipsTitle": "Conseils de {name}, qui a partagé l'offre",
+    "attachment": "Document complémentaire",
+    "view": "Consulter",
+    "viewerNote": "Document consultable sur OPPORTINITIES uniquement, avec la mention de publication.",
+    "page": "Page {page} sur {pages}"
+  },
+  "unlocked": {
+    "intro": "Les offres dont vous avez obtenu les coordonnées de candidature.",
+    "empty": "Aucune offre déverrouillée",
+    "emptyBody": "Déverrouillez une offre pour retrouver ici ses coordonnées de candidature.",
+    "browse": "Voir les offres",
+    "on": "Déverrouillée le {date}"
+  },
+  "candidateRules": {
+    "congratsTitle": "Félicitations, l'offre est à vous !",
+    "congratsBody": "Votre accès est ouvert et restera disponible dans « Déverrouillées ».",
+    "title": "Règlement des candidats",
+    "items": {
+      "gateway": "OPPORTINITIES vous relie à l'offre : nous ne sommes pas intermédiaires entre vous et le recruteur.",
+      "noGuarantee": "Aucun recrutement n'est garanti : être appelé dépend de votre expérience, de votre dossier et de la décision du recruteur.",
+      "credits": "Les crédits utilisés financent le fonctionnement de la plateforme. Ils ne sont jamais versés au recruteur.",
+      "noFees": "Le recruteur ne vous demande rien. Si quelqu'un réclame de l'argent pour une candidature, signalez-le-nous : c'est une fraude.",
+      "direct": "Postulez directement auprès de l'employeur, avec des informations exactes et un dossier soigné."
+    },
+    "accept": "J'ai lu et j'accepte le règlement des candidats.",
+    "required": "Cochez la case pour continuer.",
+    "continue": "Voir les coordonnées",
+    "acceptedToast": "Règlement accepté. Bonne candidature !",
+    "reminder": "Rappel du règlement des candidats"
   }
 }

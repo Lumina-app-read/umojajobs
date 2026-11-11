@@ -10,7 +10,7 @@ import { Alert } from '@/components/ui/alert';
 import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState } from '@/components/ui/feedback';
 import { getCountries, getJobCategories, searchJobs } from '@/lib/api/server';
-import { JobCard } from './job-card';
+import { JobList } from './job-list';
 import { type JobFilterValues, JobFilters } from './job-filters';
 import { JobPagination } from './pagination';
 import { firstParam, type JobsBase, pageParam, type SearchParams } from './routes';
@@ -40,7 +40,7 @@ export async function JobSearchView({ base, params }: { base: JobsBase; params: 
   const filters = readFilters(params);
   const page = pageParam(params);
 
-  const query = new URLSearchParams({ page: String(page), pageSize: '20' });
+  const query = new URLSearchParams({ page: String(page), pageSize: '30' });
   if (filters.q) query.set('q', filters.q);
   if (filters.country) query.set('country', filters.country);
   if (filters.category) query.set('category', filters.category);
@@ -100,11 +100,7 @@ export async function JobSearchView({ base, params }: { base: JobsBase; params: 
           <p className="text-sm font-medium text-fg-muted" role="status">
             {t('results', { count: result.total })}
           </p>
-          <div className="stagger grid gap-4 md:grid-cols-2">
-            {result.items.map((offer) => (
-              <JobCard key={offer.id} offer={offer} base={base} />
-            ))}
-          </div>
+          <JobList offers={result.items} base={base} />
           <JobPagination page={page} pages={pages} href={pageHref} />
         </>
       )}

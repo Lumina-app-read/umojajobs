@@ -53,7 +53,7 @@ export const APP_NAV: AppNavGroup[] = [
     items: [
       { key: 'jobs', href: '/dashboard/jobs', icon: Briefcase, phase: null },
       { key: 'saved', href: '/dashboard/saved', icon: Bookmark, phase: null },
-      { key: 'unlocked', href: '/dashboard/unlocked', icon: Unlock, phase: 2 },
+      { key: 'unlocked', href: '/dashboard/unlocked', icon: Unlock, phase: null },
     ],
   },
   {

@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
+import { JobCard } from '@/features/jobs/job-card';
+import { getCreditBalance, getMyJobOffers, getUnlocks, searchJobs } from '@/lib/api/server';
 import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState, StatCard } from '@/components/ui/feedback';
@@ -34,26 +36,42 @@ export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const t = await getTranslations('common.app');
   const format = await getFormatter();
+  const [credits, unlocks, latest, mine] = await Promise.all([
+    getCreditBalance(),
+    getUnlocks(),
+    searchJobs('page=1&pageSize=4'),
+    getMyJobOffers(),
+  ]);
 
   const steps: { icon: LucideIcon; label: string; done: boolean; href?: string }[] = [
     { icon: CircleCheck, label: t('overview.stepAccount'), done: true },
-    { icon: Search, label: t('overview.stepExplore'), done: false },
+    {
+      icon: Search,
+      label: t('overview.stepExplore'),
+      done: (unlocks?.length ?? 0) > 0,
+      href: '/dashboard/jobs',
+    },
     { icon: Sparkles, label: t('overview.stepStudio'), done: false },
-    { icon: Share2, label: t('overview.stepShare'), done: false, href: '/dashboard/publish' },
+    {
+      icon: Share2,
+      label: t('overview.stepShare'),
+      done: (mine ?? []).some((offer) => offer.status !== 'draft'),
+      href: '/dashboard/publish',
+    },
   ];
-  // Valeurs réelles du compte : aucun crédit, offre, gain ni document tant que ces modules
-  // (phases 3 et 4) ne sont pas ouverts. Elles seront lues dans le portefeuille ensuite.
+  // Valeurs réelles du compte. Les gains seront lus dans le portefeuille (étape 3d) et les
+  // documents dans le Career Studio (phase 4).
   const stats: { icon: LucideIcon; label: string; value: string; hint: string }[] = [
     {
       icon: Coins,
       label: t('overview.credits'),
-      value: format.number(0),
+      value: format.number(credits?.balance ?? 0),
       hint: t('overview.creditsHint'),
     },
     {
       icon: Unlock,
       label: t('overview.unlocked'),
-      value: format.number(0),
+      value: format.number(unlocks?.length ?? 0),
       hint: t('overview.unlockedHint'),
     },
     {
@@ -127,12 +145,20 @@ export default async function DashboardOverviewPage() {
           <h2 id="recommended" className="mb-3 text-base font-semibold text-fg">
             {t('overview.recommended')}
           </h2>
-          <EmptyState
-            icon={Briefcase}
-            title={t('overview.recommendedEmpty')}
-            description={t('overview.recommendedEmptyBody')}
-            className="bg-surface py-12"
-          />
+          {latest && latest.items.length > 0 ? (
+            <div className="stagger grid gap-4 xl:grid-cols-2">
+              {latest.items.map((offer) => (
+                <JobCard key={offer.id} offer={offer} base="/dashboard/jobs" />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Briefcase}
+              title={t('overview.recommendedEmpty')}
+              description={t('overview.recommendedEmptyBody')}
+              className="bg-surface py-12"
+            />
+          )}
         </section>
         <section aria-labelledby="notifications">
           <h2 id="notifications" className="mb-3 text-base font-semibold text-fg">

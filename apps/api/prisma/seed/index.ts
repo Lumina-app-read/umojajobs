@@ -13,6 +13,7 @@ import { uuidv7 } from '../../src/common/uuid-v7';
 import { Prisma, PrismaClient } from '../../src/generated/prisma/client';
 import { toSearchName } from '../../src/locations/search-name';
 import { type CityDatasetRow, parseCityDataset } from './cities-dataset';
+import { seedFinance } from './finance';
 import { seedJobCategories } from './job-categories';
 import { seedRolesAndPermissions } from './roles';
 
@@ -116,8 +117,9 @@ async function main(): Promise<void> {
     const cityCount = await seedCities(prisma, countryIds);
     const rbac = await seedRolesAndPermissions(prisma);
     const categoryCount = await seedJobCategories(prisma);
+    const financeCount = await seedFinance(prisma);
     process.stdout.write(
-      `Seed terminé : ${countryIds.size} pays, ${cityCount} villes, ${rbac.roles} rôles, ${rbac.permissions} permissions, ${categoryCount} catégories d'offres.\n`,
+      `Seed terminé : ${countryIds.size} pays, ${cityCount} villes, ${rbac.roles} rôles, ${rbac.permissions} permissions, ${categoryCount} catégories d'offres, ${financeCount} valeurs financières initialisées.\n`,
     );
   } finally {
     await prisma.$disconnect();

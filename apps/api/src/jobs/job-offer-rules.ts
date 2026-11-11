@@ -181,8 +181,8 @@ export interface SubmissionFields {
 }
 
 /**
- * Champs manquants pour soumettre une offre. Un moyen de candidater au moins (instructions,
- * email ou lien) est exigé ; un salaire indiqué doit préciser sa devise et sa période.
+ * Champs manquants pour soumettre une offre. L'endroit où envoyer sa candidature (lien ou
+ * email) est obligatoire ; un salaire indiqué doit préciser sa devise et sa période.
  */
 export function missingSubmissionFields(offer: SubmissionFields): string[] {
   const required: (keyof SubmissionFields)[] = [
@@ -198,8 +198,8 @@ export function missingSubmissionFields(offer: SubmissionFields): string[] {
     'sourceType',
   ];
   const missing: string[] = required.filter((field) => !offer[field]?.toString().trim());
-  if (!offer.applicationInstructions && !offer.applicationEmail && !offer.applicationUrl) {
-    missing.push('applicationInstructions');
+  if (!offer.applicationEmail && !offer.applicationUrl) {
+    missing.push('applicationUrl');
   }
   if (offer.salaryMin || offer.salaryMax) {
     if (!offer.salaryCurrency) missing.push('salaryCurrency');

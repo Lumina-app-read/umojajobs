@@ -96,7 +96,7 @@
       "overview": "Vue d'ensemble",
       "jobs": "Offres d'emploi",
       "saved": "Enregistrées",
-      "unlocked": "Débloquées",
+      "unlocked": "Déverrouillées",
       "publications": "Mes publications",
       "publish": "Publier une offre",
       "wallet": "Portefeuille",
@@ -135,12 +135,12 @@
       "stepShare": "Partager une première offre",
       "done": "Fait",
       "credits": "Crédits",
-      "unlocked": "Offres débloquées",
+      "unlocked": "Offres déverrouillées",
       "earnings": "Gains disponibles",
       "documents": "Documents",
-      "recommended": "Offres recommandées",
+      "recommended": "Dernières offres publiées",
       "recommendedEmpty": "Aucune offre pour le moment",
-      "recommendedEmptyBody": "Les offres vérifiées apparaîtront ici dès l'ouverture du module Offres.",
+      "recommendedEmptyBody": "Les offres vérifiées par la modération apparaîtront ici.",
       "notifications": "Notifications",
       "notificationsEmpty": "Aucune notification",
       "notificationsEmptyBody": "Les validations, déverrouillages et paiements vous seront signalés ici.",
@@ -267,7 +267,10 @@
       "role_granted": "Rôle attribué",
       "role_revoked": "Rôle retiré",
       "profile_updated": "Profil modifié",
-      "contributor_terms_accepted": "Conditions de publication acceptées"
+      "contributor_terms_accepted": "Conditions de publication acceptées",
+      "financial_setting_changed": "Paramètre financier modifié",
+      "credits_granted": "Crédits attribués",
+      "candidate_terms_accepted": "Règlement des candidats accepté"
     },
     "badge": "Admin"
   }

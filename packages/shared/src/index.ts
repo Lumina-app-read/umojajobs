@@ -5,5 +5,6 @@ export * from './app';
 export * from './auth';
 export * from './countries';
 export * from './errors';
+export * from './finance';
 export * from './locales';
 export * from './jobs';

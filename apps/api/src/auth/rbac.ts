@@ -16,6 +16,8 @@ export const PERMISSION_DESCRIPTIONS: Record<PermissionCode, string> = {
   [PERMISSIONS.SECURITY_EVENTS_READ]: 'Consulter le journal de sécurité',
   [PERMISSIONS.AUDIT_LOGS_READ]: "Consulter les journaux d'audit",
   [PERMISSIONS.SETTINGS_MANAGE]: 'Modifier les paramètres de la plateforme',
+  [PERMISSIONS.FINANCE_READ]: 'Consulter les paramètres et registres financiers',
+  [PERMISSIONS.FINANCE_MANAGE]: 'Modifier les paramètres financiers et attribuer des crédits',
 };
 
 const ALL_PERMISSIONS = Object.values(PERMISSIONS);
@@ -34,6 +36,7 @@ export const ROLE_PERMISSIONS: Record<RoleCode, readonly PermissionCode[]> = {
     PERMISSIONS.JOBS_MODERATE,
     PERMISSIONS.SECURITY_EVENTS_READ,
     PERMISSIONS.AUDIT_LOGS_READ,
+    PERMISSIONS.FINANCE_READ,
   ],
   super_admin: ALL_PERMISSIONS,
 };

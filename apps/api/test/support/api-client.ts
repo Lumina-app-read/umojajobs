@@ -26,8 +26,8 @@ export class ApiClient {
     return this.agent.get(path).then((response) => response);
   }
 
-  post(path: string, body: object = {}): Promise<Response> {
-    return this.withCsrf(this.agent.post(path).send(body));
+  post(path: string, body: object = {}, headers: Record<string, string> = {}): Promise<Response> {
+    return this.withCsrf(this.agent.post(path).set(headers).send(body));
   }
 
   put(path: string, body: object = {}): Promise<Response> {

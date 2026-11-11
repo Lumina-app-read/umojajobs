@@ -12,6 +12,8 @@ export interface AuthUser {
   totpEnabled: boolean;
   /** Version des conditions de publication acceptée (null : jamais acceptées). */
   contributorTermsVersion: string | null;
+  /** Version du règlement des candidats acceptée (null : jamais accepté). */
+  candidateTermsVersion: string | null;
 }
 
 /** Contexte d'authentification attaché à la requête par le guard de session. */

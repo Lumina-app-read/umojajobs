@@ -82,6 +82,7 @@ describe('Documents des offres : stockage privé et liens signés (intégration)
         endDate: day(20),
         sourceType: 'newspaper',
         applicationInstructions: 'Envoyer CV et lettre au service RH.',
+        applicationEmail: 'rh@mines-sud.example',
       })
     ).body as JobOfferResponse;
   }

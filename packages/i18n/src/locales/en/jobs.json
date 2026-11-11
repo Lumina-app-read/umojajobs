@@ -66,7 +66,7 @@
       "source": "Source",
       "sourceHint": "Where did you find this offer? Moderation checks the source.",
       "application": "Application",
-      "applicationHint": "Private information: only revealed to people who unlock the offer. Provide at least one way to apply.",
+      "applicationHint": "Private information: only revealed to people who unlock the offer.",
       "documents": "Documents",
       "documentsHint": "PDF only. The original offer stays private and is only available after unlocking."
     },
@@ -95,7 +95,10 @@
       "applicationInstructions": "Application instructions",
       "applicationEmail": "Application email",
       "applicationUrl": "Application link",
-      "applicationAddress": "Drop-off address"
+      "applicationAddress": "Drop-off address",
+      "applicationPhone": "Contact number",
+      "contributorTips": "Your tips to get selected",
+      "applicationChannel": "application link or email"
     },
     "placeholders": {
       "title": "e.g. Senior accountant",
@@ -121,12 +124,17 @@
       "applicationInstructions": "e.g. Send your CV and cover letter quoting reference HR-42",
       "applicationEmail": "e.g. recruitment@company.com",
       "applicationUrl": "e.g. https://company.com/apply",
-      "applicationAddress": "e.g. 12 Independence Avenue, Accra"
+      "applicationAddress": "e.g. 12 Independence Avenue, Accra",
+      "applicationPhone": "E.g. +243 812 345 678",
+      "contributorTips": "E.g. Quote reference COM-12 in the subject and attach your certificates: the recruiter requires them."
     },
     "hints": {
       "skills": "Up to 20 skills. Press Enter or a comma to add one.",
       "noCity": "Optional: leave empty if the offer covers several cities.",
-      "city": "Choose the country first."
+      "city": "Choose the country first.",
+      "applicationChannel": "Provide at least an application link or email.",
+      "applicationPhone": "Only if the employer shares a number.",
+      "contributorTips": "Share your experience: what matters to this recruiter, the documents not to forget."
     },
     "removeSkill": "Remove {skill}",
     "saveDraft": "Save draft",
@@ -323,22 +331,84 @@
       "unlockUrl": "Application link",
       "unlockAddress": "Drop-off address",
       "unlockInstructions": "Application instructions",
-      "unlockDocument": "Original offer (PDF)",
+      "unlockDocument": "Original posting, viewable online",
       "unlockAttachments": "{count, plural, one {# supporting document} other {# supporting documents}}",
-      "unlockSoon": "Unlocking will open with the credit wallet.",
-      "unlockButton": "Unlock the offer",
       "save": "Save",
       "saved": "Saved",
       "savedToast": "Offer saved",
       "removedToast": "Offer removed from your saved list",
-      "loginToSave": "Sign in to save"
+      "loginToSave": "Sign in to save",
+      "unlockPhone": "Contact number",
+      "unlockTips": "A contributor’s tips to get selected"
     },
-    "archivesEmpty": "No archived offers yet"
+    "archivesEmpty": "No archived offers yet",
+    "timing": {
+      "open": "Open",
+      "closing": "{count, plural, one {Closes in # day} other {Closes in # days}}",
+      "closingToday": "Closes today",
+      "expired": "Expired",
+      "endsOn": "Open until {date}",
+      "endedOn": "Expired on {date}"
+    }
   },
   "saved": {
     "intro": "The offers you set aside for later.",
     "browse": "Browse offers",
     "empty": "No saved offers",
     "emptyBody": "Save an offer from its page to find it here."
+  },
+  "unlock": {
+    "title": "Application details",
+    "button": "Unlock the offer",
+    "buttonWithCost": "{credits, plural, one {Unlock · # credit} other {Unlock · # credits}}",
+    "balance": "{balance, plural, =0 {Your balance: no credits} one {Your balance: # credit} other {Your balance: # credits}}",
+    "insufficient": "{missing, plural, one {You need # more credit. Credit top-ups open soon.} other {You need # more credits. Credit top-ups open soon.}}",
+    "notConfigured": "Unlocking is temporarily unavailable.",
+    "loginToUnlock": "Sign in to unlock",
+    "own": "Your offer: see your publications",
+    "confirmTitle": "Unlock this offer?",
+    "confirmBody": "{credits, plural, one {# credit will be charged.} other {# credits will be charged.}} Balance afterwards: {after, plural, =0 {no credits} one {# credit} other {# credits}}.",
+    "confirmNote": "The details stay available under “Unlocked”, even after the offer expires.",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "unlockedToast": "Congratulations!",
+    "alreadyToast": "Offer already unlocked: no credits charged",
+    "unlockedOn": "Unlocked on {date}",
+    "email": "Application email",
+    "url": "Application link",
+    "address": "Drop-off address",
+    "instructions": "Instructions",
+    "original": "Original posting (PDF)",
+    "unlockedToastBody": "The offer is unlocked: its application details are waiting for you.",
+    "phone": "Contact number",
+    "tipsTitle": "Tips from {name}, who shared the offer",
+    "attachment": "Additional document",
+    "view": "View",
+    "viewerNote": "Document viewable on OPPORTINITIES only, with the publication mark.",
+    "page": "Page {page} of {pages}"
+  },
+  "unlocked": {
+    "intro": "The offers whose application details you have obtained.",
+    "empty": "No unlocked offers",
+    "emptyBody": "Unlock an offer to find its application details here.",
+    "browse": "Browse offers",
+    "on": "Unlocked on {date}"
+  },
+  "candidateRules": {
+    "congratsTitle": "Congratulations, the offer is yours!",
+    "congratsBody": "Your access is open and stays available under “Unlocked”.",
+    "title": "Candidate rules",
+    "items": {
+      "gateway": "OPPORTINITIES connects you with the offer: we are not an intermediary between you and the recruiter.",
+      "noGuarantee": "No hiring is guaranteed: being contacted depends on your experience, your application and the recruiter’s decision.",
+      "credits": "The credits you use fund the running of the platform. They are never paid to the recruiter.",
+      "noFees": "The recruiter asks you for nothing. If anyone requests money for an application, report it to us: it is fraud.",
+      "direct": "Apply directly to the employer, with accurate information and a careful application."
+    },
+    "accept": "I have read and accept the candidate rules.",
+    "required": "Tick the box to continue.",
+    "continue": "See the application details",
+    "acceptedToast": "Rules accepted. Good luck with your application!",
+    "reminder": "Reminder of the candidate rules"
   }
 }

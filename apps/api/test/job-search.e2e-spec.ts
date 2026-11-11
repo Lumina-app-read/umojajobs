@@ -191,6 +191,8 @@ describe('Consultation publique des offres (intégration)', () => {
       applicationUrl: true,
       applicationAddress: false,
       applicationInstructions: false,
+      applicationPhone: false,
+      contributorTips: false,
       originalDocument: false,
       attachments: 0,
     });

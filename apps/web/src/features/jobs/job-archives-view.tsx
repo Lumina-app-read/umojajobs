@@ -4,7 +4,7 @@ import { Alert } from '@/components/ui/alert';
 import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState } from '@/components/ui/feedback';
 import { getJobArchives } from '@/lib/api/server';
-import { JobCard } from './job-card';
+import { JobList } from './job-list';
 import { JobPagination } from './pagination';
 import { type JobsBase, pageParam, type SearchParams } from './routes';
 
@@ -42,11 +42,7 @@ export async function JobArchivesView({ base, params }: { base: JobsBase; params
         <EmptyState icon={Archive} title={t('archivesEmpty')} className="bg-surface py-16" />
       ) : (
         <>
-          <div className="stagger grid gap-4 md:grid-cols-2">
-            {result.items.map((offer) => (
-              <JobCard key={offer.id} offer={offer} base={base} />
-            ))}
-          </div>
+          <JobList offers={result.items} base={base} />
           <JobPagination
             page={page}
             pages={pages}

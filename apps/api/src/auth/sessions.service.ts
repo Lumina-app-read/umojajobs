@@ -141,6 +141,7 @@ export class SessionsService {
         theme: user.theme,
         totpEnabled,
         contributorTermsVersion: user.contributorTermsVersion,
+        candidateTermsVersion: user.candidateTermsVersion,
       },
     };
   }

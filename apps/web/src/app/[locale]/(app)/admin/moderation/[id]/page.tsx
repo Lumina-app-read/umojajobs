@@ -192,6 +192,8 @@ export default async function ModerationOfferPage({ params }: { params: Promise<
                 [t('form.fields.applicationEmail'), offer.applicationEmail],
                 [t('form.fields.applicationUrl'), offer.applicationUrl],
                 [t('form.fields.applicationAddress'), offer.applicationAddress],
+                [t('form.fields.applicationPhone'), offer.applicationPhone],
+                [t('form.fields.contributorTips'), offer.contributorTips],
               ]}
             />
           </Panel>

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from '@/i18n/navigation';
 import { formatSalary } from './format';
 import type { JobsBase } from './routes';
+import { TimingIndicator } from './timing-indicator';
 
 /** Carte d'offre : intitulé, entreprise, lieu, contrat, salaire éventuel et date limite. */
 export function JobCard({
@@ -40,16 +41,20 @@ export function JobCard({
             <span className="truncate">{offer.companyName}</span>
           </p>
         </div>
-        {offer.status === 'expired' ? (
-          <Badge tone="neutral">{t('public.detail.expired')}</Badge>
-        ) : (
+        <TimingIndicator
+          status={offer.status}
+          endsAt={offer.endsAt}
+          endDate={offer.endDate}
+          className="shrink-0 pt-0.5"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 text-[13px] text-fg-muted">
+        {offer.status === 'active' && (
           <Badge tone="success" icon={BadgeCheck}>
             {t('public.verified')}
           </Badge>
         )}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 text-[13px] text-fg-muted">
         <span className="flex items-center gap-1.5">
           <MapPin className="size-4" aria-hidden="true" />
           <span aria-hidden="true">{flagEmoji(offer.countryIso2)}</span>

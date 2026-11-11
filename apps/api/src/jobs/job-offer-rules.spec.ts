@@ -149,10 +149,24 @@ describe('complétude avant soumission', () => {
     expect(missingSubmissionFields(complete)).toEqual([]);
   });
 
-  it('exige au moins un moyen de candidater', () => {
+  it('exige un lien ou un email de candidature, les instructions seules ne suffisent pas', () => {
     expect(missingSubmissionFields({ ...complete, applicationEmail: null })).toEqual([
-      'applicationInstructions',
+      'applicationUrl',
     ]);
+    expect(
+      missingSubmissionFields({
+        ...complete,
+        applicationEmail: null,
+        applicationInstructions: 'Déposer le dossier à l’accueil.',
+      }),
+    ).toEqual(['applicationUrl']);
+    expect(
+      missingSubmissionFields({
+        ...complete,
+        applicationEmail: null,
+        applicationUrl: 'https://example.com/postuler',
+      }),
+    ).toEqual([]);
   });
 
   it('exige la devise et la période d’un salaire indiqué', () => {

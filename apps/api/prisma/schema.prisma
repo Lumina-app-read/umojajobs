@@ -138,6 +138,9 @@ enum SecurityEventType {
   role_revoked
   profile_updated
   contributor_terms_accepted
+  financial_setting_changed
+  credits_granted
+  candidate_terms_accepted
 
   @@map("security_event_type")
 }
@@ -162,6 +165,9 @@ model User {
   /// Conditions de publication des offres : version acceptée et date (preuve d'acceptation).
   contributorTermsVersion    String?         @map("contributor_terms_version") @db.VarChar(32)
   contributorTermsAcceptedAt DateTime?       @map("contributor_terms_accepted_at") @db.Timestamptz(3)
+  /// Règlement des candidats : version acceptée et date (après le premier déverrouillage).
+  candidateTermsVersion      String?         @map("candidate_terms_version") @db.VarChar(32)
+  candidateTermsAcceptedAt   DateTime?       @map("candidate_terms_accepted_at") @db.Timestamptz(3)
   failedLoginCount           Int             @default(0) @map("failed_login_count")
   lockedUntil                DateTime?       @map("locked_until") @db.Timestamptz(3)
   lastLoginAt                DateTime?       @map("last_login_at") @db.Timestamptz(3)
@@ -188,6 +194,15 @@ model User {
   jobFiles           JobOfferFile[]          @relation("JobOfferFileUploader")
   fileDownloads      FileDownloadLog[]       @relation("FileDownloader")
   savedJobs          SavedJob[]
+  financialSettings  FinancialSetting[]      @relation("FinancialSettingAuthor")
+  serviceCosts       ServiceCreditCost[]     @relation("ServiceCostAuthor")
+  creditAccount      CreditAccount?
+  creditMovements    CreditMovement[]        @relation("CreditMovementActor")
+  ledgerAccounts     LedgerAccount[]         @relation("LedgerAccountOwner")
+  ledgerTransactions LedgerTransaction[]     @relation("LedgerTransactionActor")
+  jobUnlocks         JobUnlock[]             @relation("JobUnlockUser")
+  commissions        Commission[]            @relation("CommissionContributor")
+  commissionEvents   CommissionEvent[]       @relation("CommissionEventActor")
 
   @@index([countryId])
   @@map("users")
@@ -437,6 +452,10 @@ model JobOffer {
   applicationEmail        String?          @map("application_email") @db.Citext
   applicationUrl          String?          @map("application_url") @db.VarChar(2048)
   applicationAddress      String?          @map("application_address") @db.VarChar(500)
+  /// Privé : numéro de contact E.164 communiqué par l'employeur.
+  applicationPhone        String?          @map("application_phone") @db.VarChar(16)
+  /// Privé : conseils du contributeur pour réussir la candidature.
+  contributorTips         String?          @map("contributor_tips")
   /// Identifiant d'URL public (intitulé, entreprise, ville), attribué à la validation. Stable ensuite.
   slug                    String?          @unique @db.VarChar(180)
   /// Texte normalisé (minuscules, sans accents) pour la recherche : intitulé, entreprise,
@@ -464,6 +483,8 @@ model JobOffer {
   revisions     JobOfferRevision[]
   files         JobOfferFile[]
   savedBy       SavedJob[]
+  unlocks       JobUnlock[]
+  commissions   Commission[]
 
   @@index([contributorId, createdAt(sort: Desc)])
   @@index([status, submittedAt])
@@ -596,4 +617,326 @@ model SavedJob {
   @@id([userId, jobOfferId])
   @@index([userId, createdAt(sort: Desc)])
   @@map("saved_jobs")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3 — Monétisation : paramètres financiers, crédits et grand livre.
+// Montants en NUMERIC(20,6), crédits en entiers. Registres en ajout seul (triggers).
+// ---------------------------------------------------------------------------
+
+/// Paramètres financiers administrables (CLAUDE.md §10 et §11 : jamais codés en dur).
+enum FinancialSettingKey {
+  /// Valeur interne d'un crédit en USD, figée sur chaque lot à son attribution.
+  credit_unit_value_usd
+  /// Part du contributeur sur la valeur des crédits consommés (0,30 = 30 %).
+  contributor_commission_rate
+  /// Seuil minimal d'une demande de retrait, en USD.
+  withdrawal_min_usd
+  /// Délai de retenue d'une commission (contributeur établi), en jours.
+  commission_hold_days
+  /// Délai de retenue renforcé pour un nouveau contributeur, en jours.
+  commission_hold_days_new_contributor
+  /// Ancienneté en deçà de laquelle un contributeur est « nouveau », en jours.
+  new_contributor_period_days
+  /// Montant de retrait à partir duquel deux administrateurs distincts sont requis, en USD.
+  withdrawal_dual_approval_usd
+
+  @@map("financial_setting_key")
+}
+
+/// Services payables en crédits.
+enum CreditService {
+  unlock_standard
+  unlock_premium
+  doc_cv
+  doc_cover_letter
+  doc_application_letter
+  doc_pack
+
+  @@map("credit_service")
+}
+
+enum CreditLotOrigin {
+  /// Recharge payée (Chariow) : seule origine éligible aux commissions.
+  purchase
+  /// Dotation gratuite (geste commercial, promotion) : jamais commissionnable (arbitrage A2).
+  grant
+  adjustment
+
+  @@map("credit_lot_origin")
+}
+
+enum CreditMovementType {
+  purchase
+  consume
+  refund
+  expire
+  grant
+  adjust
+
+  @@map("credit_movement_type")
+}
+
+enum LedgerAccountType {
+  asset
+  liability
+  revenue
+  expense
+
+  @@map("ledger_account_type")
+}
+
+enum LedgerTransactionType {
+  credit_grant
+  credit_consumption
+  commission_accrual
+
+  @@map("ledger_transaction_type")
+}
+
+/// Historique des valeurs : la valeur en vigueur est la plus récente dont la date d'effet est passée.
+model FinancialSetting {
+  id            String              @id @default(uuid(7)) @db.Uuid
+  key           FinancialSettingKey
+  value         Decimal             @db.Decimal(20, 6)
+  effectiveFrom DateTime            @map("effective_from") @db.Timestamptz(3)
+  /// Null pour les valeurs initiales chargées par le seed.
+  changedById   String?             @map("changed_by_id") @db.Uuid
+  reason        String              @db.VarChar(500)
+  createdAt     DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  changedBy User? @relation("FinancialSettingAuthor", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([key, effectiveFrom(sort: Desc)])
+  @@map("financial_settings")
+}
+
+/// Coût d'un service en crédits, historisé de la même façon.
+model ServiceCreditCost {
+  id            String        @id @default(uuid(7)) @db.Uuid
+  service       CreditService
+  credits       Int
+  effectiveFrom DateTime      @map("effective_from") @db.Timestamptz(3)
+  changedById   String?       @map("changed_by_id") @db.Uuid
+  reason        String        @db.VarChar(500)
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  changedBy User? @relation("ServiceCostAuthor", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([service, effectiveFrom(sort: Desc)])
+  @@map("service_credit_costs")
+}
+
+/// Compte de crédits d'un utilisateur. La ligne est verrouillée (FOR UPDATE) à chaque mouvement.
+model CreditAccount {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  /// Solde en cache, égal à la somme des mouvements (contrôlé par la réconciliation).
+  balance   Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  lots      CreditLot[]
+  movements CreditMovement[]
+
+  @@map("credit_accounts")
+}
+
+/// Lot de crédits : consommé du plus ancien au plus récent (FIFO).
+model CreditLot {
+  id                 String          @id @default(uuid(7)) @db.Uuid
+  accountId          String          @map("account_id") @db.Uuid
+  origin             CreditLotOrigin
+  creditsTotal       Int             @map("credits_total")
+  creditsRemaining   Int             @map("credits_remaining")
+  /// Valeur interne d'un crédit au moment de l'attribution (arbitrage A1 : figée par lot).
+  creditUnitValueUsd Decimal         @map("credit_unit_value_usd") @db.Decimal(20, 6)
+  commissionable     Boolean
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  account     CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  allocations CreditLotAllocation[]
+
+  @@index([accountId, createdAt])
+  @@map("credit_lots")
+}
+
+/// Registre des crédits, en ajout seul : le solde est la somme des quantités.
+model CreditMovement {
+  id             String             @id @default(uuid(7)) @db.Uuid
+  accountId      String             @map("account_id") @db.Uuid
+  type           CreditMovementType
+  /// Positive pour une entrée, négative pour une sortie.
+  quantity       Int
+  balanceAfter   Int                @map("balance_after")
+  /// Rejouer une même opération ne produit jamais un second mouvement.
+  idempotencyKey String             @unique @map("idempotency_key") @db.VarChar(200)
+  referenceType  String?            @map("reference_type") @db.VarChar(50)
+  referenceId    String?            @map("reference_id") @db.Uuid
+  actorId        String?            @map("actor_id") @db.Uuid
+  reason         String?            @db.VarChar(500)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  jobUnlock   JobUnlock?
+  account     CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  actor       User?                 @relation("CreditMovementActor", fields: [actorId], references: [id], onDelete: Restrict)
+  allocations CreditLotAllocation[]
+
+  @@index([accountId, createdAt(sort: Desc)])
+  @@map("credit_movements")
+}
+
+/// Lots touchés par un mouvement, avec la valeur correspondante (base des commissions).
+model CreditLotAllocation {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  movementId String   @map("movement_id") @db.Uuid
+  lotId      String   @map("lot_id") @db.Uuid
+  credits    Int
+  valueUsd   Decimal  @map("value_usd") @db.Decimal(20, 6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  movement CreditMovement @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  lot      CreditLot      @relation(fields: [lotId], references: [id], onDelete: Restrict)
+
+  @@unique([movementId, lotId])
+  @@index([lotId])
+  @@map("credit_lot_allocations")
+}
+
+/// Plan de comptes (audit §6.2). Les comptes d'un contributeur portent son identifiant.
+model LedgerAccount {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  code        String            @unique @db.VarChar(100)
+  type        LedgerAccountType
+  ownerUserId String?           @map("owner_user_id") @db.Uuid
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  owner   User?         @relation("LedgerAccountOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  entries LedgerEntry[]
+
+  @@index([ownerUserId])
+  @@map("ledger_accounts")
+}
+
+/// Transaction comptable équilibrée (vérifié en base à la validation de la transaction SQL).
+model LedgerTransaction {
+  id                    String                @id @default(uuid(7)) @db.Uuid
+  type                  LedgerTransactionType
+  referenceType         String?               @map("reference_type") @db.VarChar(50)
+  referenceId           String?               @map("reference_id") @db.Uuid
+  idempotencyKey        String                @unique @map("idempotency_key") @db.VarChar(200)
+  /// Écriture compensatoire : transaction d'origine annulée par celle-ci.
+  reversesTransactionId String?               @map("reverses_transaction_id") @db.Uuid
+  actorId               String?               @map("actor_id") @db.Uuid
+  reason                String?               @db.VarChar(500)
+  occurredAt            DateTime              @default(now()) @map("occurred_at") @db.Timestamptz(3)
+
+  reverses   LedgerTransaction?  @relation("LedgerReversal", fields: [reversesTransactionId], references: [id], onDelete: Restrict)
+  reversedBy LedgerTransaction[] @relation("LedgerReversal")
+  actor      User?               @relation("LedgerTransactionActor", fields: [actorId], references: [id], onDelete: Restrict)
+  entries    LedgerEntry[]
+  commission Commission?
+
+  @@index([referenceType, referenceId])
+  @@map("ledger_transactions")
+}
+
+/// Ligne d'écriture : un débit ou un crédit strictement positif, jamais les deux.
+model LedgerEntry {
+  id            String  @id @default(uuid(7)) @db.Uuid
+  transactionId String  @map("transaction_id") @db.Uuid
+  accountId     String  @map("account_id") @db.Uuid
+  debit         Decimal @default(0) @db.Decimal(20, 6)
+  credit        Decimal @default(0) @db.Decimal(20, 6)
+
+  transaction LedgerTransaction @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+  account     LedgerAccount     @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([transactionId])
+  @@index([accountId])
+  @@map("ledger_entries")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3b — Déverrouillages et commissions.
+// ---------------------------------------------------------------------------
+
+/// États d'une commission (CLAUDE.md §10). Les transitions sont historisées.
+enum CommissionStatus {
+  pending
+  available
+  paid
+  reversed
+
+  @@map("commission_status")
+}
+
+/// Déverrouillage d'une offre par un utilisateur : définitif, une seule fois par offre.
+model JobUnlock {
+  id         String        @id @default(uuid(7)) @db.Uuid
+  userId     String        @map("user_id") @db.Uuid
+  jobOfferId String        @map("job_offer_id") @db.Uuid
+  service    CreditService
+  credits    Int
+  movementId String        @unique @map("movement_id") @db.Uuid
+  /// Valeur interne des crédits consommés (somme des lots touchés).
+  valueUsd   Decimal       @map("value_usd") @db.Decimal(20, 6)
+  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user       User           @relation("JobUnlockUser", fields: [userId], references: [id], onDelete: Restrict)
+  jobOffer   JobOffer       @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
+  movement   CreditMovement @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  commission Commission?
+
+  @@unique([userId, jobOfferId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([jobOfferId])
+  @@map("job_unlocks")
+}
+
+/// Commission du contributeur sur un déverrouillage éligible (crédits payés uniquement).
+model Commission {
+  id                  String           @id @default(uuid(7)) @db.Uuid
+  unlockId            String           @unique @map("unlock_id") @db.Uuid
+  contributorId       String           @map("contributor_id") @db.Uuid
+  jobOfferId          String           @map("job_offer_id") @db.Uuid
+  /// Valeur des crédits consommés issus de recharges payées (base du calcul).
+  baseValueUsd        Decimal          @map("base_value_usd") @db.Decimal(20, 6)
+  /// Taux en vigueur au moment du déverrouillage.
+  rate                Decimal          @db.Decimal(9, 6)
+  amountUsd           Decimal          @map("amount_usd") @db.Decimal(20, 6)
+  status              CommissionStatus @default(pending)
+  availableAt         DateTime?        @map("available_at") @db.Timestamptz(3)
+  reversedAt          DateTime?        @map("reversed_at") @db.Timestamptz(3)
+  ledgerTransactionId String           @unique @map("ledger_transaction_id") @db.Uuid
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  unlock            JobUnlock         @relation(fields: [unlockId], references: [id], onDelete: Restrict)
+  contributor       User              @relation("CommissionContributor", fields: [contributorId], references: [id], onDelete: Restrict)
+  jobOffer          JobOffer          @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
+  ledgerTransaction LedgerTransaction @relation(fields: [ledgerTransactionId], references: [id], onDelete: Restrict)
+  events            CommissionEvent[]
+
+  @@index([contributorId, status, createdAt(sort: Desc)])
+  @@index([jobOfferId])
+  @@map("commissions")
+}
+
+/// Historique des états d'une commission, en ajout seul.
+model CommissionEvent {
+  id           String            @id @default(uuid(7)) @db.Uuid
+  commissionId String            @map("commission_id") @db.Uuid
+  fromStatus   CommissionStatus? @map("from_status")
+  toStatus     CommissionStatus  @map("to_status")
+  actorId      String?           @map("actor_id") @db.Uuid
+  reason       String?           @db.VarChar(500)
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  commission Commission @relation(fields: [commissionId], references: [id], onDelete: Restrict)
+  actor      User?      @relation("CommissionEventActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([commissionId, createdAt])
+  @@map("commission_events")
 }

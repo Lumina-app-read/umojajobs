@@ -40,5 +40,14 @@
   "FILE_UNSAFE": "Ce PDF contient des éléments actifs (scripts, pièces jointes) et ne peut pas être accepté.",
   "FILE_LIMIT_REACHED": "Le nombre maximal de documents pour cette offre est atteint.",
   "FILE_NOT_FOUND": "Ce document est introuvable.",
-  "CONTRIBUTOR_TERMS_REQUIRED": "Acceptez les conditions de publication avant de partager une offre."
+  "CONTRIBUTOR_TERMS_REQUIRED": "Acceptez les conditions de publication avant de partager une offre.",
+  "FINANCIAL_SETTING_INVALID": "Valeur invalide pour ce paramètre financier.",
+  "FINANCE_NOT_CONFIGURED": "Ce service n'est pas encore disponible : son paramétrage financier est incomplet.",
+  "INSUFFICIENT_CREDITS": "Votre solde de crédits est insuffisant.",
+  "USER_NOT_FOUND": "Cet utilisateur est introuvable.",
+  "JOB_UNLOCK_OWN_OFFER": "Vous avez partagé cette offre : ses coordonnées sont déjà dans vos publications.",
+  "JOB_UNLOCK_UNAVAILABLE": "Cette offre ne peut plus être déverrouillée : elle n'est plus active.",
+  "JOB_UNLOCK_NOT_FOUND": "Vous n'avez pas déverrouillé cette offre.",
+  "CREDIT_SELF_GRANT": "Vous ne pouvez pas vous attribuer des crédits à vous-même.",
+  "CANDIDATE_TERMS_REQUIRED": "Acceptez le règlement des candidats pour voir les coordonnées."
 }

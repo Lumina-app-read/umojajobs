@@ -23,7 +23,7 @@ import { CookiesService } from '../security/cookies.service';
 import { AllowPendingMfa, CurrentAuth, Public } from '../security/decorators';
 import { type AuthContext } from './auth-context';
 import {
-  AcceptContributorTermsDto,
+  AcceptTermsDto,
   AcceptedDto,
   ChangePasswordDto,
   CsrfTokenDto,
@@ -165,10 +165,22 @@ export class AuthController {
   @ApiOkResponse({ type: MeDto })
   acceptContributorTerms(
     @CurrentAuth() auth: AuthContext,
-    @Body() dto: AcceptContributorTermsDto,
+    @Body() dto: AcceptTermsDto,
     @Req() req: AppRequest,
   ): Promise<MeDto> {
     return this.authService.acceptContributorTerms(auth, dto.version, getClientInfo(req));
+  }
+
+  /** Acceptation du règlement des candidats (après le premier déverrouillage). */
+  @Post('me/candidate-terms')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: MeDto })
+  acceptCandidateTerms(
+    @CurrentAuth() auth: AuthContext,
+    @Body() dto: AcceptTermsDto,
+    @Req() req: AppRequest,
+  ): Promise<MeDto> {
+    return this.authService.acceptCandidateTerms(auth, dto.version, getClientInfo(req));
   }
 
   @Get('sessions')

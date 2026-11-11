@@ -18,6 +18,8 @@ export const PERMISSIONS = {
   SECURITY_EVENTS_READ: 'security_events.read',
   AUDIT_LOGS_READ: 'audit_logs.read',
   SETTINGS_MANAGE: 'settings.manage',
+  FINANCE_READ: 'finance.read',
+  FINANCE_MANAGE: 'finance.manage',
 } as const;
 
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -68,5 +70,8 @@ export const SECURITY_EVENT_TYPES = [
   'role_revoked',
   'profile_updated',
   'contributor_terms_accepted',
+  'candidate_terms_accepted',
+  'financial_setting_changed',
+  'credits_granted',
 ] as const;
 export type SecurityEventTypeCode = (typeof SECURITY_EVENT_TYPES)[number];
