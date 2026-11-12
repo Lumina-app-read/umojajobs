@@ -1,8 +1,9 @@
-# CLAUDE.md — OPPORTINITIES
+# CLAUDE.md — Umoja Jobs
 
 ## 1. IDENTITÉ DU PROJET
 
-- Nom : OPPORTINITIES
+- Nom : Umoja Jobs (anciennement OPPORTINITIES, renommé par le propriétaire le 12 novembre 2026).
+- Les noms techniques internes (paquets `@opportinities/*`, base de données) conservent l'ancien nom ; tout ce que voit l'utilisateur utilise « Umoja Jobs ».
 - Type : SaaS panafricain de partage d'offres d'emploi et de création de documents professionnels.
 - Marché initial : les 54 pays africains.
 - Langues : français et anglais.
@@ -69,7 +70,7 @@ Utiliser des contrats API cohérents et des types partagés pour limiter les inc
 
 ## 4. MISSION DU PRODUIT
 
-OPPORTINITIES doit permettre :
+Umoja Jobs doit permettre :
 
 1. De découvrir des offres d'emploi fiables.
 2. De partager gratuitement des opportunités trouvées sur des sources externes.
@@ -590,4 +591,4 @@ Le rapport doit confirmer la faisabilité de la stack Next.js + NestJS + Postgre
 
 Attendre l'approbation explicite du propriétaire avant toute implémentation.
 
-**Objectif final : faire d'OPPORTINITIES une plateforme panafricaine fiable, sécurisée, bilingue et évolutive pour les opportunités professionnelles et les documents de candidature.**
+**Objectif final : faire d'Umoja Jobs une plateforme panafricaine fiable, sécurisée, bilingue et évolutive pour les opportunités professionnelles et les documents de candidature.**
