@@ -132,7 +132,7 @@ export class EnvironmentVariables {
   @IsString()
   SMTP_PASSWORD?: string;
 
-  /** Expéditeur des emails, par exemple « OPPORTINITIES <no-reply@exemple.com> ». */
+  /** Expéditeur des emails, par exemple « Umoja Jobs <no-reply@exemple.com> ». */
   @IsString()
   @MinLength(3)
   MAIL_FROM!: string;

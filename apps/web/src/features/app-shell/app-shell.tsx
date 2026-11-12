@@ -94,7 +94,7 @@ function Brand({ variant, onNavigate }: { variant: ShellVariant; onNavigate?: ()
       className="-ml-1 flex items-center gap-2 rounded-md p-1"
       aria-label={admin ? t('admin.nav.enter') : t('nav.dashboard')}
     >
-      <Logo size={30} />
+      <Logo size={28} />
       {admin && (
         <span className="rounded-md bg-navy px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
           {t('admin.badge')}

@@ -43,7 +43,7 @@ export async function SiteFooter() {
               className="-ml-1 inline-flex rounded-md p-1"
               aria-label={t('nav.homeLabel')}
             >
-              <Logo size={36} />
+              <Logo size={32} />
             </Link>
             <p className="mt-4 text-sm font-semibold text-fg">{t('meta.tagline')}</p>
             <p className="mt-2 text-sm leading-relaxed text-fg-muted">{t('meta.description')}</p>

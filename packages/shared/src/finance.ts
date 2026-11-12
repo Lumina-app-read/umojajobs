@@ -154,7 +154,7 @@ export interface UnlockedContentsResponse {
   applicationInstructions: string | null;
   applicationPhone: string | null;
   contributorTips: string | null;
-  /** Contributeur affiché sur les documents (« Publiée par … sur opportinities.com »). */
+  /** Contributeur affiché sur les documents (« Publiée par … sur Umoja Jobs »). */
   publishedBy: string;
   files: UnlockedFile[];
 }

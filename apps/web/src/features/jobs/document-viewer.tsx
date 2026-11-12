@@ -13,7 +13,7 @@ import { useFormErrors } from '@/lib/use-form-errors';
 
 /**
  * Consultation des documents dans le site : les pages arrivent en images rendues par le serveur,
- * avec la mention « Publiée par … sur opportinities.com » incrustée. Aucun bouton ni lien de
+ * avec la mention « Publiée par … sur Umoja Jobs » incrustée. Aucun bouton ni lien de
  * téléchargement ; le fichier d'origine n'est jamais transmis au navigateur.
  */
 export function DocumentViewer({

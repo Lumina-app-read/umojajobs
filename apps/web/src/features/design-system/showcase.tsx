@@ -111,7 +111,7 @@ export function DesignShowcase() {
           <p className="text-xs font-semibold tracking-[0.06em] text-brand uppercase">
             Design system
           </p>
-          <h1 className="mt-1 text-heading-lg text-fg">Composants OPPORTINITIES</h1>
+          <h1 className="mt-1 text-heading-lg text-fg">Composants Umoja Jobs</h1>
           <p className="mt-1 text-sm text-fg-muted">
             Référence interne · docs/DESIGN_SYSTEM.md · visible en développement uniquement
           </p>

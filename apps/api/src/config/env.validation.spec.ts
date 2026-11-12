@@ -7,7 +7,7 @@ const BASE = {
   APP_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString('base64'),
   SMTP_HOST: 'localhost',
   SMTP_PORT: '1025',
-  MAIL_FROM: 'OPPORTINITIES <no-reply@example.test>',
+  MAIL_FROM: 'Umoja Jobs <no-reply@example.test>',
   TERMS_VERSION: '2026-11-09',
   S3_REGION: 'garage',
   S3_BUCKET: 'oppo-private',

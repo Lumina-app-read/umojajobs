@@ -11,7 +11,7 @@
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
     "skipToContent": "Aller au contenu principal",
-    "homeLabel": "Accueil d'OPPORTINITIES",
+    "homeLabel": "Accueil d'Umoja Jobs",
     "jobs": "Offres d'emploi",
     "share": "Partager une offre",
     "careerStudio": "Career Studio",
@@ -40,7 +40,7 @@
     "submitting": "Envoi en cours…"
   },
   "footer": {
-    "rights": "© {year} OPPORTINITIES. Tous droits réservés.",
+    "rights": "© {year} Umoja Jobs. Tous droits réservés.",
     "terms": "Conditions d'utilisation",
     "privacy": "Politique de confidentialité",
     "geonames": "Données géographiques : GeoNames, licence CC BY 4.0.",

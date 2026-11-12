@@ -12,7 +12,8 @@ const MAX_SCALE = 2.5;
 /** Au-delà, les pages suivantes ne sont pas proposées (une annonce dépasse rarement quelques pages). */
 export const MAX_RENDERED_PAGES = 30;
 const CACHE_TTL_SECONDS = 6 * 60 * 60;
-const CACHE_VERSION = 'v1';
+// v2 : mention « Publiée par … sur Umoja Jobs » (changement de nom).
+const CACHE_VERSION = 'v2';
 
 type PdfJs = typeof PdfJsModule;
 type LoadingTask = ReturnType<PdfJs['getDocument']>;
@@ -20,7 +21,7 @@ type LoadingTask = ReturnType<PdfJs['getDocument']>;
 export interface RenderSource {
   fileId: string;
   storageKey: string;
-  /** Mention incrustée sur chaque page : « Publiée par … sur opportinities.com ». */
+  /** Mention incrustée sur chaque page : « Publiée par … sur Umoja Jobs ». */
   watermark: string;
 }
 

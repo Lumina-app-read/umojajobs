@@ -1,20 +1,20 @@
 {
   "common": {
     "greeting": "Bonjour {firstName},",
-    "signature": "L'équipe OPPORTINITIES",
-    "footer": "Cet email automatique a été envoyé par OPPORTINITIES. Merci de ne pas y répondre.",
+    "signature": "L'équipe Umoja Jobs",
+    "footer": "Cet email automatique a été envoyé par Umoja Jobs. Merci de ne pas y répondre.",
     "linkFallback": "Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :"
   },
   "verifyEmail": {
     "subject": "Confirmez votre adresse email",
-    "intro": "Merci pour votre inscription sur OPPORTINITIES. Confirmez votre adresse email pour activer votre compte.",
+    "intro": "Merci pour votre inscription sur Umoja Jobs. Confirmez votre adresse email pour activer votre compte.",
     "action": "Confirmer mon adresse email",
     "expiry": "Ce lien expire dans {hours} heures.",
     "ignore": "Si vous n'êtes pas à l'origine de cette inscription, ignorez simplement cet email."
   },
   "accountExists": {
     "subject": "Tentative d'inscription avec votre adresse email",
-    "intro": "Une inscription a été tentée avec votre adresse email, alors qu'un compte OPPORTINITIES existe déjà pour cette adresse.",
+    "intro": "Une inscription a été tentée avec votre adresse email, alors qu'un compte Umoja Jobs existe déjà pour cette adresse.",
     "hint": "Si c'est vous, connectez-vous. En cas d'oubli, vous pouvez réinitialiser votre mot de passe.",
     "action": "Réinitialiser mon mot de passe",
     "ignore": "Si vous n'êtes pas à l'origine de cette tentative, aucune action n'est nécessaire : votre compte n'a pas été modifié."
@@ -28,7 +28,7 @@
   },
   "passwordChanged": {
     "subject": "Votre mot de passe a été modifié",
-    "intro": "Le mot de passe de votre compte OPPORTINITIES vient d'être modifié. Par sécurité, vos autres sessions ont été déconnectées.",
+    "intro": "Le mot de passe de votre compte Umoja Jobs vient d'être modifié. Par sécurité, vos autres sessions ont été déconnectées.",
     "warning": "Si vous n'êtes pas à l'origine de cette modification, réinitialisez immédiatement votre mot de passe et contactez notre support."
   }
 }

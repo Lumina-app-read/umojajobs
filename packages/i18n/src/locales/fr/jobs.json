@@ -1,7 +1,7 @@
 {
   "terms": {
     "title": "Conditions de publication des offres",
-    "intro": "Partager une offre est gratuit. Pour que chaque candidat puisse s'y fier, toute publication sur OPPORTINITIES respecte les règles suivantes. Lisez-les attentivement avant de continuer.",
+    "intro": "Partager une offre est gratuit. Pour que chaque candidat puisse s'y fier, toute publication sur Umoja Jobs respecte les règles suivantes. Lisez-les attentivement avant de continuer.",
     "version": "Version du {date}",
     "rules": {
       "authentic": {
@@ -42,7 +42,7 @@
       }
     },
     "certify": "Je certifie que les offres que je partagerai sont authentiques, valables et reproduites fidèlement.",
-    "accept": "J'ai lu et j'accepte les conditions de publication ainsi que les <terms>conditions d'utilisation</terms> d'OPPORTINITIES.",
+    "accept": "J'ai lu et j'accepte les conditions de publication ainsi que les <terms>conditions d'utilisation</terms> d'Umoja Jobs.",
     "submit": "Accepter et continuer",
     "required": "Cochez les deux cases pour continuer.",
     "review": "Relire les conditions de publication",
@@ -384,7 +384,7 @@
     "tipsTitle": "Conseils de {name}, qui a partagé l'offre",
     "attachment": "Document complémentaire",
     "view": "Consulter",
-    "viewerNote": "Document consultable sur OPPORTINITIES uniquement, avec la mention de publication.",
+    "viewerNote": "Document consultable sur Umoja Jobs uniquement, avec la mention de publication.",
     "page": "Page {page} sur {pages}",
     "topUp": "Recharger mes crédits"
   },
@@ -400,7 +400,7 @@
     "congratsBody": "Votre accès est ouvert et restera disponible dans « Déverrouillées ».",
     "title": "Règlement des candidats",
     "items": {
-      "gateway": "OPPORTINITIES vous relie à l'offre : nous ne sommes pas intermédiaires entre vous et le recruteur.",
+      "gateway": "Umoja Jobs vous relie à l'offre : nous ne sommes pas intermédiaires entre vous et le recruteur.",
       "noGuarantee": "Aucun recrutement n'est garanti : être appelé dépend de votre expérience, de votre dossier et de la décision du recruteur.",
       "credits": "Les crédits utilisés financent le fonctionnement de la plateforme. Ils ne sont jamais versés au recruteur.",
       "noFees": "Le recruteur ne vous demande rien. Si quelqu'un réclame de l'argent pour une candidature, signalez-le-nous : c'est une fraude.",
@@ -572,10 +572,10 @@
     "phone": "Téléphone",
     "phonePlaceholder": "Ex. : +243 812 345 678",
     "phoneHint": "Demandé par le prestataire de paiement.",
-    "secure": "Vos crédits sont ajoutés dès que le paiement est confirmé. Aucune donnée bancaire ne transite par OPPORTINITIES.",
+    "secure": "Vos crédits sont ajoutés dès que le paiement est confirmé. Aucune donnée bancaire ne transite par Umoja Jobs.",
     "pay": "Payer {price}",
     "cancel": "Annuler",
-    "note": "Les crédits n’expirent pas. Les frais de paiement sont à la charge d’OPPORTINITIES.",
+    "note": "Les crédits n’expirent pas. Les frais de paiement sont à la charge d’Umoja Jobs.",
     "verifyingTitle": "Paiement en cours de vérification",
     "verifyingBody": "Nous attendons la confirmation du paiement. Cela prend généralement moins d’une minute.",
     "paidTitle": "Paiement confirmé !",

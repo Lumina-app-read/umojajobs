@@ -34,7 +34,7 @@ export async function SiteHeader() {
     <header className="header-elevate sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:px-6">
         <Link href="/" className="-ml-1 rounded-md p-1" aria-label={t('homeLabel')}>
-          <Logo />
+          <Logo variant="auto" size={30} />
         </Link>
 
         <nav aria-label={t('main')} className="ml-6 max-lg:hidden">

@@ -59,7 +59,7 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
             <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
               <DialogTitle className="sr-only">{t('nav.menu')}</DialogTitle>
               <Link href="/" onClick={close} className="rounded-md" aria-label={t('nav.homeLabel')}>
-                <Logo size={28} />
+                <Logo size={26} />
               </Link>
               <button
                 type="button"

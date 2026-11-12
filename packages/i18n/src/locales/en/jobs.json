@@ -1,7 +1,7 @@
 {
   "terms": {
     "title": "Offer publishing conditions",
-    "intro": "Sharing an offer is free. So that every candidate can rely on it, every post on OPPORTINITIES follows the rules below. Please read them carefully before continuing.",
+    "intro": "Sharing an offer is free. So that every candidate can rely on it, every post on Umoja Jobs follows the rules below. Please read them carefully before continuing.",
     "version": "Version of {date}",
     "rules": {
       "authentic": {
@@ -42,7 +42,7 @@
       }
     },
     "certify": "I certify that the offers I share will be authentic, still open and faithfully copied.",
-    "accept": "I have read and accept the publishing conditions and the OPPORTINITIES <terms>terms of use</terms>.",
+    "accept": "I have read and accept the publishing conditions and the Umoja Jobs <terms>terms of use</terms>.",
     "submit": "Accept and continue",
     "required": "Tick both boxes to continue.",
     "review": "Review the publishing conditions",
@@ -384,7 +384,7 @@
     "tipsTitle": "Tips from {name}, who shared the offer",
     "attachment": "Additional document",
     "view": "View",
-    "viewerNote": "Document viewable on OPPORTINITIES only, with the publication mark.",
+    "viewerNote": "Document viewable on Umoja Jobs only, with the publication mark.",
     "page": "Page {page} of {pages}",
     "topUp": "Top up my credits"
   },
@@ -400,7 +400,7 @@
     "congratsBody": "Your access is open and stays available under “Unlocked”.",
     "title": "Candidate rules",
     "items": {
-      "gateway": "OPPORTINITIES connects you with the offer: we are not an intermediary between you and the recruiter.",
+      "gateway": "Umoja Jobs connects you with the offer: we are not an intermediary between you and the recruiter.",
       "noGuarantee": "No hiring is guaranteed: being contacted depends on your experience, your application and the recruiter’s decision.",
       "credits": "The credits you use fund the running of the platform. They are never paid to the recruiter.",
       "noFees": "The recruiter asks you for nothing. If anyone requests money for an application, report it to us: it is fraud.",
@@ -572,10 +572,10 @@
     "phone": "Phone",
     "phonePlaceholder": "E.g. +243 812 345 678",
     "phoneHint": "Required by the payment provider.",
-    "secure": "Your credits are added as soon as the payment is confirmed. No banking data goes through OPPORTINITIES.",
+    "secure": "Your credits are added as soon as the payment is confirmed. No banking data goes through Umoja Jobs.",
     "pay": "Pay {price}",
     "cancel": "Cancel",
-    "note": "Credits do not expire. Payment fees are paid by OPPORTINITIES.",
+    "note": "Credits do not expire. Payment fees are paid by Umoja Jobs.",
     "verifyingTitle": "Payment being verified",
     "verifyingBody": "We are waiting for the payment confirmation. It usually takes less than a minute.",
     "paidTitle": "Payment confirmed!",

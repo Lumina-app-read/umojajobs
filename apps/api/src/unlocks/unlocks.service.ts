@@ -372,7 +372,7 @@ export class UnlocksService {
     return {
       fileId: file.id,
       storageKey: file.storageKey,
-      watermark: `Publiée par ${publisherName(file.jobOffer.contributor)} sur opportinities.com`,
+      watermark: `Publiée par ${publisherName(file.jobOffer.contributor)} sur Umoja Jobs`,
     };
   }
 }
