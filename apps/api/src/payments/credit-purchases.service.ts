@@ -35,6 +35,8 @@ const CHARIOW_RECEIVABLE = { code: 'chariow_receivable', type: 'asset' as const 
 const CHARIOW_WALLET = { code: 'chariow_wallet', type: 'asset' as const };
 const PAYMENT_FEES = { code: 'payment_processing_fees', type: 'expense' as const };
 const PAID_STATUSES = new Set(['completed', 'settled']);
+/** Identifiant de vente Chariow : « SALE… » en production, « sal_… » dans la documentation. */
+const SALE_ID = /^[A-Za-z0-9_-]{6,100}$/;
 
 const toPack = (pack: {
   id: string;
@@ -296,8 +298,16 @@ export class CreditPurchasesService {
     if (!event || event.processedAt || !event.signatureValid) return;
     let error: string | null = null;
     try {
-      if (event.saleId) await this.confirmSale(event.saleId);
-      else error = 'Identifiant de vente absent de la notification';
+      let saleId = event.saleId;
+      if (!saleId) {
+        const reference = extractOrderRef(event.payload);
+        const order = reference
+          ? await this.prisma.creditOrder.findUnique({ where: { reference } })
+          : null;
+        saleId = order?.providerSaleId ?? null;
+      }
+      if (saleId) await this.confirmSale(saleId);
+      else error = 'Vente non identifiée dans la notification';
     } catch (caught) {
       error = (caught as Error).message.slice(0, 500);
     }
@@ -457,22 +467,24 @@ export class CreditPurchasesService {
           rawSnapshot: sale as unknown as Prisma.InputJsonValue,
         },
       });
-      if (doneAt && net && fee && net.add(fee).eq(payment.amountUsd)) {
+      // Chariow retient plus que ses frais de service affichés (ex. : net 0,85 et frais 0,07 sur
+      // 1,00) : tout ce qui n'est pas versé est comptabilisé comme coût de paiement.
+      if (doneAt && net && net.gt(0) && net.lte(payment.amountUsd)) {
+        const cost = payment.amountUsd.sub(net);
         await this.ledger.post(tx, {
           type: 'payment_settlement',
           idempotencyKey: `settlement:${saleId}`,
           referenceType: 'payment',
           referenceId: payment.id,
+          reason: `Net ${net.toFixed(2)}, frais de service ${fee?.toFixed(2) ?? '?'}, coût total ${cost.toFixed(2)}`,
           lines: [
-            ...(fee.gt(0) ? [{ account: PAYMENT_FEES, debit: fee }] : []),
+            ...(cost.gt(0) ? [{ account: PAYMENT_FEES, debit: cost }] : []),
             { account: CHARIOW_WALLET, debit: net },
             { account: CHARIOW_RECEIVABLE, credit: payment.amountUsd },
           ],
         });
       } else if (doneAt) {
-        this.logger.warn(
-          `Règlement ${saleId} : net et frais incohérents, écriture à faire à la main`,
-        );
+        this.logger.warn(`Règlement ${saleId} : montant net absent ou incohérent, à vérifier`);
       }
     });
   }
@@ -501,7 +513,7 @@ function mismatch(
 }
 
 /** Identifiant de vente dans une Pulse : la documentation montre plusieurs formes. */
-function extractSaleId(payload: unknown): string | null {
+export function extractSaleId(payload: unknown): string | null {
   const read = (value: unknown, ...path: string[]): unknown =>
     path.reduce<unknown>(
       (node, key) =>
@@ -513,8 +525,27 @@ function extractSaleId(payload: unknown): string | null {
     read(payload, 'data', 'sale', 'id'),
     read(payload, 'data', 'id'),
   ];
-  const found = candidates.find((value) => typeof value === 'string' && value.startsWith('sal_'));
-  return typeof found === 'string' ? found.slice(0, 100) : null;
+  const found = candidates.find((value) => typeof value === 'string' && SALE_ID.test(value));
+  return typeof found === 'string' ? found : null;
+}
+
+/** Référence de commande transmise dans custom_metadata (repli si la vente n'est pas identifiée). */
+export function extractOrderRef(payload: unknown): string | null {
+  const read = (value: unknown, ...path: string[]): unknown =>
+    path.reduce<unknown>(
+      (node, key) =>
+        node && typeof node === 'object' ? (node as Record<string, unknown>)[key] : undefined,
+      value,
+    );
+  const candidates = [
+    read(payload, 'custom_metadata', 'order_ref'),
+    read(payload, 'sale', 'custom_metadata', 'order_ref'),
+    read(payload, 'data', 'custom_metadata', 'order_ref'),
+  ];
+  const found = candidates.find(
+    (value) => typeof value === 'string' && /^CR-\d{8}-[0-9A-F]{8}$/.test(value),
+  );
+  return typeof found === 'string' ? found : null;
 }
 
 /** Téléphone au format attendu par Chariow : chiffres nationaux et pays ISO alpha-2. */
