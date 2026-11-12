@@ -35,11 +35,7 @@ const DESKTOP_QUERY = '(min-width: 1024px)';
 const iconButton = cn(buttonClasses('ghost', 'md'), 'size-9 px-0');
 
 /** Navigation traduite de l'espace demandé, limitée aux permissions de l'utilisateur. */
-function useNavGroups(
-  variant: ShellVariant,
-  permissions: string[],
-  showEarnings: boolean,
-): NavGroupView[] {
+function useNavGroups(variant: ShellVariant, permissions: string[]): NavGroupView[] {
   const t = useTranslations('common');
 
   if (variant === 'admin') {
@@ -56,10 +52,7 @@ function useNavGroups(
     return groups;
   }
 
-  // Les revenus restent discrets : la rubrique n'apparaît qu'à un contributeur qui a des gains.
-  const groups: NavGroupView[] = APP_NAV.filter(
-    (group) => group.key !== 'finances' || showEarnings,
-  ).map((group) => ({
+  const groups: NavGroupView[] = APP_NAV.map((group) => ({
     key: group.key,
     label: group.key === 'main' ? null : t(`app.nav.groups.${group.key}`),
     items: group.items.map((item) => ({ ...item, label: t(`app.nav.${item.key}`) })),
@@ -219,18 +212,15 @@ function AppTabBar() {
 export function AppShell({
   user,
   variant = 'user',
-  showEarnings = false,
   children,
 }: {
   user: ShellUser;
   variant?: ShellVariant;
-  /** Affiche la rubrique « Mes revenus » (contributeur ayant déjà des gains). */
-  showEarnings?: boolean;
   children: ReactNode;
 }) {
   const t = useTranslations('common');
   const pathname = usePathname();
-  const groups = useNavGroups(variant, user.permissions, showEarnings);
+  const groups = useNavGroups(variant, user.permissions);
   const navLabel = variant === 'admin' ? t('admin.nav.label') : t('app.nav.label');
   const current = groups
     .flatMap((group) => group.items)

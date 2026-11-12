@@ -547,5 +547,15 @@
         "reject": "Demande refusée, montant libéré"
       }
     }
+  },
+  "earnings": {
+    "title": "Mes revenus",
+    "intro": "Les revenus issus des offres que vous avez partagées, et leurs retraits.",
+    "tabs": {
+      "label": "Rubriques de mes revenus",
+      "overview": "Aperçu",
+      "commissions": "Commissions",
+      "withdrawals": "Retraits"
+    }
   }
 }

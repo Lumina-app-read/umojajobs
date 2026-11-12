@@ -1,5 +1,5 @@
 import { type CommissionStatus } from '@opportinities/shared';
-import { HandCoins, Megaphone, Wallet } from 'lucide-react';
+import { HandCoins, Megaphone } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Alert } from '@/components/ui/alert';
@@ -12,7 +12,7 @@ import { getCommissions } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('common.app.nav');
+  const t = await getTranslations('jobs.earnings.tabs');
   return { title: t('commissions') };
 }
 
@@ -32,18 +32,6 @@ export default async function CommissionsPage() {
 
   return (
     <div className="grid gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg sm:text-[28px]">
-            {t('title')}
-          </h1>
-          <p className="mt-1.5 text-sm text-fg-muted">{t('intro')}</p>
-        </div>
-        <ButtonLink href="/dashboard/wallet" variant="secondary" icon={Wallet}>
-          {t('seeWallet')}
-        </ButtonLink>
-      </div>
-
       {commissions === null ? (
         <Alert tone="error">{t('unavailable')}</Alert>
       ) : commissions.length === 0 ? (

@@ -1,4 +1,4 @@
-import { ArrowDownToLine, Clock, HandCoins, Info, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowDownToLine, Clock, Info, TrendingUp, Wallet } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Alert } from '@/components/ui/alert';
@@ -8,8 +8,8 @@ import { getWallet } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('common.app.nav');
-  return { title: t('wallet') };
+  const t = await getTranslations('jobs.earnings');
+  return { title: t('title') };
 }
 
 /** Portefeuille du contributeur : soldes calculés par l'API, aucun calcul financier ici. */
@@ -24,18 +24,6 @@ export default async function WalletPage() {
 
   return (
     <div className="grid gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg sm:text-[28px]">
-            {t('title')}
-          </h1>
-          <p className="mt-1.5 text-sm text-fg-muted">{t('intro')}</p>
-        </div>
-        <ButtonLink href="/dashboard/commissions" variant="secondary" icon={HandCoins}>
-          {t('seeCommissions')}
-        </ButtonLink>
-      </div>
-
       {wallet === null ? (
         <Alert tone="error">{t('unavailable')}</Alert>
       ) : (
@@ -78,7 +66,7 @@ export default async function WalletPage() {
                 : t('withdrawNoThreshold')}
             </p>
             <div className="mt-4">
-              <ButtonLink href="/dashboard/withdrawals" icon={ArrowDownToLine}>
+              <ButtonLink href="/dashboard/earnings/withdrawals" icon={ArrowDownToLine}>
                 {t('withdrawCta')}
               </ButtonLink>
             </div>

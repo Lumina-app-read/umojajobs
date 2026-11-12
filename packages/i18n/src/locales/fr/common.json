@@ -89,7 +89,6 @@
       "groups": {
         "offers": "Offres",
         "contribute": "Contribuer",
-        "finances": "Mes revenus",
         "studio": "Career Studio",
         "account": "Compte"
       },
@@ -99,13 +98,11 @@
       "unlocked": "Déverrouillées",
       "publications": "Mes publications",
       "publish": "Publier une offre",
-      "wallet": "Portefeuille",
-      "commissions": "Commissions",
-      "withdrawals": "Retraits",
       "studio": "Studio",
       "documents": "Mes documents",
       "notifications": "Notifications",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "earnings": "Mes revenus"
     },
     "tabs": {
       "home": "Accueil",

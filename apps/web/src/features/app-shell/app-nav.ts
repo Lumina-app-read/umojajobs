@@ -1,10 +1,8 @@
 import {
-  ArrowDownToLine,
   Bell,
   Bookmark,
   Briefcase,
   Files,
-  HandCoins,
   LayoutDashboard,
   type LucideIcon,
   Megaphone,
@@ -25,9 +23,7 @@ export interface AppNavItem {
     | 'unlocked'
     | 'publications'
     | 'publish'
-    | 'wallet'
-    | 'commissions'
-    | 'withdrawals'
+    | 'earnings'
     | 'studio'
     | 'documents'
     | 'notifications'
@@ -38,7 +34,7 @@ export interface AppNavItem {
 }
 
 export interface AppNavGroup {
-  key: 'main' | 'offers' | 'contribute' | 'finances' | 'studio' | 'account';
+  key: 'main' | 'offers' | 'contribute' | 'studio' | 'account';
   items: AppNavItem[];
 }
 
@@ -61,14 +57,7 @@ export const APP_NAV: AppNavGroup[] = [
     items: [
       { key: 'publications', href: '/dashboard/publications', icon: Megaphone, phase: null },
       { key: 'publish', href: '/dashboard/publish', icon: SquarePlus, phase: null },
-    ],
-  },
-  {
-    key: 'finances',
-    items: [
-      { key: 'wallet', href: '/dashboard/wallet', icon: Wallet, phase: null },
-      { key: 'commissions', href: '/dashboard/commissions', icon: HandCoins, phase: null },
-      { key: 'withdrawals', href: '/dashboard/withdrawals', icon: ArrowDownToLine, phase: null },
+      { key: 'earnings', href: '/dashboard/earnings', icon: Wallet, phase: null },
     ],
   },
   {

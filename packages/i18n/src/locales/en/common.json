@@ -89,7 +89,6 @@
       "groups": {
         "offers": "Offers",
         "contribute": "Contribute",
-        "finances": "My earnings",
         "studio": "Career Studio",
         "account": "Account"
       },
@@ -99,13 +98,11 @@
       "unlocked": "Unlocked",
       "publications": "My posts",
       "publish": "Post an offer",
-      "wallet": "Wallet",
-      "commissions": "Commissions",
-      "withdrawals": "Withdrawals",
       "studio": "Studio",
       "documents": "My documents",
       "notifications": "Notifications",
-      "settings": "Settings"
+      "settings": "Settings",
+      "earnings": "My earnings"
     },
     "tabs": {
       "home": "Home",

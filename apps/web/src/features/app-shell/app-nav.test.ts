@@ -4,13 +4,13 @@ import { APP_NAV_ITEMS, APP_TABS, isActive, UPCOMING_SECTIONS } from './app-nav'
 describe('navigation de l’espace connecté', () => {
   it('la vue d’ensemble n’est active que sur sa propre adresse', () => {
     expect(isActive('/dashboard', '/dashboard')).toBe(true);
-    expect(isActive('/dashboard/wallet', '/dashboard')).toBe(false);
+    expect(isActive('/dashboard/earnings', '/dashboard')).toBe(false);
   });
 
   it('une rubrique reste active sur ses sous-pages, sans confondre les préfixes', () => {
-    expect(isActive('/dashboard/wallet', '/dashboard/wallet')).toBe(true);
-    expect(isActive('/dashboard/wallet/history', '/dashboard/wallet')).toBe(true);
-    expect(isActive('/dashboard/walletx', '/dashboard/wallet')).toBe(false);
+    expect(isActive('/dashboard/earnings', '/dashboard/earnings')).toBe(true);
+    expect(isActive('/dashboard/earnings/withdrawals', '/dashboard/earnings')).toBe(true);
+    expect(isActive('/dashboard/earningsx', '/dashboard/earnings')).toBe(false);
   });
 
   it('les rubriques disponibles ne passent pas par la page « Bientôt disponible »', () => {

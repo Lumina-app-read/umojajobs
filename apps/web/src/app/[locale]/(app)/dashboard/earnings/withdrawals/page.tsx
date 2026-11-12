@@ -1,11 +1,10 @@
 import { flagEmoji } from '@opportinities/shared';
-import { ArrowDownToLine, Banknote, History, Wallet } from 'lucide-react';
+import { ArrowDownToLine, Banknote, History, type LucideIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState } from '@/components/ui/feedback';
 import { WITHDRAWAL_TONE } from '@/features/withdrawals/status';
 import { AddMethodButton, RequestWithdrawalForm } from '@/features/withdrawals/withdrawal-forms';
@@ -13,7 +12,7 @@ import { getCountries, getMyWithdrawals, getWallet, getWithdrawalMethods } from 
 import { requireUser } from '@/lib/auth-guard';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('common.app.nav');
+  const t = await getTranslations('jobs.earnings.tabs');
   return { title: t('withdrawals') };
 }
 
@@ -40,18 +39,6 @@ export default async function WithdrawalsPage() {
 
   return (
     <div className="grid gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg sm:text-[28px]">
-            {t('title')}
-          </h1>
-          <p className="mt-1.5 text-sm text-fg-muted">{t('intro')}</p>
-        </div>
-        <ButtonLink href="/dashboard/wallet" variant="secondary" icon={Wallet}>
-          {t('seeWallet')}
-        </ButtonLink>
-      </div>
-
       <Card icon={ArrowDownToLine} title={t('requestTitle')}>
         {wallet === null ? (
           <Alert tone="error">{t('unavailable')}</Alert>
@@ -142,7 +129,7 @@ function Card({
   action,
   children,
 }: {
-  icon: typeof Wallet;
+  icon: LucideIcon;
   title: string;
   action?: ReactNode;
   children: ReactNode;

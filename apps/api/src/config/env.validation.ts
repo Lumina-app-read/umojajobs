@@ -110,6 +110,19 @@ export class EnvironmentVariables {
   @IsBoolean()
   SMTP_SECURE = false;
 
+  /** API Chariow (recharges de crédits). Sans clé, le paiement reste fermé. */
+  @IsUrl({ require_tld: true, protocols: ['https'] })
+  CHARIOW_API_BASE_URL = 'https://api.chariow.com/v1';
+
+  @IsOptional()
+  @IsString()
+  CHARIOW_API_KEY?: string;
+
+  /** Secret de signature des Pulses (webhooks), propre à chaque Pulse (whsec_…). */
+  @IsOptional()
+  @IsString()
+  CHARIOW_PULSE_SECRET?: string;
+
   @IsOptional()
   @IsString()
   SMTP_USER?: string;

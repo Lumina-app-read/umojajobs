@@ -547,5 +547,15 @@
         "reject": "Request rejected, amount released"
       }
     }
+  },
+  "earnings": {
+    "title": "My earnings",
+    "intro": "Earnings from the offers you shared, and their withdrawals.",
+    "tabs": {
+      "label": "My earnings sections",
+      "overview": "Overview",
+      "commissions": "Commissions",
+      "withdrawals": "Withdrawals"
+    }
   }
 }
