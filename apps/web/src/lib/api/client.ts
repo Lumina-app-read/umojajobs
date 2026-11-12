@@ -37,9 +37,10 @@ export async function apiRequest<T>(
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   path: string,
   body?: unknown,
+  extraHeaders: Record<string, string> = {},
   retried = false,
 ): Promise<T> {
-  const headers: Record<string, string> = { Accept: 'application/json' };
+  const headers: Record<string, string> = { Accept: 'application/json', ...extraHeaders };
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   if (UNSAFE_METHODS.has(method)) headers['X-CSRF-Token'] = await ensureCsrfToken();
 
@@ -59,7 +60,7 @@ export async function apiRequest<T>(
     const error = ApiError.fromBody(response.status, await safeJson(response));
     if (error.code === ERROR_CODES.CSRF_INVALID && !retried) {
       setCsrfToken(null);
-      return apiRequest<T>(method, path, body, true);
+      return apiRequest<T>(method, path, body, extraHeaders, true);
     }
     throw error;
   }
@@ -90,7 +91,8 @@ export async function apiUpload<T>(path: string, form: FormData): Promise<T> {
 
 export const api = {
   get: <T>(path: string) => apiRequest<T>('GET', path),
-  post: <T>(path: string, body?: unknown) => apiRequest<T>('POST', path, body ?? {}),
+  post: <T>(path: string, body?: unknown, headers?: Record<string, string>) =>
+    apiRequest<T>('POST', path, body ?? {}, headers),
   put: <T>(path: string, body?: unknown) => apiRequest<T>('PUT', path, body ?? {}),
   patch: <T>(path: string, body: unknown) => apiRequest<T>('PATCH', path, body),
   delete: <T>(path: string) => apiRequest<T>('DELETE', path),

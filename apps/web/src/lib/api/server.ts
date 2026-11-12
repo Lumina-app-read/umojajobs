@@ -4,6 +4,8 @@ import {
   type CountryResponse,
   type CreditBalanceResponse,
   type CreditCostResponse,
+  type FinancialSettingResponse,
+  type ServiceCostResponse,
   type UnlockedContentsResponse,
   type UnlockSummaryResponse,
   type JobCategoryResponse,
@@ -177,5 +179,21 @@ export const getUnlocks = cache(async (): Promise<UnlockSummaryResponse[] | null
 /** Commissions du contributeur connecté (null si l'API ne répond pas). */
 export async function getCommissions(): Promise<CommissionResponse[] | null> {
   const result = await serverGet<CommissionResponse[]>('/me/commissions').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Paramètres financiers en vigueur (administration ; null si l'API refuse ou ne répond pas). */
+export async function getFinancialSettings(): Promise<FinancialSettingResponse[] | null> {
+  const result = await serverGet<FinancialSettingResponse[]>('/admin/finance/settings').catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Coûts des services en crédits, avec leur historique d'auteur (administration). */
+export async function getServiceCosts(): Promise<ServiceCostResponse[] | null> {
+  const result = await serverGet<ServiceCostResponse[]>('/admin/finance/service-costs').catch(
+    () => null,
+  );
   return result?.data ?? null;
 }

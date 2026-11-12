@@ -10,6 +10,7 @@ import {
   type CreditGrantResponse,
   ERROR_CODES,
   FINANCE_LIMITS,
+  type FinanceUserLookupResponse,
 } from '@opportinities/shared';
 import { type AuthContext } from '../auth/auth-context';
 import { type ClientInfo } from '../common/http/app-request';
@@ -90,6 +91,27 @@ export class CreditsService {
         ...movement,
         createdAt: movement.createdAt.toISOString(),
       })),
+    };
+  }
+
+  /** Bénéficiaire d'une dotation, retrouvé par son adresse exacte (insensible à la casse). */
+  async lookupUser(email: string): Promise<FinanceUserLookupResponse> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: email.trim() },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        creditAccount: { select: { balance: true } },
+      },
+    });
+    if (!user) throw new NotFoundException({ code: ERROR_CODES.USER_NOT_FOUND });
+    return {
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      balance: user.creditAccount?.balance ?? 0,
     };
   }
 

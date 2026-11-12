@@ -52,11 +52,8 @@ export interface AdminNavGroup {
 
 const { ADMIN_ACCESS, USERS_READ, ROLES_MANAGE, JOBS_MODERATE, SETTINGS_MANAGE } = PERMISSIONS;
 
-/**
- * Les finances n'ont pas encore de permissions dédiées (elles seront créées avec la phase 3) :
- * en attendant, seules les personnes autorisées à modifier les paramètres les voient.
- */
-const FINANCE_PERMISSION = SETTINGS_MANAGE;
+/** Finances : consultation avec finance.read ; les modifications exigent finance.manage. */
+const FINANCE_PERMISSION = PERMISSIONS.FINANCE_READ;
 
 export const ADMIN_NAV: AdminNavGroup[] = [
   {
@@ -90,10 +87,10 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         key: 'pricing',
-        href: '/admin/pricing',
+        href: '/admin/finance',
         icon: BadgePercent,
-        permission: SETTINGS_MANAGE,
-        phase: 4,
+        permission: FINANCE_PERMISSION,
+        phase: null,
       },
     ],
   },

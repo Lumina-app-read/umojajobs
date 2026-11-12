@@ -206,7 +206,7 @@
       "unlocks": "Unlocks",
       "commissions": "Commissions",
       "withdrawals": "Withdrawals",
-      "pricing": "Documents and pricing",
+      "pricing": "Pricing and settings",
       "notifications": "Notifications",
       "translations": "Translations",
       "settings": "Settings",
@@ -272,6 +272,74 @@
       "credits_granted": "Credits granted",
       "candidate_terms_accepted": "Candidate rules accepted"
     },
-    "badge": "Admin"
+    "badge": "Admin",
+    "finance": {
+      "title": "Pricing and financial settings",
+      "intro": "Every change takes effect immediately and stays in the history, with its author and reason.",
+      "readOnly": "Read only: changes require the finance management permission.",
+      "settingsTitle": "Financial settings",
+      "costsTitle": "Service costs in credits",
+      "columns": {
+        "setting": "Setting",
+        "value": "Value",
+        "since": "Since",
+        "by": "By",
+        "service": "Service",
+        "credits": "Credits"
+      },
+      "notSet": "Not set",
+      "notSetHint": "Feature closed until a value is set.",
+      "seed": "Initial value",
+      "edit": "Edit",
+      "editTitle": "Edit: {name}",
+      "valueLabel": "New value",
+      "creditsLabel": "New cost in credits",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "E.g. committee decision of 12 November 2026",
+      "reasonHint": "At least 10 characters. The reason is kept in the history.",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Change saved",
+      "units": {
+        "usd": "USD",
+        "rate": "rate from 0 to 1",
+        "days": "days"
+      },
+      "settings": {
+        "credit_unit_value_usd": "Value of one credit",
+        "contributor_commission_rate": "Contributor share",
+        "withdrawal_min_usd": "Withdrawal threshold",
+        "commission_hold_days": "Commission holding period",
+        "commission_hold_days_new_contributor": "Holding period (new contributor)",
+        "new_contributor_period_days": "New contributor period",
+        "withdrawal_dual_approval_usd": "Dual approval of withdrawals from"
+      },
+      "placeholders": {
+        "usd": "E.g. 0.10",
+        "rate": "E.g. 0.30",
+        "days": "E.g. 14"
+      },
+      "services": {
+        "unlock_standard": "Offer unlock",
+        "unlock_premium": "Premium unlock",
+        "doc_cv": "CV",
+        "doc_cover_letter": "Cover letter",
+        "doc_application_letter": "Job application letter",
+        "doc_pack": "CV and letter pack"
+      },
+      "grant": {
+        "title": "Grant free credits",
+        "intro": "Goodwill gesture or compensation. These credits never earn a commission and you cannot grant them to yourself.",
+        "emailLabel": "Recipient email",
+        "emailPlaceholder": "E.g. awa.diallo@example.com",
+        "find": "Search",
+        "found": "{name}: {balance, plural, =0 {no credits} one {# credit} other {# credits}} currently",
+        "creditsLabel": "Credits to grant",
+        "creditsPlaceholder": "E.g. 20",
+        "submit": "Grant",
+        "done": "{credits, plural, one {# credit granted} other {# credits granted}}. New balance: {balance}.",
+        "change": "Change recipient"
+      }
+    }
   }
 }

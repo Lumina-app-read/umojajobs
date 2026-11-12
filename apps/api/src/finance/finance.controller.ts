@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import {
   type CreditGrantResponse,
   ERROR_CODES,
   type FinancialSettingResponse,
+  type FinanceUserLookupResponse,
   PERMISSIONS,
   type ServiceCostResponse,
 } from '@opportinities/shared';
@@ -29,6 +31,7 @@ import {
   CreditGrantInputDto,
   FinancialSettingInputDto,
   FinancialSettingKeyParamDto,
+  FinanceUserLookupQueryDto,
   ServiceCostInputDto,
   ServiceParamDto,
 } from './finance.dto';
@@ -97,6 +100,13 @@ export class FinanceAdminController {
       body.reason,
       getClientInfo(req),
     );
+  }
+
+  @Get('users/lookup')
+  @RequirePermissions(PERMISSIONS.ADMIN_ACCESS, PERMISSIONS.FINANCE_MANAGE)
+  @ApiOkResponse({ description: 'Bénéficiaire d’une dotation, retrouvé par son email exact.' })
+  lookupUser(@Query() query: FinanceUserLookupQueryDto): Promise<FinanceUserLookupResponse> {
+    return this.credits.lookupUser(query.email);
   }
 
   @Post('credit-grants')

@@ -18,14 +18,22 @@ describe('navigation de l’administration', () => {
     expect(groups).toEqual(['main']);
   });
 
-  it('les finances restent réservées aux personnes qui gèrent les paramètres', () => {
+  it('les finances exigent la permission de consultation financière', () => {
     const admin = keys([
       PERMISSIONS.ADMIN_ACCESS,
       PERMISSIONS.USERS_READ,
       PERMISSIONS.SECURITY_EVENTS_READ,
     ]);
     expect(admin).toContain('securityEvents');
-    expect(admin).not.toContain('payments');
+    expect(admin).not.toContain('pricing');
+    expect(keys([PERMISSIONS.ADMIN_ACCESS, PERMISSIONS.FINANCE_READ])).toEqual([
+      'overview',
+      'pricing',
+      'payments',
+      'unlocks',
+      'commissions',
+      'withdrawals',
+    ]);
     expect(keys(Object.values(PERMISSIONS))).toHaveLength(ADMIN_NAV_ITEMS.length);
   });
 });

@@ -108,6 +108,14 @@ export interface CreditGrantInput {
   reason: string;
 }
 
+/** Bénéficiaire d'une dotation, retrouvé par son email (administration financière). */
+export interface FinanceUserLookupResponse {
+  id: string;
+  name: string;
+  email: string;
+  balance: number;
+}
+
 export interface CreditGrantResponse {
   movementId: string;
   balance: number;

@@ -10,7 +10,18 @@ import {
   type ServiceCostInput,
 } from '@opportinities/shared';
 import { Transform } from 'class-transformer';
-import { IsIn, IsInt, IsString, IsUUID, Length, Matches, Max, Min } from 'class-validator';
+import {
+  IsEmail,
+  IsIn,
+  IsInt,
+  IsString,
+  IsUUID,
+  Length,
+  Matches,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 const trim = ({ value }: { value: unknown }): unknown =>
   typeof value === 'string' ? value.trim() : value;
@@ -72,4 +83,12 @@ export class CreditGrantInputDto implements CreditGrantInput {
   @IsString()
   @Length(FINANCE_LIMITS.reasonMin, FINANCE_LIMITS.reasonMax)
   reason!: string;
+}
+
+export class FinanceUserLookupQueryDto {
+  @ApiProperty({ example: 'awa.diallo@example.com' })
+  @Transform(trim)
+  @IsEmail()
+  @MaxLength(254)
+  email!: string;
 }

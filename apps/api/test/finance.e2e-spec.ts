@@ -168,6 +168,25 @@ describe('Finances : paramètres, crédits et grand livre (intégration)', () =>
     });
   });
 
+  it('retrouve un bénéficiaire par son email, réservé à la gestion financière', async () => {
+    const member = await account();
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: member.userId } });
+    const found = await treasurer.get(
+      `/api/v1/admin/finance/users/lookup?email=${encodeURIComponent(user.email.toUpperCase())}`,
+    );
+    expect(found.status).toBe(200);
+    expect(found.body).toMatchObject({ id: member.userId, balance: 0 });
+    const missing = await treasurer.get(
+      '/api/v1/admin/finance/users/lookup?email=inconnu%40example.test',
+    );
+    expect(missing.status).toBe(404);
+    const reader = await account('admin');
+    const denied = await reader.api.get(
+      `/api/v1/admin/finance/users/lookup?email=${encodeURIComponent(user.email)}`,
+    );
+    expect(denied.status).toBe(403);
+  });
+
   it('attribue des crédits gratuits une seule fois par clé, sans droit à commission', async () => {
     const member = await account();
     const key = randomUUID();

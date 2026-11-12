@@ -206,7 +206,7 @@
       "unlocks": "Déverrouillages",
       "commissions": "Commissions",
       "withdrawals": "Retraits",
-      "pricing": "Documents et tarifs",
+      "pricing": "Tarifs et paramètres",
       "notifications": "Notifications",
       "translations": "Traductions",
       "settings": "Paramètres",
@@ -272,6 +272,74 @@
       "credits_granted": "Crédits attribués",
       "candidate_terms_accepted": "Règlement des candidats accepté"
     },
-    "badge": "Admin"
+    "badge": "Admin",
+    "finance": {
+      "title": "Tarifs et paramètres financiers",
+      "intro": "Chaque modification prend effet immédiatement et reste dans l’historique, avec son auteur et son motif.",
+      "readOnly": "Consultation seule : la modification exige la permission de gestion financière.",
+      "settingsTitle": "Paramètres financiers",
+      "costsTitle": "Coûts des services en crédits",
+      "columns": {
+        "setting": "Paramètre",
+        "value": "Valeur",
+        "since": "Depuis",
+        "by": "Par",
+        "service": "Service",
+        "credits": "Crédits"
+      },
+      "notSet": "Non défini",
+      "notSetHint": "Fonction fermée tant que la valeur n’est pas fixée.",
+      "seed": "Valeur initiale",
+      "edit": "Modifier",
+      "editTitle": "Modifier : {name}",
+      "valueLabel": "Nouvelle valeur",
+      "creditsLabel": "Nouveau coût en crédits",
+      "reasonLabel": "Motif",
+      "reasonPlaceholder": "Ex. : décision du comité du 12 novembre 2026",
+      "reasonHint": "10 caractères au moins. Le motif est conservé dans l’historique.",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "saved": "Modification enregistrée",
+      "units": {
+        "usd": "USD",
+        "rate": "taux de 0 à 1",
+        "days": "jours"
+      },
+      "settings": {
+        "credit_unit_value_usd": "Valeur d’un crédit",
+        "contributor_commission_rate": "Part du contributeur",
+        "withdrawal_min_usd": "Seuil de retrait",
+        "commission_hold_days": "Délai de retenue des commissions",
+        "commission_hold_days_new_contributor": "Délai de retenue (nouveau contributeur)",
+        "new_contributor_period_days": "Ancienneté d’un nouveau contributeur",
+        "withdrawal_dual_approval_usd": "Double validation des retraits à partir de"
+      },
+      "placeholders": {
+        "usd": "Ex. : 0.10",
+        "rate": "Ex. : 0.30",
+        "days": "Ex. : 14"
+      },
+      "services": {
+        "unlock_standard": "Déverrouillage d’une offre",
+        "unlock_premium": "Déverrouillage premium",
+        "doc_cv": "CV",
+        "doc_cover_letter": "Lettre de motivation",
+        "doc_application_letter": "Demande d’emploi",
+        "doc_pack": "Pack CV et lettre"
+      },
+      "grant": {
+        "title": "Attribuer des crédits gratuits",
+        "intro": "Geste commercial ou dédommagement. Ces crédits ne donnent jamais droit à une commission et vous ne pouvez pas vous en attribuer.",
+        "emailLabel": "Email du bénéficiaire",
+        "emailPlaceholder": "Ex. : awa.diallo@example.com",
+        "find": "Rechercher",
+        "found": "{name} : {balance, plural, =0 {aucun crédit} one {# crédit} other {# crédits}} actuellement",
+        "creditsLabel": "Crédits à attribuer",
+        "creditsPlaceholder": "Ex. : 20",
+        "submit": "Attribuer",
+        "done": "{credits, plural, one {# crédit attribué} other {# crédits attribués}}. Nouveau solde : {balance}.",
+        "change": "Changer de bénéficiaire"
+      }
+    }
   }
 }
