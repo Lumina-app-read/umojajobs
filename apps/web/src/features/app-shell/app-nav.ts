@@ -68,7 +68,7 @@ export const APP_NAV: AppNavGroup[] = [
     items: [
       { key: 'wallet', href: '/dashboard/wallet', icon: Wallet, phase: null },
       { key: 'commissions', href: '/dashboard/commissions', icon: HandCoins, phase: null },
-      { key: 'withdrawals', href: '/dashboard/withdrawals', icon: ArrowDownToLine, phase: 3 },
+      { key: 'withdrawals', href: '/dashboard/withdrawals', icon: ArrowDownToLine, phase: null },
     ],
   },
   {

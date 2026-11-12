@@ -206,3 +206,95 @@ export interface WalletResponse {
   holdConfigured: boolean;
   commissionCount: number;
 }
+
+// --- Retraits (phase 3d) ---------------------------------------------------------------------
+
+export const WITHDRAWAL_METHOD_TYPES = ['mobile_money', 'bank_transfer'] as const;
+export type WithdrawalMethodType = (typeof WITHDRAWAL_METHOD_TYPES)[number];
+
+export const WITHDRAWAL_STATUSES = [
+  'pending',
+  'under_review',
+  'approved',
+  'processing',
+  'paid',
+  'rejected',
+] as const;
+export type WithdrawalStatus = (typeof WITHDRAWAL_STATUSES)[number];
+
+/** Décisions de l'administration sur une demande de retrait. */
+export const WITHDRAWAL_ACTIONS = ['review', 'approve', 'process', 'pay', 'fail', 'reject'] as const;
+export type WithdrawalAction = (typeof WITHDRAWAL_ACTIONS)[number];
+
+export const WITHDRAWAL_LIMITS = {
+  providerMax: 100,
+  holderMax: 150,
+  accountMax: 40,
+  referenceMax: 120,
+  noteMin: 10,
+  noteMax: 1000,
+} as const;
+
+export interface WithdrawalMethodInput {
+  type: WithdrawalMethodType;
+  countryIso2: string;
+  /** Opérateur (Orange Money, M-Pesa…) ou banque. */
+  provider: string;
+  accountHolder: string;
+  /** Numéro E.164 pour le Mobile Money, numéro de compte ou IBAN pour un virement. */
+  accountNumber: string;
+}
+
+export interface WithdrawalMethodResponse {
+  id: string;
+  type: WithdrawalMethodType;
+  countryIso2: string;
+  provider: string;
+  maskedAccount: string;
+  createdAt: string;
+}
+
+export interface WithdrawalRequestInput {
+  methodId: string;
+  /** Montant en USD, décimal en chaîne (« 12.50 »). */
+  amountUsd: string;
+}
+
+export interface WithdrawalEventResponse {
+  toStatus: WithdrawalStatus;
+  note: string | null;
+  createdAt: string;
+}
+
+export interface WithdrawalResponse {
+  id: string;
+  amountUsd: string;
+  status: WithdrawalStatus;
+  method: WithdrawalMethodResponse;
+  payoutReference: string | null;
+  paidAt: string | null;
+  rejectionReason: string | null;
+  createdAt: string;
+  events: WithdrawalEventResponse[];
+}
+
+/** Vue de l'administration : coordonnées déchiffrées et contrôle de la double validation. */
+export interface AdminWithdrawalResponse extends WithdrawalResponse {
+  user: { id: string; name: string; email: string };
+  accountHolder: string;
+  accountNumber: string;
+  approvedBy: { id: string; name: string } | null;
+  paidBy: { id: string; name: string } | null;
+  /** Vrai si le montant atteint le seuil : l'approbateur ne peut pas marquer le versement. */
+  dualApprovalRequired: boolean;
+}
+
+export interface WithdrawalDecisionInput {
+  action: WithdrawalAction;
+  /** Obligatoire pour « pay ». */
+  payoutReference?: string;
+  /** Date effective du versement (AAAA-MM-JJ), obligatoire pour « pay ». */
+  paidOn?: string;
+  /** Motif, obligatoire pour « reject » et « fail ». */
+  note?: string;
+}

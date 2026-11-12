@@ -115,14 +115,14 @@ describe('Finances : paramètres, crédits et grand livre (intégration)', () =>
     expect(denied.status).toBe(403);
   });
 
-  it('expose les valeurs initiales et laisse vides les décisions encore ouvertes', async () => {
+  it('expose les valeurs initiales décidées par le propriétaire', async () => {
     const settings = (await treasurer.get('/api/v1/admin/finance/settings'))
       .body as FinancialSettingResponse[];
     const value = (key: string) => settings.find((setting) => setting.key === key)?.value;
     expect(value('credit_unit_value_usd')).toBe('0.1');
     expect(value('contributor_commission_rate')).toBe('0.3');
-    expect(value('commission_hold_days')).toBeNull();
-    expect(value('withdrawal_dual_approval_usd')).toBeNull();
+    expect(value('commission_hold_days')).toBe('14');
+    expect(value('withdrawal_dual_approval_usd')).toBe('50');
 
     const costs = (await treasurer.get('/api/v1/admin/finance/service-costs'))
       .body as ServiceCostResponse[];

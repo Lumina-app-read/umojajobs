@@ -32,7 +32,6 @@ describe('navigation de l’administration', () => {
       'payments',
       'unlocks',
       'commissions',
-      'withdrawals',
     ]);
     expect(keys(Object.values(PERMISSIONS))).toHaveLength(ADMIN_NAV_ITEMS.length);
   });

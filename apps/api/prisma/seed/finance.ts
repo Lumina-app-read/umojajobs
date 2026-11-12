@@ -9,8 +9,8 @@ import {
  * Ce sont des données administrables, pas des constantes du code : elles ne sont chargées que si
  * le paramètre n'a encore aucune valeur, puis se modifient depuis l'administration (historisé).
  *
- * Non chargés volontairement (décisions encore ouvertes) : délais de retenue des commissions
- * (N4), ancienneté d'un nouveau contributeur (N4) et seuil de double validation des retraits (N5).
+ * Délais de retenue (N4) et seuil de double validation des retraits (N5) : décisions du
+ * propriétaire du 12 novembre 2026.
  */
 const INITIAL_SETTINGS: { key: FinancialSettingKey; value: string; reason: string }[] = [
   {
@@ -27,6 +27,26 @@ const INITIAL_SETTINGS: { key: FinancialSettingKey; value: string; reason: strin
     key: 'withdrawal_min_usd',
     value: '10',
     reason: 'Valeur initiale : seuil de retrait de 10 USD (CLAUDE.md §11).',
+  },
+  {
+    key: 'commission_hold_days',
+    value: '14',
+    reason: 'Décision N4 du 12 novembre 2026 : retenue de 14 jours (contributeur établi).',
+  },
+  {
+    key: 'commission_hold_days_new_contributor',
+    value: '30',
+    reason: 'Décision N4 du 12 novembre 2026 : retenue de 30 jours (nouveau contributeur).',
+  },
+  {
+    key: 'new_contributor_period_days',
+    value: '60',
+    reason: 'Décision N4 du 12 novembre 2026 : nouveau contributeur pendant 60 jours.',
+  },
+  {
+    key: 'withdrawal_dual_approval_usd',
+    value: '50',
+    reason: 'Décision N5 du 12 novembre 2026 : double validation à partir de 50 USD.',
   },
 ];
 

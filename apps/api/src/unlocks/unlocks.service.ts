@@ -180,12 +180,22 @@ export class UnlocksService {
    * payé. Les commissions annulées ne comptent pas. Montants exacts, jamais de flottant.
    */
   async wallet(userId: string): Promise<WalletResponse> {
-    const [groups, minimum, holdDays] = await Promise.all([
+    const [groups, allocated, withdrawals, minimum, holdDays] = await Promise.all([
       this.prisma.commission.groupBy({
         by: ['status'],
         where: { contributorId: userId },
         _sum: { amountUsd: true },
         _count: { _all: true },
+      }),
+      // Part des commissions disponibles déjà affectée à des retraits (en cours ou payés).
+      this.prisma.withdrawalCommissionAllocation.aggregate({
+        where: { releasedAt: null, commission: { contributorId: userId, status: 'available' } },
+        _sum: { amountUsd: true },
+      }),
+      this.prisma.withdrawalRequest.groupBy({
+        by: ['status'],
+        where: { userId, status: { not: 'rejected' } },
+        _sum: { amountUsd: true },
       }),
       this.settings.require('withdrawal_min_usd').catch(() => null),
       this.settings.require('commission_hold_days').catch(() => null),
@@ -193,15 +203,20 @@ export class UnlocksService {
     const sum = (status: string) =>
       groups.find((group) => group.status === status)?._sum.amountUsd ?? new Prisma.Decimal(0);
     const pending = sum('pending');
-    const available = sum('available');
+    const available = sum('available').sub(allocated._sum.amountUsd ?? 0);
     const paid = sum('paid');
+    const zero = new Prisma.Decimal(0);
+    const reserved = withdrawals
+      .filter((group) => group.status !== 'paid')
+      .reduce((total, group) => total.add(group._sum.amountUsd ?? zero), zero);
+    const withdrawn = withdrawals.find((group) => group.status === 'paid')?._sum.amountUsd ?? zero;
     return {
       currency: 'USD',
       pendingUsd: pending.toFixed(6),
       availableUsd: available.toFixed(6),
-      reservedUsd: new Prisma.Decimal(0).toFixed(6),
-      totalEarnedUsd: pending.add(available).add(paid).toFixed(6),
-      totalWithdrawnUsd: paid.toFixed(6),
+      reservedUsd: reserved.toFixed(6),
+      totalEarnedUsd: pending.add(sum('available')).add(paid).toFixed(6),
+      totalWithdrawnUsd: withdrawn.toFixed(6),
       withdrawalMinUsd: minimum ? minimum.toFixed(2) : null,
       holdConfigured: holdDays !== null,
       commissionCount: groups

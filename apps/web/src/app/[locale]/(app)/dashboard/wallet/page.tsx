@@ -77,7 +77,11 @@ export default async function WalletPage() {
                 ? t('withdrawThreshold', { amount: usd(wallet.withdrawalMinUsd) })
                 : t('withdrawNoThreshold')}
             </p>
-            <p className="mt-1 text-[13px] text-fg-subtle">{t('withdrawSoon')}</p>
+            <div className="mt-4">
+              <ButtonLink href="/dashboard/withdrawals" icon={ArrowDownToLine}>
+                {t('withdrawCta')}
+              </ButtonLink>
+            </div>
           </section>
 
           <Alert tone="info" title={t('howTitle')}>

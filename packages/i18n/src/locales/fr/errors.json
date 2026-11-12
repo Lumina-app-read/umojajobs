@@ -49,5 +49,13 @@
   "JOB_UNLOCK_UNAVAILABLE": "Cette offre ne peut plus être déverrouillée : elle n'est plus active.",
   "JOB_UNLOCK_NOT_FOUND": "Vous n'avez pas déverrouillé cette offre.",
   "CREDIT_SELF_GRANT": "Vous ne pouvez pas vous attribuer des crédits à vous-même.",
-  "CANDIDATE_TERMS_REQUIRED": "Acceptez le règlement des candidats pour voir les coordonnées."
+  "CANDIDATE_TERMS_REQUIRED": "Acceptez le règlement des candidats pour voir les coordonnées.",
+  "WITHDRAWAL_METHOD_NOT_FOUND": "Ce moyen de retrait est introuvable.",
+  "WITHDRAWAL_NOT_FOUND": "Cette demande de retrait est introuvable.",
+  "WITHDRAWAL_BELOW_MINIMUM": "Le montant est inférieur au seuil de retrait.",
+  "WITHDRAWAL_INSUFFICIENT_FUNDS": "Le montant dépasse votre solde disponible.",
+  "WITHDRAWAL_ALREADY_OPEN": "Une demande de retrait est déjà en cours.",
+  "WITHDRAWAL_INVALID_TRANSITION": "Cette action n'est pas possible dans l'état actuel de la demande.",
+  "WITHDRAWAL_DUAL_APPROVAL": "Au-delà du seuil, le versement doit être confirmé par un autre administrateur que celui qui l'a approuvé.",
+  "WITHDRAWAL_SELF_REVIEW": "Vous ne pouvez pas traiter votre propre demande de retrait."
 }

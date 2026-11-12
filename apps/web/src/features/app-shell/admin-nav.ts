@@ -122,8 +122,9 @@ export const ADMIN_NAV: AdminNavGroup[] = [
         key: 'withdrawals',
         href: '/admin/withdrawals',
         icon: ArrowDownToLine,
-        permission: FINANCE_PERMISSION,
-        phase: 3,
+        // Coordonnées de versement déchiffrées : réservé à la gestion financière.
+        permission: PERMISSIONS.FINANCE_MANAGE,
+        phase: null,
       },
     ],
   },

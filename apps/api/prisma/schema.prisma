@@ -141,6 +141,8 @@ enum SecurityEventType {
   financial_setting_changed
   credits_granted
   candidate_terms_accepted
+  withdrawal_requested
+  withdrawal_status_changed
 
   @@map("security_event_type")
 }
@@ -180,29 +182,34 @@ model User {
   createdAt                  DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                  DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  country            Country                 @relation(fields: [countryId], references: [id], onDelete: Restrict)
-  roles              UserRole[]              @relation("UserRoles")
-  rolesAssigned      UserRole[]              @relation("RoleAssignedBy")
-  sessions           Session[]
-  verificationTokens VerificationToken[]
-  recoveryCodes      MfaRecoveryCode[]
-  securityEvents     SecurityEvent[]
-  jobOffers          JobOffer[]              @relation("JobOfferContributor")
-  reviewedJobOffers  JobOffer[]              @relation("JobOfferReviewer")
-  jobStatusChanges   JobOfferStatusHistory[] @relation("JobOfferStatusActor")
-  jobRevisions       JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
-  jobFiles           JobOfferFile[]          @relation("JobOfferFileUploader")
-  fileDownloads      FileDownloadLog[]       @relation("FileDownloader")
-  savedJobs          SavedJob[]
-  financialSettings  FinancialSetting[]      @relation("FinancialSettingAuthor")
-  serviceCosts       ServiceCreditCost[]     @relation("ServiceCostAuthor")
-  creditAccount      CreditAccount?
-  creditMovements    CreditMovement[]        @relation("CreditMovementActor")
-  ledgerAccounts     LedgerAccount[]         @relation("LedgerAccountOwner")
-  ledgerTransactions LedgerTransaction[]     @relation("LedgerTransactionActor")
-  jobUnlocks         JobUnlock[]             @relation("JobUnlockUser")
-  commissions        Commission[]            @relation("CommissionContributor")
-  commissionEvents   CommissionEvent[]       @relation("CommissionEventActor")
+  country             Country                 @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  roles               UserRole[]              @relation("UserRoles")
+  rolesAssigned       UserRole[]              @relation("RoleAssignedBy")
+  sessions            Session[]
+  verificationTokens  VerificationToken[]
+  recoveryCodes       MfaRecoveryCode[]
+  securityEvents      SecurityEvent[]
+  jobOffers           JobOffer[]              @relation("JobOfferContributor")
+  reviewedJobOffers   JobOffer[]              @relation("JobOfferReviewer")
+  jobStatusChanges    JobOfferStatusHistory[] @relation("JobOfferStatusActor")
+  jobRevisions        JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
+  jobFiles            JobOfferFile[]          @relation("JobOfferFileUploader")
+  fileDownloads       FileDownloadLog[]       @relation("FileDownloader")
+  savedJobs           SavedJob[]
+  financialSettings   FinancialSetting[]      @relation("FinancialSettingAuthor")
+  serviceCosts        ServiceCreditCost[]     @relation("ServiceCostAuthor")
+  creditAccount       CreditAccount?
+  creditMovements     CreditMovement[]        @relation("CreditMovementActor")
+  ledgerAccounts      LedgerAccount[]         @relation("LedgerAccountOwner")
+  ledgerTransactions  LedgerTransaction[]     @relation("LedgerTransactionActor")
+  jobUnlocks          JobUnlock[]             @relation("JobUnlockUser")
+  commissions         Commission[]            @relation("CommissionContributor")
+  commissionEvents    CommissionEvent[]       @relation("CommissionEventActor")
+  withdrawalMethods   WithdrawalMethod[]      @relation("WithdrawalMethodOwner")
+  withdrawals         WithdrawalRequest[]     @relation("WithdrawalRequester")
+  approvedWithdrawals WithdrawalRequest[]     @relation("WithdrawalApprover")
+  paidWithdrawals     WithdrawalRequest[]     @relation("WithdrawalPayer")
+  withdrawalEvents    WithdrawalEvent[]       @relation("WithdrawalEventActor")
 
   @@index([countryId])
   @@map("users")
@@ -690,6 +697,9 @@ enum LedgerTransactionType {
   credit_grant
   credit_consumption
   commission_accrual
+  withdrawal_reserve
+  withdrawal_release
+  withdrawal_payout
 
   @@map("ledger_transaction_type")
 }
@@ -832,11 +842,12 @@ model LedgerTransaction {
   reason                String?               @db.VarChar(500)
   occurredAt            DateTime              @default(now()) @map("occurred_at") @db.Timestamptz(3)
 
-  reverses   LedgerTransaction?  @relation("LedgerReversal", fields: [reversesTransactionId], references: [id], onDelete: Restrict)
-  reversedBy LedgerTransaction[] @relation("LedgerReversal")
-  actor      User?               @relation("LedgerTransactionActor", fields: [actorId], references: [id], onDelete: Restrict)
-  entries    LedgerEntry[]
-  commission Commission?
+  reverses          LedgerTransaction?  @relation("LedgerReversal", fields: [reversesTransactionId], references: [id], onDelete: Restrict)
+  reversedBy        LedgerTransaction[] @relation("LedgerReversal")
+  actor             User?               @relation("LedgerTransactionActor", fields: [actorId], references: [id], onDelete: Restrict)
+  entries           LedgerEntry[]
+  commission        Commission?
+  withdrawalReserve WithdrawalRequest?  @relation("WithdrawalReserve")
 
   @@index([referenceType, referenceId])
   @@map("ledger_transactions")
@@ -913,11 +924,12 @@ model Commission {
   createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt           DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  unlock            JobUnlock         @relation(fields: [unlockId], references: [id], onDelete: Restrict)
-  contributor       User              @relation("CommissionContributor", fields: [contributorId], references: [id], onDelete: Restrict)
-  jobOffer          JobOffer          @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
-  ledgerTransaction LedgerTransaction @relation(fields: [ledgerTransactionId], references: [id], onDelete: Restrict)
-  events            CommissionEvent[]
+  unlock                JobUnlock                        @relation(fields: [unlockId], references: [id], onDelete: Restrict)
+  contributor           User                             @relation("CommissionContributor", fields: [contributorId], references: [id], onDelete: Restrict)
+  jobOffer              JobOffer                         @relation(fields: [jobOfferId], references: [id], onDelete: Restrict)
+  ledgerTransaction     LedgerTransaction                @relation(fields: [ledgerTransactionId], references: [id], onDelete: Restrict)
+  events                CommissionEvent[]
+  withdrawalAllocations WithdrawalCommissionAllocation[]
 
   @@index([contributorId, status, createdAt(sort: Desc)])
   @@index([jobOfferId])
@@ -939,4 +951,115 @@ model CommissionEvent {
 
   @@index([commissionId, createdAt])
   @@map("commission_events")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3d — Retraits des contributeurs (audit §7, CLAUDE.md §11).
+// ---------------------------------------------------------------------------
+
+enum WithdrawalMethodType {
+  mobile_money
+  bank_transfer
+
+  @@map("withdrawal_method_type")
+}
+
+/// États d'une demande de retrait (CLAUDE.md §11). `paid` exige référence et date du versement.
+enum WithdrawalStatus {
+  pending
+  under_review
+  approved
+  processing
+  paid
+  rejected
+
+  @@map("withdrawal_status")
+}
+
+/// Moyen de retrait d'un utilisateur. Les coordonnées sont chiffrées (AES-256-GCM).
+model WithdrawalMethod {
+  id               String               @id @default(uuid(7)) @db.Uuid
+  userId           String               @map("user_id") @db.Uuid
+  type             WithdrawalMethodType
+  countryIso2      String               @map("country_iso2") @db.Char(2)
+  /// Opérateur ou banque, affichable (« Orange Money », « Rawbank »).
+  provider         String               @db.VarChar(100)
+  /// Fin du numéro ou du compte, seule partie affichée (« ••• 4567 »).
+  maskedAccount    String               @map("masked_account") @db.VarChar(40)
+  /// Coordonnées complètes chiffrées : jamais renvoyées à l'utilisateur, lues par l'administration.
+  detailsEncrypted String               @map("details_encrypted")
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  archivedAt       DateTime?            @map("archived_at") @db.Timestamptz(3)
+
+  user     User                @relation("WithdrawalMethodOwner", fields: [userId], references: [id], onDelete: Restrict)
+  requests WithdrawalRequest[]
+
+  @@index([userId, archivedAt])
+  @@map("withdrawal_methods")
+}
+
+/// Demande de retrait : le montant est réservé dès la création (écriture au grand livre).
+model WithdrawalRequest {
+  id                   String           @id @default(uuid(7)) @db.Uuid
+  userId               String           @map("user_id") @db.Uuid
+  methodId             String           @map("method_id") @db.Uuid
+  amountUsd            Decimal          @map("amount_usd") @db.Decimal(20, 6)
+  status               WithdrawalStatus @default(pending)
+  approvedById         String?          @map("approved_by_id") @db.Uuid
+  approvedAt           DateTime?        @map("approved_at") @db.Timestamptz(3)
+  paidById             String?          @map("paid_by_id") @db.Uuid
+  paidAt               DateTime?        @map("paid_at") @db.Timestamptz(3)
+  /// Référence de l'opérateur ou de la banque, obligatoire pour `paid`.
+  payoutReference      String?          @map("payout_reference") @db.VarChar(120)
+  rejectionReason      String?          @map("rejection_reason") @db.VarChar(1000)
+  reserveTransactionId String           @unique @map("reserve_transaction_id") @db.Uuid
+  createdAt            DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user               User                             @relation("WithdrawalRequester", fields: [userId], references: [id], onDelete: Restrict)
+  method             WithdrawalMethod                 @relation(fields: [methodId], references: [id], onDelete: Restrict)
+  approvedBy         User?                            @relation("WithdrawalApprover", fields: [approvedById], references: [id], onDelete: Restrict)
+  paidBy             User?                            @relation("WithdrawalPayer", fields: [paidById], references: [id], onDelete: Restrict)
+  reserveTransaction LedgerTransaction                @relation("WithdrawalReserve", fields: [reserveTransactionId], references: [id], onDelete: Restrict)
+  events             WithdrawalEvent[]
+  allocations        WithdrawalCommissionAllocation[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt])
+  @@map("withdrawal_requests")
+}
+
+/// Historique des états d'une demande de retrait, en ajout seul.
+model WithdrawalEvent {
+  id           String            @id @default(uuid(7)) @db.Uuid
+  withdrawalId String            @map("withdrawal_id") @db.Uuid
+  fromStatus   WithdrawalStatus? @map("from_status")
+  toStatus     WithdrawalStatus  @map("to_status")
+  actorId      String?           @map("actor_id") @db.Uuid
+  note         String?           @db.VarChar(1000)
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  withdrawal WithdrawalRequest @relation(fields: [withdrawalId], references: [id], onDelete: Restrict)
+  actor      User?             @relation("WithdrawalEventActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([withdrawalId, createdAt])
+  @@map("withdrawal_events")
+}
+
+/// Commissions couvertes par une demande, dans l'ordre chronologique (la dernière en partie).
+model WithdrawalCommissionAllocation {
+  id           String    @id @default(uuid(7)) @db.Uuid
+  withdrawalId String    @map("withdrawal_id") @db.Uuid
+  commissionId String    @map("commission_id") @db.Uuid
+  amountUsd    Decimal   @map("amount_usd") @db.Decimal(20, 6)
+  /// Renseigné si la demande est refusée : le montant redevient disponible.
+  releasedAt   DateTime? @map("released_at") @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  withdrawal WithdrawalRequest @relation(fields: [withdrawalId], references: [id], onDelete: Restrict)
+  commission Commission        @relation(fields: [commissionId], references: [id], onDelete: Restrict)
+
+  @@unique([withdrawalId, commissionId])
+  @@index([commissionId])
+  @@map("withdrawal_commission_allocations")
 }

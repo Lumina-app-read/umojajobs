@@ -270,7 +270,9 @@
       "contributor_terms_accepted": "Publishing conditions accepted",
       "financial_setting_changed": "Financial setting changed",
       "credits_granted": "Credits granted",
-      "candidate_terms_accepted": "Candidate rules accepted"
+      "candidate_terms_accepted": "Candidate rules accepted",
+      "withdrawal_requested": "Withdrawal requested",
+      "withdrawal_status_changed": "Withdrawal status changed"
     },
     "badge": "Admin",
     "finance": {

@@ -8,7 +8,11 @@ import {
   type ServiceCostResponse,
   type UnlockedContentsResponse,
   type UnlockSummaryResponse,
+  type AdminWithdrawalResponse,
   type WalletResponse,
+  type WithdrawalMethodResponse,
+  type WithdrawalResponse,
+  type WithdrawalStatus,
   type JobCategoryResponse,
   type JobOfferResponse,
   type JobOfferSummaryResponse,
@@ -204,3 +208,35 @@ export const getWallet = cache(async (): Promise<WalletResponse | null> => {
   const result = await serverGet<WalletResponse>('/me/wallet').catch(() => null);
   return result?.data ?? null;
 });
+
+/** Moyens de retrait de l'utilisateur connecté (null si l'API ne répond pas). */
+export async function getWithdrawalMethods(): Promise<WithdrawalMethodResponse[] | null> {
+  const result = await serverGet<WithdrawalMethodResponse[]>('/me/withdrawal-methods').catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Demandes de retrait de l'utilisateur connecté. */
+export async function getMyWithdrawals(): Promise<WithdrawalResponse[] | null> {
+  const result = await serverGet<WithdrawalResponse[]>('/me/withdrawals').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** File des retraits (administration) : en cours par défaut, ou un état précis. */
+export async function getAdminWithdrawals(
+  status: WithdrawalStatus | null,
+): Promise<AdminWithdrawalResponse[] | null> {
+  const query = status ? `?status=${status}` : '';
+  const result = await serverGet<AdminWithdrawalResponse[]>(`/admin/withdrawals${query}`).catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+export async function getAdminWithdrawal(id: string): Promise<AdminWithdrawalResponse | null> {
+  const result = await serverGet<AdminWithdrawalResponse>(
+    `/admin/withdrawals/${encodeURIComponent(id)}`,
+  ).catch(() => null);
+  return result?.data ?? null;
+}

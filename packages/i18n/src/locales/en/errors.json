@@ -49,5 +49,13 @@
   "JOB_UNLOCK_UNAVAILABLE": "This offer can no longer be unlocked: it is not active anymore.",
   "JOB_UNLOCK_NOT_FOUND": "You have not unlocked this offer.",
   "CREDIT_SELF_GRANT": "You cannot grant credits to yourself.",
-  "CANDIDATE_TERMS_REQUIRED": "Accept the candidate rules to see the application details."
+  "CANDIDATE_TERMS_REQUIRED": "Accept the candidate rules to see the application details.",
+  "WITHDRAWAL_METHOD_NOT_FOUND": "This withdrawal method cannot be found.",
+  "WITHDRAWAL_NOT_FOUND": "This withdrawal request cannot be found.",
+  "WITHDRAWAL_BELOW_MINIMUM": "The amount is below the withdrawal threshold.",
+  "WITHDRAWAL_INSUFFICIENT_FUNDS": "The amount exceeds your available balance.",
+  "WITHDRAWAL_ALREADY_OPEN": "A withdrawal request is already in progress.",
+  "WITHDRAWAL_INVALID_TRANSITION": "This action is not possible in the request’s current state.",
+  "WITHDRAWAL_DUAL_APPROVAL": "Above the threshold, the payout must be confirmed by an administrator other than the approver.",
+  "WITHDRAWAL_SELF_REVIEW": "You cannot process your own withdrawal request."
 }
