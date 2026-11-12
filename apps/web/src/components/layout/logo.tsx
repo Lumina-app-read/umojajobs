@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
 
-/** Proportions des fichiers recadrés de `public/images/logos` (logo complet 405 × 96). */
-const FULL_RATIO = 405 / 96;
+/** Proportions des fichiers recadrés de `public/images/logos` (logo complet 450 × 96). */
+const FULL_RATIO = 450 / 96;
 
 /**
  * Logo Umoja Jobs. `full` : icône et nom ; `mark` : icône seule ; `auto` : icône seule sur
