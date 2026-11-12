@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -9,6 +10,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type Redis from 'ioredis';
 import {
   AFRICAN_COUNTRIES,
   type AdminCreditPackResponse,
@@ -27,6 +29,7 @@ import { LEDGER_ACCOUNTS, LedgerService } from '../finance/ledger.service';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SecurityEventsService } from '../security-events/security-events.service';
+import { REDIS_CLIENT } from '../redis/redis.module';
 import { ChariowClient, type ChariowSale } from './chariow.client';
 
 type Tx = Prisma.TransactionClient;
@@ -91,6 +94,7 @@ export class CreditPurchasesService {
     private readonly ledger: LedgerService,
     private readonly securityEvents: SecurityEventsService,
     private readonly config: ConfigService<EnvironmentVariables, true>,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
   ) {}
 
   // --- Packs -----------------------------------------------------------------------------------
@@ -238,7 +242,19 @@ export class CreditPurchasesService {
   async order(userId: string, reference: string): Promise<CreditOrderResponse> {
     const order = await this.prisma.creditOrder.findFirst({ where: { reference, userId } });
     if (!order) throw new NotFoundException({ code: ERROR_CODES.CREDIT_ORDER_NOT_FOUND });
-    return toOrder(order);
+    if (order.status !== 'pending' || !order.providerSaleId) return toOrder(order);
+
+    // Pendant que la page de retour attend, la vente est relue chez Chariow (au plus toutes les
+    // 5 secondes par commande) : les crédits arrivent sans attendre la Pulse ni la réconciliation.
+    // C'est toujours la vente confirmée par Chariow qui fait foi, jamais le retour du navigateur.
+    const throttle = await this.redis.set(`credit-order-check:${order.id}`, '1', 'EX', 5, 'NX');
+    if (throttle === 'OK') {
+      await this.confirmSale(order.providerSaleId).catch((error: Error) =>
+        this.logger.warn(`Vérification de ${reference} : ${error.message}`),
+      );
+    }
+    const fresh = await this.prisma.creditOrder.findUniqueOrThrow({ where: { id: order.id } });
+    return toOrder(fresh);
   }
 
   async orders(userId: string): Promise<CreditOrderResponse[]> {

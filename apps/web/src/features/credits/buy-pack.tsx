@@ -96,7 +96,7 @@ export function BuyPackButton({
 
 /**
  * Retour de la page de paiement : le navigateur ne prouve rien. L'état de la commande est
- * interrogé jusqu'à confirmation par le serveur (ou au bout d'une minute environ).
+ * interrogé (le serveur relit alors la vente chez Chariow) jusqu'à confirmation, 3 minutes au plus.
  */
 export function OrderStatus({ reference }: { reference: string }) {
   const t = useTranslations('jobs.credits');
@@ -121,7 +121,7 @@ export function OrderStatus({ reference }: { reference: string }) {
         if (!stopped) setStatus('unknown');
         return;
       }
-      if (attempts < 20) setTimeout(() => void tick(), 3000);
+      if (attempts < 60) setTimeout(() => void tick(), 3000);
     };
     void tick();
     return () => {

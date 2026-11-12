@@ -248,6 +248,24 @@ describe('Recharges de crédits Chariow (intégration)', () => {
     expect(totals._sum.debit?.toFixed(6)).toBe(totals._sum.credit?.toFixed(6));
   });
 
+  it('crédite dès que la page de retour consulte la commande, sans attendre la Pulse', async () => {
+    const buyer = await member();
+    const order = await buy(buyer);
+    const saleId = await saleOf(order.reference);
+    const pending = (await buyer.api.get(`/api/v1/me/credit-orders/${order.reference}`))
+      .body as CreditOrderResponse;
+    expect(pending.status).toBe('pending');
+
+    (sales.get(saleId) as FakeSale).status = 'completed';
+    await redis.flushdb(); // délai minimal entre deux relectures
+    const paid = (await buyer.api.get(`/api/v1/me/credit-orders/${order.reference}`))
+      .body as CreditOrderResponse;
+    expect(paid.status).toBe('paid');
+    expect(
+      (await prisma.creditAccount.findUniqueOrThrow({ where: { userId: buyer.userId } })).balance,
+    ).toBe(100);
+  });
+
   it('place en anomalie une vente dont le montant ne correspond pas, sans crédit', async () => {
     const buyer = await member();
     const order = await buy(buyer);
