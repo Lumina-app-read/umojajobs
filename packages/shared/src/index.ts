@@ -8,3 +8,4 @@ export * from './errors';
 export * from './finance';
 export * from './locales';
 export * from './jobs';
+export * from './studio';

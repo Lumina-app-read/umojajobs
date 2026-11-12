@@ -63,5 +63,9 @@
   "CREDIT_PACK_NOT_FOUND": "Ce pack de crédits n'est pas disponible.",
   "CREDIT_PACK_INVALID": "Pack invalide : le prix doit correspondre au nombre de crédits multiplié par la valeur d'un crédit.",
   "CREDIT_ORDER_NOT_FOUND": "Cette commande est introuvable.",
-  "PHONE_REQUIRED": "Indiquez un numéro de téléphone pour le paiement."
+  "PHONE_REQUIRED": "Indiquez un numéro de téléphone pour le paiement.",
+  "CAREER_DOCUMENT_NOT_FOUND": "Ce document est introuvable.",
+  "CAREER_DOCUMENT_VERSION_CONFLICT": "Le document a été modifié dans un autre onglet. Rechargez la page pour récupérer la dernière version.",
+  "CAREER_DOCUMENT_TYPE_UNAVAILABLE": "Ce type de document n'est pas encore disponible.",
+  "CAREER_DOCUMENT_LIMIT": "Vous avez atteint le nombre maximal de documents. Supprimez-en un pour en créer un nouveau."
 }

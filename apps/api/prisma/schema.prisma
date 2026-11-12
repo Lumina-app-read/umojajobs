@@ -212,6 +212,7 @@ model User {
   paidWithdrawals     WithdrawalRequest[]     @relation("WithdrawalPayer")
   withdrawalEvents    WithdrawalEvent[]       @relation("WithdrawalEventActor")
   creditOrders        CreditOrder[]           @relation("CreditOrderBuyer")
+  careerDocuments     CareerDocument[]        @relation("CareerDocumentOwner")
 
   @@index([countryId])
   @@map("users")
@@ -1176,4 +1177,45 @@ model PaymentEvent {
   @@unique([provider, deliveryId])
   @@index([saleId])
   @@map("payment_events")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4 — Career Studio : documents professionnels (CV, lettres).
+// ---------------------------------------------------------------------------
+
+/// Types de documents (cahier des charges §11) ; architecture extensible.
+enum CareerDocumentType {
+  cv
+  cover_letter
+  application_letter
+  internship_request
+  recommendation_draft
+  resignation_letter
+  follow_up_letter
+  thank_you_letter
+
+  @@map("career_document_type")
+}
+
+/// Document de l'utilisateur : contenu structuré (JSON validé par l'API selon le type),
+/// modèle de mise en page et langue. Brouillon gratuit ; l'export PDF est payé en crédits.
+model CareerDocument {
+  id          String             @id @default(uuid(7)) @db.Uuid
+  userId      String             @map("user_id") @db.Uuid
+  type        CareerDocumentType
+  title       String             @db.VarChar(120)
+  language    Locale
+  templateKey String             @map("template_key") @db.VarChar(40)
+  content     Json
+  /// Version optimiste : une modification concurrente est refusée.
+  version     Int                @default(1)
+  createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Suppression par l'utilisateur : la ligne est conservée (exports déjà payés).
+  deletedAt   DateTime?          @map("deleted_at") @db.Timestamptz(3)
+
+  user User @relation("CareerDocumentOwner", fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, deletedAt, updatedAt(sort: Desc)])
+  @@map("career_documents")
 }

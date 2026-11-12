@@ -63,5 +63,9 @@
   "CREDIT_PACK_NOT_FOUND": "This credit pack is not available.",
   "CREDIT_PACK_INVALID": "Invalid pack: the price must equal the number of credits times the value of one credit.",
   "CREDIT_ORDER_NOT_FOUND": "This order cannot be found.",
-  "PHONE_REQUIRED": "Enter a phone number for the payment."
+  "PHONE_REQUIRED": "Enter a phone number for the payment.",
+  "CAREER_DOCUMENT_NOT_FOUND": "This document cannot be found.",
+  "CAREER_DOCUMENT_VERSION_CONFLICT": "The document was changed in another tab. Reload the page to get the latest version.",
+  "CAREER_DOCUMENT_TYPE_UNAVAILABLE": "This document type is not available yet.",
+  "CAREER_DOCUMENT_LIMIT": "You have reached the maximum number of documents. Delete one to create a new one."
 }

@@ -1,5 +1,7 @@
 import 'server-only';
 import {
+  type CareerDocumentResponse,
+  type CareerDocumentSummary,
   type CommissionResponse,
   type CountryResponse,
   type CreditBalanceResponse,
@@ -252,6 +254,20 @@ export async function getCreditPacks(): Promise<CreditPackResponse[]> {
 /** Tous les packs, actifs ou non (administration financière). */
 export async function getAdminCreditPacks(): Promise<AdminCreditPackResponse[] | null> {
   const result = await serverGet<AdminCreditPackResponse[]>('/admin/credit-packs').catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Documents du Career Studio de l'utilisateur connecté (null si l'API ne répond pas). */
+export async function getCareerDocuments(): Promise<CareerDocumentSummary[] | null> {
+  const result = await serverGet<CareerDocumentSummary[]>('/me/career-documents').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Un document du Career Studio (null s'il n'existe pas ou n'appartient pas à l'utilisateur). */
+export async function getCareerDocument(id: string): Promise<CareerDocumentResponse | null> {
+  const result = await serverGet<CareerDocumentResponse>(`/me/career-documents/${id}`).catch(
     () => null,
   );
   return result?.data ?? null;

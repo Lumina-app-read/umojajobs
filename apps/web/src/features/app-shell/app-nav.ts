@@ -66,7 +66,7 @@ export const APP_NAV: AppNavGroup[] = [
   {
     key: 'studio',
     items: [
-      { key: 'studio', href: '/dashboard/studio', icon: Sparkles, phase: 4 },
+      { key: 'studio', href: '/dashboard/studio', icon: Sparkles, phase: null },
       { key: 'documents', href: '/dashboard/documents', icon: Files, phase: 4 },
     ],
   },
