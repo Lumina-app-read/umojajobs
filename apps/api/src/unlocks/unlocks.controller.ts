@@ -20,6 +20,7 @@ import {
   type UnlockRequest,
   type UnlockResponse,
   type UnlockSummaryResponse,
+  type WalletResponse,
 } from '@opportinities/shared';
 import { Type } from 'class-transformer';
 import { IsInt, IsUUID, Max, Min } from 'class-validator';
@@ -142,6 +143,21 @@ export class MyUnlocksController {
     res.setHeader('Cache-Control', 'private, no-store');
     res.setHeader('Content-Disposition', 'inline');
     return new StreamableFile(image, { type: 'image/webp', length: image.length });
+  }
+}
+
+/** Portefeuille du contributeur connecté. */
+@ApiTags('wallet')
+@Controller('me/wallet')
+export class MyWalletController {
+  constructor(private readonly unlocks: UnlocksService) {}
+
+  @Get()
+  @ApiOkResponse({
+    description: 'Soldes en attente, disponible, réservé, gains et retraits (USD).',
+  })
+  wallet(@CurrentAuth() auth: AuthContext): Promise<WalletResponse> {
+    return this.unlocks.wallet(auth.user.id);
   }
 }
 

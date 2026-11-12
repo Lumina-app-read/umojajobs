@@ -8,6 +8,7 @@ import {
   type ServiceCostResponse,
   type UnlockedContentsResponse,
   type UnlockSummaryResponse,
+  type WalletResponse,
   type JobCategoryResponse,
   type JobOfferResponse,
   type JobOfferSummaryResponse,
@@ -197,3 +198,9 @@ export async function getServiceCosts(): Promise<ServiceCostResponse[] | null> {
   );
   return result?.data ?? null;
 }
+
+/** Portefeuille du contributeur connecté (null si l'API ne répond pas). */
+export const getWallet = cache(async (): Promise<WalletResponse | null> => {
+  const result = await serverGet<WalletResponse>('/me/wallet').catch(() => null);
+  return result?.data ?? null;
+});

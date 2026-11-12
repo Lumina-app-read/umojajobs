@@ -51,11 +51,7 @@ export default async function AdminFinancePage() {
         </h1>
         <p className="mt-1.5 max-w-2xl text-sm text-fg-muted">{t('intro')}</p>
       </div>
-      {!canManage && (
-        <Alert tone="info">
-          {t('readOnly')}
-        </Alert>
-      )}
+      {!canManage && <Alert tone="info">{t('readOnly')}</Alert>}
 
       <Section icon={SlidersHorizontal} title={t('settingsTitle')}>
         {settings === null ? (

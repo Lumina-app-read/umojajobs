@@ -16,7 +16,13 @@ import {
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { JobCard } from '@/features/jobs/job-card';
-import { getCreditBalance, getMyJobOffers, getUnlocks, searchJobs } from '@/lib/api/server';
+import {
+  getCreditBalance,
+  getMyJobOffers,
+  getUnlocks,
+  getWallet,
+  searchJobs,
+} from '@/lib/api/server';
 import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState, StatCard } from '@/components/ui/feedback';
@@ -36,11 +42,12 @@ export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const t = await getTranslations('common.app');
   const format = await getFormatter();
-  const [credits, unlocks, latest, mine] = await Promise.all([
+  const [credits, unlocks, latest, mine, wallet] = await Promise.all([
     getCreditBalance(),
     getUnlocks(),
     searchJobs('page=1&pageSize=4'),
     getMyJobOffers(),
+    getWallet(),
   ]);
 
   const steps: { icon: LucideIcon; label: string; done: boolean; href?: string }[] = [
@@ -59,8 +66,8 @@ export default async function DashboardOverviewPage() {
       href: '/dashboard/publish',
     },
   ];
-  // Valeurs réelles du compte. Les gains seront lus dans le portefeuille (étape 3d) et les
-  // documents dans le Career Studio (phase 4).
+  // Valeurs réelles du compte (portefeuille calculé par l'API). Les documents viendront du
+  // Career Studio (phase 4).
   const stats: { icon: LucideIcon; label: string; value: string; hint: string }[] = [
     {
       icon: Coins,
@@ -77,7 +84,10 @@ export default async function DashboardOverviewPage() {
     {
       icon: HandCoins,
       label: t('overview.earnings'),
-      value: format.number(0, { style: 'currency', currency: 'USD' }),
+      value: format.number(Number(wallet?.availableUsd ?? 0), {
+        style: 'currency',
+        currency: 'USD',
+      }),
       hint: t('overview.earningsHint'),
     },
     {

@@ -410,5 +410,47 @@
     "continue": "Voir les coordonnées",
     "acceptedToast": "Règlement accepté. Bonne candidature !",
     "reminder": "Rappel du règlement des candidats"
+  },
+  "wallet": {
+    "title": "Portefeuille",
+    "intro": "Vos gains de contributeur : 30 % de la valeur des crédits payés utilisés pour déverrouiller vos offres.",
+    "seeCommissions": "Voir les commissions",
+    "unavailable": "Le portefeuille est momentanément indisponible.",
+    "available": "Disponible",
+    "availableHint": "Peut être retiré",
+    "pending": "En attente",
+    "pendingHint": "Pendant le délai de sécurité",
+    "earned": "Total des gains",
+    "earnedHint": "{count, plural, =0 {Aucune commission} one {# commission} other {# commissions}}",
+    "withdrawn": "Total retiré",
+    "withdrawnHint": "Versé sur votre compte",
+    "withdrawTitle": "Retirer vos gains",
+    "withdrawThreshold": "Retrait possible dès {amount} disponibles, par Mobile Money ou virement selon votre pays.",
+    "withdrawNoThreshold": "Le seuil de retrait sera communiqué prochainement.",
+    "withdrawSoon": "Les demandes de retrait ouvrent prochainement.",
+    "howTitle": "Comment une commission devient disponible",
+    "howBody": "Chaque commission reste en attente pendant un délai de sécurité (règlement du paiement, absence de remboursement ou de fraude), puis devient disponible.",
+    "howBodyPending": "Chaque commission reste d'abord en attente : elle devient disponible après confirmation du paiement et un délai de sécurité, dont la durée sera communiquée prochainement."
+  },
+  "commissions": {
+    "title": "Commissions",
+    "intro": "Une commission par déverrouillage payé de vos offres, jamais sur vos propres achats.",
+    "seeWallet": "Voir le portefeuille",
+    "unavailable": "Les commissions sont momentanément indisponibles.",
+    "empty": "Aucune commission pour le moment",
+    "emptyBody": "Partagez des offres vérifiées : chaque déverrouillage payé vous rapporte une commission.",
+    "share": "Publier une offre",
+    "columns": {
+      "date": "Date",
+      "offer": "Offre",
+      "amount": "Montant",
+      "status": "État"
+    },
+    "status": {
+      "pending": "En attente",
+      "available": "Disponible",
+      "paid": "Payée",
+      "reversed": "Annulée"
+    }
   }
 }

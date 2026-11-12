@@ -11,6 +11,7 @@ import {
   type ModerationJobOfferResponse,
   type UnlockResponse,
   type UnlockSummaryResponse,
+  type WalletResponse,
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
 import { Prisma } from '../src/generated/prisma/client';
@@ -265,6 +266,12 @@ describe('Déverrouillages et commissions (intégration)', () => {
     expect(entries.reduce((sum, e) => sum.add(e.debit), new Prisma.Decimal(0)).toFixed(6)).toBe(
       '0.150000',
     );
+
+    const wallet = (await contributor.api.get('/api/v1/me/wallet')).body as WalletResponse;
+    expect(Number(wallet.pendingUsd)).toBeGreaterThanOrEqual(0.15);
+    expect(wallet.availableUsd).toBe('0.000000');
+    expect(wallet.withdrawalMinUsd).toBe('10.00');
+    expect(wallet.totalEarnedUsd).toBe(wallet.pendingUsd);
 
     const mine = (await contributor.api.get('/api/v1/me/commissions')).body as CommissionResponse[];
     expect(mine.find((entry) => entry.offer.id === offer.id)?.amountUsd).toBe('0.150000');

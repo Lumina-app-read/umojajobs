@@ -410,5 +410,47 @@
     "continue": "See the application details",
     "acceptedToast": "Rules accepted. Good luck with your application!",
     "reminder": "Reminder of the candidate rules"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "intro": "Your contributor earnings: 30% of the value of paid credits used to unlock your offers.",
+    "seeCommissions": "See commissions",
+    "unavailable": "The wallet is temporarily unavailable.",
+    "available": "Available",
+    "availableHint": "Can be withdrawn",
+    "pending": "Pending",
+    "pendingHint": "During the safety period",
+    "earned": "Total earnings",
+    "earnedHint": "{count, plural, =0 {No commissions} one {# commission} other {# commissions}}",
+    "withdrawn": "Total withdrawn",
+    "withdrawnHint": "Paid to your account",
+    "withdrawTitle": "Withdraw your earnings",
+    "withdrawThreshold": "Withdrawal possible from {amount} available, by Mobile Money or bank transfer depending on your country.",
+    "withdrawNoThreshold": "The withdrawal threshold will be announced soon.",
+    "withdrawSoon": "Withdrawal requests open soon.",
+    "howTitle": "How a commission becomes available",
+    "howBody": "Each commission stays pending during a safety period (payment settlement, no refund or fraud), then becomes available.",
+    "howBodyPending": "Each commission is first pending: it becomes available after the payment is confirmed and a safety period, whose length will be announced soon."
+  },
+  "commissions": {
+    "title": "Commissions",
+    "intro": "One commission per paid unlock of your offers, never on your own purchases.",
+    "seeWallet": "See wallet",
+    "unavailable": "Commissions are temporarily unavailable.",
+    "empty": "No commissions yet",
+    "emptyBody": "Share verified offers: each paid unlock earns you a commission.",
+    "share": "Post an offer",
+    "columns": {
+      "date": "Date",
+      "offer": "Offer",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "status": {
+      "pending": "Pending",
+      "available": "Available",
+      "paid": "Paid",
+      "reversed": "Reversed"
+    }
   }
 }

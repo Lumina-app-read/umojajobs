@@ -14,6 +14,7 @@ import {
   type UnlockedContentsResponse,
   type UnlockResponse,
   type UnlockSummaryResponse,
+  type WalletResponse,
 } from '@opportinities/shared';
 import { type AuthContext } from '../auth/auth-context';
 import { type ClientInfo } from '../common/http/app-request';
@@ -172,6 +173,41 @@ export class UnlocksService {
         ? [{ unlockedAt: unlock.createdAt.toISOString(), credits: unlock.credits, offer }]
         : [];
     });
+  }
+
+  /**
+   * Portefeuille calculé à partir des commissions (source de vérité) : en attente, disponible,
+   * payé. Les commissions annulées ne comptent pas. Montants exacts, jamais de flottant.
+   */
+  async wallet(userId: string): Promise<WalletResponse> {
+    const [groups, minimum, holdDays] = await Promise.all([
+      this.prisma.commission.groupBy({
+        by: ['status'],
+        where: { contributorId: userId },
+        _sum: { amountUsd: true },
+        _count: { _all: true },
+      }),
+      this.settings.require('withdrawal_min_usd').catch(() => null),
+      this.settings.require('commission_hold_days').catch(() => null),
+    ]);
+    const sum = (status: string) =>
+      groups.find((group) => group.status === status)?._sum.amountUsd ?? new Prisma.Decimal(0);
+    const pending = sum('pending');
+    const available = sum('available');
+    const paid = sum('paid');
+    return {
+      currency: 'USD',
+      pendingUsd: pending.toFixed(6),
+      availableUsd: available.toFixed(6),
+      reservedUsd: new Prisma.Decimal(0).toFixed(6),
+      totalEarnedUsd: pending.add(available).add(paid).toFixed(6),
+      totalWithdrawnUsd: paid.toFixed(6),
+      withdrawalMinUsd: minimum ? minimum.toFixed(2) : null,
+      holdConfigured: holdDays !== null,
+      commissionCount: groups
+        .filter((group) => group.status !== 'reversed')
+        .reduce((count, group) => count + group._count._all, 0),
+    };
   }
 
   /** Commissions du contributeur connecté, des plus récentes aux plus anciennes. */

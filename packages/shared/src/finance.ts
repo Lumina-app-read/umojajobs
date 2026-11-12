@@ -188,3 +188,21 @@ export interface CommissionResponse {
   availableAt: string | null;
   offer: { id: string; title: string; slug: string | null };
 }
+
+/**
+ * Portefeuille d'un contributeur (CLAUDE.md §11), en USD, montants décimaux en chaîne.
+ * Les retraits (réservé, retiré) arrivent avec l'étape suivante : ils valent 0 jusque-là.
+ */
+export interface WalletResponse {
+  currency: 'USD';
+  pendingUsd: string;
+  availableUsd: string;
+  reservedUsd: string;
+  totalEarnedUsd: string;
+  totalWithdrawnUsd: string;
+  /** Seuil de retrait en vigueur (null : non défini). */
+  withdrawalMinUsd: string | null;
+  /** Faux tant que les délais de sécurité des commissions ne sont pas fixés. */
+  holdConfigured: boolean;
+  commissionCount: number;
+}
