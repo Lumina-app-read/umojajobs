@@ -362,7 +362,7 @@
     "button": "Unlock the offer",
     "buttonWithCost": "{credits, plural, one {Unlock · # credit} other {Unlock · # credits}}",
     "balance": "{balance, plural, =0 {Your balance: no credits} one {Your balance: # credit} other {Your balance: # credits}}",
-    "insufficient": "{missing, plural, one {You need # more credit. Credit top-ups open soon.} other {You need # more credits. Credit top-ups open soon.}}",
+    "insufficient": "{missing, plural, one {You need # more credit.} other {You need # more credits.}}",
     "notConfigured": "Unlocking is temporarily unavailable.",
     "loginToUnlock": "Sign in to unlock",
     "own": "Your offer: see your publications",
@@ -385,7 +385,8 @@
     "attachment": "Additional document",
     "view": "View",
     "viewerNote": "Document viewable on OPPORTINITIES only, with the publication mark.",
-    "page": "Page {page} of {pages}"
+    "page": "Page {page} of {pages}",
+    "topUp": "Top up my credits"
   },
   "unlocked": {
     "intro": "The offers whose application details you have obtained.",
@@ -556,6 +557,44 @@
       "overview": "Overview",
       "commissions": "Commissions",
       "withdrawals": "Withdrawals"
+    }
+  },
+  "credits": {
+    "title": "My credits",
+    "intro": "Credits unlock offers and, soon, export your documents.",
+    "balance": "Balance",
+    "packsTitle": "Top up",
+    "unavailable": "Credit top-ups open very soon.",
+    "creditsCount": "{count, plural, one {# credit} other {# credits}}",
+    "buy": "Buy",
+    "buyTitle": "{credits, plural, one {Buy # credit} other {Buy # credits}}",
+    "buyBody": "Secure payment of {price} by Mobile Money or card, on our payment provider’s page.",
+    "phone": "Phone",
+    "phonePlaceholder": "E.g. +243 812 345 678",
+    "phoneHint": "Required by the payment provider.",
+    "secure": "Your credits are added as soon as the payment is confirmed. No banking data goes through OPPORTINITIES.",
+    "pay": "Pay {price}",
+    "cancel": "Cancel",
+    "note": "Credits do not expire. Payment fees are paid by OPPORTINITIES.",
+    "verifyingTitle": "Payment being verified",
+    "verifyingBody": "We are waiting for the payment confirmation. It usually takes less than a minute.",
+    "paidTitle": "Payment confirmed!",
+    "paidBody": "Your credits have been added to your balance.",
+    "orderStatus": {
+      "failed": "The payment did not go through. Nothing was charged to your credits; you can try again.",
+      "abandoned": "The payment was abandoned. You can try again whenever you like.",
+      "anomaly": "The payment is being checked by our team. You will be informed shortly.",
+      "unknown": "This payment cannot be checked right now. Reload the page in a moment."
+    },
+    "historyTitle": "History",
+    "noHistory": "No movements yet",
+    "movements": {
+      "purchase": "Top-up",
+      "consume": "Unlock",
+      "grant": "Free credits",
+      "refund": "Refund",
+      "expire": "Expiry",
+      "adjust": "Adjustment"
     }
   }
 }

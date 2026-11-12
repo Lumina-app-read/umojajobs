@@ -1,6 +1,7 @@
 import {
   Bell,
   Bookmark,
+  Coins,
   Briefcase,
   Files,
   LayoutDashboard,
@@ -20,6 +21,7 @@ export interface AppNavItem {
     | 'overview'
     | 'jobs'
     | 'saved'
+    | 'credits'
     | 'unlocked'
     | 'publications'
     | 'publish'
@@ -50,6 +52,7 @@ export const APP_NAV: AppNavGroup[] = [
       { key: 'jobs', href: '/dashboard/jobs', icon: Briefcase, phase: null },
       { key: 'saved', href: '/dashboard/saved', icon: Bookmark, phase: null },
       { key: 'unlocked', href: '/dashboard/unlocked', icon: Unlock, phase: null },
+      { key: 'credits', href: '/dashboard/credits', icon: Coins, phase: null },
     ],
   },
   {

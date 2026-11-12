@@ -20,6 +20,7 @@ import { REDIS_CLIENT } from '../src/redis/redis.module';
 import { createTestApp } from './create-test-app';
 import { ApiClient, registrationPayload, STRONG_PASSWORD, uniqueEmail } from './support/api-client';
 import { extractToken, waitForEmail } from './support/mailpit';
+import { givePaidCredits } from './support/paid-credits';
 
 /** PDF d'une page, valide pour le rendu (texte en Helvetica, police standard). */
 function onePagePdf(): Buffer {
@@ -121,6 +122,10 @@ describe('Déverrouillages et commissions (intégration)', () => {
    * (étape 3c, pas encore branchée), `grant` une dotation gratuite.
    */
   async function fund(userId: string, credits: number, origin: 'purchase' | 'grant') {
+    if (origin === 'purchase') {
+      await givePaidCredits(prisma, userId, credits);
+      return;
+    }
     await prisma.$transaction(async (tx) => {
       const account = await tx.creditAccount.upsert({
         where: { userId },
@@ -144,7 +149,7 @@ describe('Déverrouillages et commissions (intégration)', () => {
           creditsTotal: credits,
           creditsRemaining: credits,
           creditUnitValueUsd: new Prisma.Decimal('0.10'),
-          commissionable: origin === 'purchase',
+          commissionable: false,
         },
       });
       await tx.creditLotAllocation.create({

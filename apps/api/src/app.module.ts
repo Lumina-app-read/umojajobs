@@ -13,6 +13,7 @@ import { HealthModule } from './health/health.module';
 import { FinanceModule } from './finance/finance.module';
 import { JobsModule } from './jobs/jobs.module';
 import { UnlocksModule } from './unlocks/unlocks.module';
+import { PaymentsModule } from './payments/payments.module';
 import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 import { LocationsModule } from './locations/locations.module';
 import { MailModule } from './mail/mail.module';
@@ -58,6 +59,7 @@ import { StorageModule } from './storage/storage.module';
     FinanceModule,
     UnlocksModule,
     WithdrawalsModule,
+    PaymentsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

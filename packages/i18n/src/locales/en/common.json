@@ -102,7 +102,8 @@
       "documents": "My documents",
       "notifications": "Notifications",
       "settings": "Settings",
-      "earnings": "My earnings"
+      "earnings": "My earnings",
+      "credits": "My credits"
     },
     "tabs": {
       "home": "Home",
@@ -269,7 +270,8 @@
       "credits_granted": "Credits granted",
       "candidate_terms_accepted": "Candidate rules accepted",
       "withdrawal_requested": "Withdrawal requested",
-      "withdrawal_status_changed": "Withdrawal status changed"
+      "withdrawal_status_changed": "Withdrawal status changed",
+      "credit_pack_changed": "Credit pack changed"
     },
     "badge": "Admin",
     "finance": {
@@ -338,6 +340,35 @@
         "submit": "Grant",
         "done": "{credits, plural, one {# credit granted} other {# credits granted}}. New balance: {balance}.",
         "change": "Change recipient"
+      },
+      "packs": {
+        "title": "Credit packs",
+        "intro": "Each pack matches a License product on Chariow. Price = credits × value of one credit.",
+        "empty": "No packs yet.",
+        "add": "Add a pack",
+        "edit": "Edit",
+        "editTitle": "Edit: {name}",
+        "rule": "The price must equal the number of credits times the value of one credit (no bonus).",
+        "sku": "Code",
+        "skuPlaceholder": "E.g. pack_100",
+        "name": "Display name",
+        "namePlaceholder": "E.g. 100-credit pack",
+        "credits": "Credits",
+        "creditsPlaceholder": "E.g. 100",
+        "price": "Price (USD)",
+        "pricePlaceholder": "E.g. 10.00",
+        "productId": "Chariow product",
+        "productIdPlaceholder": "E.g. prd_abc123",
+        "productIdHint": "License product ID. Without it, the pack is not for sale.",
+        "order": "Display order",
+        "active": "For sale",
+        "state": "Status",
+        "onSale": "For sale",
+        "offSale": "Not for sale",
+        "noProduct": "Not linked",
+        "save": "Save",
+        "cancel": "Cancel",
+        "saved": "Pack saved"
       }
     }
   }

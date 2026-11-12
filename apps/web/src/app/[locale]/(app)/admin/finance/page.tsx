@@ -3,7 +3,7 @@ import {
   type FinancialSettingKey,
   PERMISSIONS,
 } from '@opportinities/shared';
-import { BadgePercent, Coins, Gift, SlidersHorizontal } from 'lucide-react';
+import { BadgePercent, Coins, Gift, PackageOpen, SlidersHorizontal } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { type ReactNode } from 'react';
@@ -12,7 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Table, Td, Th, Tr } from '@/components/ui/table';
 import { CreditGrantForm } from '@/features/finance/credit-grant-form';
 import { ValueEditor } from '@/features/finance/value-editor';
-import { getFinancialSettings, getServiceCosts } from '@/lib/api/server';
+import { PackEditor } from '@/features/finance/pack-editor';
+import { getAdminCreditPacks, getFinancialSettings, getServiceCosts } from '@/lib/api/server';
 import { hasPermission, requirePermission } from '@/lib/auth-guard';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +27,11 @@ export default async function AdminFinancePage() {
   const t = await getTranslations('common.admin.finance');
   const format = await getFormatter();
   const canManage = await hasPermission(PERMISSIONS.FINANCE_MANAGE);
-  const [settings, costs] = await Promise.all([getFinancialSettings(), getServiceCosts()]);
+  const [settings, costs, packs] = await Promise.all([
+    getFinancialSettings(),
+    getServiceCosts(),
+    getAdminCreditPacks(),
+  ]);
 
   /** Affichage d'une valeur selon son unité (la valeur exacte reste celle de l'API). */
   const display = (key: FinancialSettingKey, value: string): string => {
@@ -150,6 +155,59 @@ export default async function AdminFinancePage() {
                         placeholder={t('grant.creditsPlaceholder')}
                         unit={t('columns.credits').toLowerCase()}
                       />
+                    </Td>
+                  )}
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </Section>
+
+      <Section icon={PackageOpen} title={t('packs.title')} intro={t('packs.intro')}>
+        {canManage && (
+          <div>
+            <PackEditor />
+          </div>
+        )}
+        {packs === null || packs.length === 0 ? (
+          <p className="text-sm text-fg-muted">{t('packs.empty')}</p>
+        ) : (
+          <Table>
+            <thead>
+              <tr>
+                <Th>{t('packs.name')}</Th>
+                <Th numeric>{t('packs.credits')}</Th>
+                <Th numeric>{t('packs.price')}</Th>
+                <Th>{t('packs.productId')}</Th>
+                <Th>{t('packs.state')}</Th>
+                {canManage && <Th />}
+              </tr>
+            </thead>
+            <tbody>
+              {packs.map((pack) => (
+                <Tr key={pack.id}>
+                  <Td className="font-medium">
+                    {pack.name}
+                    <span className="block text-xs text-fg-subtle">{pack.sku}</span>
+                  </Td>
+                  <Td numeric>{format.number(pack.credits)}</Td>
+                  <Td numeric>
+                    {format.number(Number(pack.priceUsd), { style: 'currency', currency: 'USD' })}
+                  </Td>
+                  <Td className="font-mono text-xs text-fg-muted">
+                    {pack.chariowProductId ?? t('packs.noProduct')}
+                  </Td>
+                  <Td>
+                    <Badge tone={pack.isActive && pack.chariowProductId ? 'success' : 'neutral'}>
+                      {pack.isActive && pack.chariowProductId
+                        ? t('packs.onSale')
+                        : t('packs.offSale')}
+                    </Badge>
+                  </Td>
+                  {canManage && (
+                    <Td className="text-right">
+                      <PackEditor pack={pack} />
                     </Td>
                   )}
                 </Tr>

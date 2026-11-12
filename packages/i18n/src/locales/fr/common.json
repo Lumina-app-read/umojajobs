@@ -102,7 +102,8 @@
       "documents": "Mes documents",
       "notifications": "Notifications",
       "settings": "Paramètres",
-      "earnings": "Mes revenus"
+      "earnings": "Mes revenus",
+      "credits": "Mes crédits"
     },
     "tabs": {
       "home": "Accueil",
@@ -269,7 +270,8 @@
       "credits_granted": "Crédits attribués",
       "candidate_terms_accepted": "Règlement des candidats accepté",
       "withdrawal_requested": "Demande de retrait",
-      "withdrawal_status_changed": "Retrait : changement d'état"
+      "withdrawal_status_changed": "Retrait : changement d'état",
+      "credit_pack_changed": "Pack de crédits modifié"
     },
     "badge": "Admin",
     "finance": {
@@ -338,6 +340,35 @@
         "submit": "Attribuer",
         "done": "{credits, plural, one {# crédit attribué} other {# crédits attribués}}. Nouveau solde : {balance}.",
         "change": "Changer de bénéficiaire"
+      },
+      "packs": {
+        "title": "Packs de crédits",
+        "intro": "Chaque pack correspond à un produit License chez Chariow. Prix = crédits × valeur d’un crédit.",
+        "empty": "Aucun pack pour le moment.",
+        "add": "Ajouter un pack",
+        "edit": "Modifier",
+        "editTitle": "Modifier : {name}",
+        "rule": "Le prix doit valoir exactement le nombre de crédits multiplié par la valeur d’un crédit (pas de bonus).",
+        "sku": "Code",
+        "skuPlaceholder": "Ex. : pack_100",
+        "name": "Nom affiché",
+        "namePlaceholder": "Ex. : Pack 100 crédits",
+        "credits": "Crédits",
+        "creditsPlaceholder": "Ex. : 100",
+        "price": "Prix (USD)",
+        "pricePlaceholder": "Ex. : 10.00",
+        "productId": "Produit Chariow",
+        "productIdPlaceholder": "Ex. : prd_abc123",
+        "productIdHint": "Identifiant du produit License. Sans lui, le pack n’est pas en vente.",
+        "order": "Ordre d’affichage",
+        "active": "En vente",
+        "state": "État",
+        "onSale": "En vente",
+        "offSale": "Hors vente",
+        "noProduct": "Non relié",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "saved": "Pack enregistré"
       }
     }
   }

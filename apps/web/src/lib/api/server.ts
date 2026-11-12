@@ -8,7 +8,9 @@ import {
   type ServiceCostResponse,
   type UnlockedContentsResponse,
   type UnlockSummaryResponse,
+  type AdminCreditPackResponse,
   type AdminWithdrawalResponse,
+  type CreditPackResponse,
   type WalletResponse,
   type WithdrawalMethodResponse,
   type WithdrawalResponse,
@@ -238,5 +240,19 @@ export async function getAdminWithdrawal(id: string): Promise<AdminWithdrawalRes
   const result = await serverGet<AdminWithdrawalResponse>(
     `/admin/withdrawals/${encodeURIComponent(id)}`,
   ).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Packs de crédits en vente (liste vide si le paiement est fermé ou l'API ne répond pas). */
+export async function getCreditPacks(): Promise<CreditPackResponse[]> {
+  const result = await serverGet<CreditPackResponse[]>('/credit-packs').catch(() => null);
+  return result?.data ?? [];
+}
+
+/** Tous les packs, actifs ou non (administration financière). */
+export async function getAdminCreditPacks(): Promise<AdminCreditPackResponse[] | null> {
+  const result = await serverGet<AdminCreditPackResponse[]>('/admin/credit-packs').catch(
+    () => null,
+  );
   return result?.data ?? null;
 }

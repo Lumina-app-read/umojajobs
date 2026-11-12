@@ -1,7 +1,7 @@
 'use client';
 
 import { type UnlockResponse } from '@opportinities/shared';
-import { LogIn, Unlock, X } from 'lucide-react';
+import { Coins, LogIn, Unlock, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -77,6 +77,11 @@ export function UnlockButton({
       <p className="text-center text-xs text-fg-subtle">
         {missing > 0 ? t('insufficient', { missing }) : t('balance', { balance })}
       </p>
+      {missing > 0 && (
+        <ButtonLink href="/dashboard/credits" variant="secondary" icon={Coins} fullWidth>
+          {t('topUp')}
+        </ButtonLink>
+      )}
       <Dialog
         open={open}
         onClose={() => !busy && setOpen(false)}

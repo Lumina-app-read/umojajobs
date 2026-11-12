@@ -7,7 +7,8 @@ import { configureApp } from './app.setup';
 import { type EnvironmentVariables, NodeEnv } from './config/env.validation';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Corps brut conservé : la signature des Pulses Chariow porte sur les octets reçus.
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
   const config = app.get<ConfigService<EnvironmentVariables, true>>(ConfigService);
 
   configureApp(app, {

@@ -96,6 +96,10 @@ export default async function globalSetup(): Promise<void> {
     TRUST_PROXY: '0',
     AUTH_MAX_FAILED_LOGINS: '5',
     AUTH_LOCKOUT_MINUTES: '15',
+    // Faux serveur Chariow démarré par la suite des paiements (port fixe, local uniquement).
+    CHARIOW_API_BASE_URL: 'http://127.0.0.1:4599/v1',
+    CHARIOW_API_KEY: 'test_chariow_key',
+    CHARIOW_PULSE_SECRET: 'whsec_test_secret',
     // Le cycle de vie des offres est testé directement, sans minuterie.
     SCHEDULED_TASKS_ENABLED: 'false',
     S3_ENDPOINT: `http://${storage.container.getHost()}:${storage.container.getMappedPort(3900)}`,

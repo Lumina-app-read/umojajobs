@@ -143,6 +143,7 @@ enum SecurityEventType {
   candidate_terms_accepted
   withdrawal_requested
   withdrawal_status_changed
+  credit_pack_changed
 
   @@map("security_event_type")
 }
@@ -210,6 +211,7 @@ model User {
   approvedWithdrawals WithdrawalRequest[]     @relation("WithdrawalApprover")
   paidWithdrawals     WithdrawalRequest[]     @relation("WithdrawalPayer")
   withdrawalEvents    WithdrawalEvent[]       @relation("WithdrawalEventActor")
+  creditOrders        CreditOrder[]           @relation("CreditOrderBuyer")
 
   @@index([countryId])
   @@map("users")
@@ -697,6 +699,9 @@ enum LedgerTransactionType {
   credit_grant
   credit_consumption
   commission_accrual
+  credit_purchase
+  payment_settlement
+  commission_release
   withdrawal_reserve
   withdrawal_release
   withdrawal_payout
@@ -763,10 +768,13 @@ model CreditLot {
   /// Valeur interne d'un crédit au moment de l'attribution (arbitrage A1 : figée par lot).
   creditUnitValueUsd Decimal         @map("credit_unit_value_usd") @db.Decimal(20, 6)
   commissionable     Boolean
+  /// Recharge payée d'origine (lot « purchase ») : une seule attribution par paiement.
+  paymentId          String?         @unique @map("payment_id") @db.Uuid
   createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
 
   account     CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
   allocations CreditLotAllocation[]
+  payment     Payment?              @relation(fields: [paymentId], references: [id], onDelete: Restrict)
 
   @@index([accountId, createdAt])
   @@map("credit_lots")
@@ -1062,4 +1070,110 @@ model WithdrawalCommissionAllocation {
   @@unique([withdrawalId, commissionId])
   @@index([commissionId])
   @@map("withdrawal_commission_allocations")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3c — Recharges de crédits payées par Chariow (produits License).
+// ---------------------------------------------------------------------------
+
+/// Pack de crédits vendu (un produit License Chariow par pack). Prix et crédits administrables.
+model CreditPack {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  sku              String   @unique @db.VarChar(40)
+  name             String   @db.VarChar(100)
+  credits          Int
+  priceUsd         Decimal  @map("price_usd") @db.Decimal(20, 2)
+  /// Identifiant du produit License chez Chariow (prd_…). Sans lui, le pack n'est pas en vente.
+  chariowProductId String?  @unique @map("chariow_product_id") @db.VarChar(100)
+  isActive         Boolean  @default(false) @map("is_active")
+  sortOrder        Int      @default(0) @map("sort_order")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  orders CreditOrder[]
+
+  @@map("credit_packs")
+}
+
+enum CreditOrderStatus {
+  pending
+  paid
+  failed
+  abandoned
+  /// Paiement reçu mais incohérent (produit, montant ou devise) : aucun crédit, revue manuelle.
+  anomaly
+
+  @@map("credit_order_status")
+}
+
+/// Commande de recharge : prix, crédits et valeur figés à la création (snapshot).
+model CreditOrder {
+  id                 String            @id @default(uuid(7)) @db.Uuid
+  reference          String            @unique @db.VarChar(40)
+  userId             String            @map("user_id") @db.Uuid
+  packId             String            @map("pack_id") @db.Uuid
+  credits            Int
+  priceUsd           Decimal           @map("price_usd") @db.Decimal(20, 2)
+  creditUnitValueUsd Decimal           @map("credit_unit_value_usd") @db.Decimal(20, 6)
+  chariowProductId   String            @map("chariow_product_id") @db.VarChar(100)
+  status             CreditOrderStatus @default(pending)
+  /// Vente Chariow (sal_…) renvoyée à l'ouverture du paiement : clé du rapprochement.
+  providerSaleId     String?           @unique @map("provider_sale_id") @db.VarChar(100)
+  checkoutUrl        String?           @map("checkout_url")
+  failureReason      String?           @map("failure_reason") @db.VarChar(500)
+  paidAt             DateTime?         @map("paid_at") @db.Timestamptz(3)
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user    User       @relation("CreditOrderBuyer", fields: [userId], references: [id], onDelete: Restrict)
+  pack    CreditPack @relation(fields: [packId], references: [id], onDelete: Restrict)
+  payment Payment?
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt])
+  @@map("credit_orders")
+}
+
+/// Paiement confirmé par relecture de la vente chez Chariow (jamais sur la seule notification).
+model Payment {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  orderId          String    @unique @map("order_id") @db.Uuid
+  provider         String    @db.VarChar(20)
+  providerSaleId   String    @map("provider_sale_id") @db.VarChar(100)
+  amountUsd        Decimal   @map("amount_usd") @db.Decimal(20, 2)
+  currency         String    @db.Char(3)
+  /// Montant net versé par Chariow après frais (connu au règlement).
+  settlementAmount Decimal?  @map("settlement_amount") @db.Decimal(20, 2)
+  serviceFee       Decimal?  @map("service_fee") @db.Decimal(20, 2)
+  settlementDueAt  DateTime? @map("settlement_due_at") @db.Timestamptz(3)
+  settlementDoneAt DateTime? @map("settlement_done_at") @db.Timestamptz(3)
+  saleStatus       String    @map("sale_status") @db.VarChar(30)
+  rawSnapshot      Json      @map("raw_snapshot")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  order CreditOrder @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  lot   CreditLot?
+
+  @@unique([provider, providerSaleId])
+  @@map("payments")
+}
+
+/// Notification reçue d'un prestataire (Pulse Chariow), conservée telle quelle.
+model PaymentEvent {
+  id             String    @id @default(uuid(7)) @db.Uuid
+  provider       String    @db.VarChar(20)
+  /// x-pulse-delivery-id : identique à chaque nouvelle tentative d'une même notification.
+  deliveryId     String    @map("delivery_id") @db.VarChar(100)
+  eventType      String    @map("event_type") @db.VarChar(60)
+  signatureValid Boolean   @map("signature_valid")
+  payload        Json
+  saleId         String?   @map("sale_id") @db.VarChar(100)
+  receivedAt     DateTime  @default(now()) @map("received_at") @db.Timestamptz(3)
+  processedAt    DateTime? @map("processed_at") @db.Timestamptz(3)
+  error          String?   @db.VarChar(500)
+
+  @@unique([provider, deliveryId])
+  @@index([saleId])
+  @@map("payment_events")
 }

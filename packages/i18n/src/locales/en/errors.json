@@ -57,5 +57,11 @@
   "WITHDRAWAL_ALREADY_OPEN": "A withdrawal request is already in progress.",
   "WITHDRAWAL_INVALID_TRANSITION": "This action is not possible in the request’s current state.",
   "WITHDRAWAL_DUAL_APPROVAL": "Above the threshold, the payout must be confirmed by an administrator other than the approver.",
-  "WITHDRAWAL_SELF_REVIEW": "You cannot process your own withdrawal request."
+  "WITHDRAWAL_SELF_REVIEW": "You cannot process your own withdrawal request.",
+  "PAYMENTS_UNAVAILABLE": "Credit top-ups are temporarily unavailable.",
+  "PAYMENT_PROVIDER_ERROR": "The payment service did not respond. Try again in a moment.",
+  "CREDIT_PACK_NOT_FOUND": "This credit pack is not available.",
+  "CREDIT_PACK_INVALID": "Invalid pack: the price must equal the number of credits times the value of one credit.",
+  "CREDIT_ORDER_NOT_FOUND": "This order cannot be found.",
+  "PHONE_REQUIRED": "Enter a phone number for the payment."
 }

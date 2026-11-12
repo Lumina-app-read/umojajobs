@@ -298,3 +298,55 @@ export interface WithdrawalDecisionInput {
   /** Motif, obligatoire pour « reject » et « fail ». */
   note?: string;
 }
+
+// --- Recharges de crédits (phase 3c) ---------------------------------------------------------
+
+export const CREDIT_ORDER_STATUSES = ['pending', 'paid', 'failed', 'abandoned', 'anomaly'] as const;
+export type CreditOrderStatus = (typeof CREDIT_ORDER_STATUSES)[number];
+
+/** Pack proposé à l'achat (seuls les packs actifs et reliés à un produit Chariow). */
+export interface CreditPackResponse {
+  id: string;
+  sku: string;
+  name: string;
+  credits: number;
+  /** Prix en USD, décimal en chaîne. */
+  priceUsd: string;
+}
+
+export interface AdminCreditPackResponse extends CreditPackResponse {
+  chariowProductId: string | null;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface CreditPackInput {
+  sku: string;
+  name: string;
+  credits: number;
+  priceUsd: string;
+  chariowProductId: string | null;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface CreditCheckoutInput {
+  packId: string;
+  /** Téléphone E.164, exigé par Chariow ; celui du profil est utilisé s'il est absent. */
+  phone?: string;
+}
+
+export interface CreditCheckoutResponse {
+  reference: string;
+  /** Page de paiement Chariow vers laquelle rediriger l'utilisateur. */
+  checkoutUrl: string;
+}
+
+export interface CreditOrderResponse {
+  reference: string;
+  status: CreditOrderStatus;
+  credits: number;
+  priceUsd: string;
+  createdAt: string;
+  paidAt: string | null;
+}

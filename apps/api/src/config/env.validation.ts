@@ -111,7 +111,8 @@ export class EnvironmentVariables {
   SMTP_SECURE = false;
 
   /** API Chariow (recharges de crédits). Sans clé, le paiement reste fermé. */
-  @IsUrl({ require_tld: true, protocols: ['https'] })
+  // http et localhost acceptés pour les tests (faux serveur Chariow) ; https en production.
+  @IsUrl({ require_tld: false, protocols: ['http', 'https'], require_protocol: true })
   CHARIOW_API_BASE_URL = 'https://api.chariow.com/v1';
 
   @IsOptional()

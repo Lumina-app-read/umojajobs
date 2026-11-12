@@ -362,7 +362,7 @@
     "button": "Déverrouiller l'offre",
     "buttonWithCost": "{credits, plural, one {Déverrouiller · # crédit} other {Déverrouiller · # crédits}}",
     "balance": "{balance, plural, =0 {Votre solde : aucun crédit} one {Votre solde : # crédit} other {Votre solde : # crédits}}",
-    "insufficient": "{missing, plural, one {Il vous manque # crédit. La recharge de crédits ouvrira prochainement.} other {Il vous manque # crédits. La recharge de crédits ouvrira prochainement.}}",
+    "insufficient": "{missing, plural, one {Il vous manque # crédit.} other {Il vous manque # crédits.}}",
     "notConfigured": "Le déverrouillage est momentanément indisponible.",
     "loginToUnlock": "Connectez-vous pour déverrouiller",
     "own": "Votre offre : voir vos publications",
@@ -385,7 +385,8 @@
     "attachment": "Document complémentaire",
     "view": "Consulter",
     "viewerNote": "Document consultable sur OPPORTINITIES uniquement, avec la mention de publication.",
-    "page": "Page {page} sur {pages}"
+    "page": "Page {page} sur {pages}",
+    "topUp": "Recharger mes crédits"
   },
   "unlocked": {
     "intro": "Les offres dont vous avez obtenu les coordonnées de candidature.",
@@ -556,6 +557,44 @@
       "overview": "Aperçu",
       "commissions": "Commissions",
       "withdrawals": "Retraits"
+    }
+  },
+  "credits": {
+    "title": "Mes crédits",
+    "intro": "Les crédits servent à déverrouiller les offres et, bientôt, à exporter vos documents.",
+    "balance": "Solde",
+    "packsTitle": "Recharger",
+    "unavailable": "La recharge de crédits ouvre très prochainement.",
+    "creditsCount": "{count, plural, one {# crédit} other {# crédits}}",
+    "buy": "Acheter",
+    "buyTitle": "{credits, plural, one {Acheter # crédit} other {Acheter # crédits}}",
+    "buyBody": "Paiement sécurisé de {price} par Mobile Money ou carte, sur la page de notre prestataire.",
+    "phone": "Téléphone",
+    "phonePlaceholder": "Ex. : +243 812 345 678",
+    "phoneHint": "Demandé par le prestataire de paiement.",
+    "secure": "Vos crédits sont ajoutés dès que le paiement est confirmé. Aucune donnée bancaire ne transite par OPPORTINITIES.",
+    "pay": "Payer {price}",
+    "cancel": "Annuler",
+    "note": "Les crédits n’expirent pas. Les frais de paiement sont à la charge d’OPPORTINITIES.",
+    "verifyingTitle": "Paiement en cours de vérification",
+    "verifyingBody": "Nous attendons la confirmation du paiement. Cela prend généralement moins d’une minute.",
+    "paidTitle": "Paiement confirmé !",
+    "paidBody": "Vos crédits ont été ajoutés à votre solde.",
+    "orderStatus": {
+      "failed": "Le paiement n’a pas abouti. Aucun montant n’a été crédité ; vous pouvez réessayer.",
+      "abandoned": "Le paiement a été abandonné. Vous pouvez réessayer quand vous le souhaitez.",
+      "anomaly": "Le paiement est en cours de vérification par notre équipe. Vous serez informé rapidement.",
+      "unknown": "Impossible de vérifier ce paiement pour le moment. Rechargez la page dans quelques instants."
+    },
+    "historyTitle": "Historique",
+    "noHistory": "Aucun mouvement pour le moment",
+    "movements": {
+      "purchase": "Recharge",
+      "consume": "Déverrouillage",
+      "grant": "Crédits offerts",
+      "refund": "Remboursement",
+      "expire": "Expiration",
+      "adjust": "Ajustement"
     }
   }
 }

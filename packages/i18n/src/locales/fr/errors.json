@@ -57,5 +57,11 @@
   "WITHDRAWAL_ALREADY_OPEN": "Une demande de retrait est déjà en cours.",
   "WITHDRAWAL_INVALID_TRANSITION": "Cette action n'est pas possible dans l'état actuel de la demande.",
   "WITHDRAWAL_DUAL_APPROVAL": "Au-delà du seuil, le versement doit être confirmé par un autre administrateur que celui qui l'a approuvé.",
-  "WITHDRAWAL_SELF_REVIEW": "Vous ne pouvez pas traiter votre propre demande de retrait."
+  "WITHDRAWAL_SELF_REVIEW": "Vous ne pouvez pas traiter votre propre demande de retrait.",
+  "PAYMENTS_UNAVAILABLE": "La recharge de crédits est momentanément indisponible.",
+  "PAYMENT_PROVIDER_ERROR": "Le service de paiement n'a pas répondu. Réessayez dans quelques instants.",
+  "CREDIT_PACK_NOT_FOUND": "Ce pack de crédits n'est pas disponible.",
+  "CREDIT_PACK_INVALID": "Pack invalide : le prix doit correspondre au nombre de crédits multiplié par la valeur d'un crédit.",
+  "CREDIT_ORDER_NOT_FOUND": "Cette commande est introuvable.",
+  "PHONE_REQUIRED": "Indiquez un numéro de téléphone pour le paiement."
 }
