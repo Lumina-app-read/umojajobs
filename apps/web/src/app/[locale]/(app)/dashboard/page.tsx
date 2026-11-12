@@ -5,7 +5,7 @@ import {
   CircleCheck,
   Coins,
   Files,
-  HandCoins,
+  Bookmark,
   type LucideIcon,
   Search,
   SquarePlus,
@@ -19,8 +19,8 @@ import { JobCard } from '@/features/jobs/job-card';
 import {
   getCreditBalance,
   getMyJobOffers,
+  getSavedJobs,
   getUnlocks,
-  getWallet,
   searchJobs,
 } from '@/lib/api/server';
 import { Badge } from '@/components/ui/badge';
@@ -42,12 +42,12 @@ export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const t = await getTranslations('common.app');
   const format = await getFormatter();
-  const [credits, unlocks, latest, mine, wallet] = await Promise.all([
+  const [credits, unlocks, latest, mine, saved] = await Promise.all([
     getCreditBalance(),
     getUnlocks(),
     searchJobs('page=1&pageSize=4'),
     getMyJobOffers(),
-    getWallet(),
+    getSavedJobs(),
   ]);
 
   const steps: { icon: LucideIcon; label: string; done: boolean; href?: string }[] = [
@@ -66,8 +66,8 @@ export default async function DashboardOverviewPage() {
       href: '/dashboard/publish',
     },
   ];
-  // Valeurs réelles du compte (portefeuille calculé par l'API). Les documents viendront du
-  // Career Studio (phase 4).
+  // Valeurs réelles du compte. Les revenus de contributeur restent dans leur rubrique dédiée,
+  // jamais mis en avant ici. Les documents viendront du Career Studio (phase 4).
   const stats: { icon: LucideIcon; label: string; value: string; hint: string }[] = [
     {
       icon: Coins,
@@ -82,13 +82,10 @@ export default async function DashboardOverviewPage() {
       hint: t('overview.unlockedHint'),
     },
     {
-      icon: HandCoins,
-      label: t('overview.earnings'),
-      value: format.number(Number(wallet?.availableUsd ?? 0), {
-        style: 'currency',
-        currency: 'USD',
-      }),
-      hint: t('overview.earningsHint'),
+      icon: Bookmark,
+      label: t('overview.saved'),
+      value: format.number(saved?.length ?? 0),
+      hint: t('overview.savedHint'),
     },
     {
       icon: Files,

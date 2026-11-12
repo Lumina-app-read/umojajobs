@@ -17,7 +17,7 @@ import {
   Sparkles,
   UserPlus,
   UserRound,
-  Wallet,
+  HeartHandshake,
 } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import Image from 'next/image';
@@ -269,7 +269,7 @@ export async function ShareSection() {
   const steps: { icon: LucideIcon; title: string; body: string }[] = [
     { icon: Share2, title: t('step1Title'), body: t('step1Body') },
     { icon: ShieldCheck, title: t('step2Title'), body: t('step2Body') },
-    { icon: Wallet, title: t('step3Title'), body: t('step3Body') },
+    { icon: HeartHandshake, title: t('step3Title'), body: t('step3Body') },
   ];
   return (
     <section

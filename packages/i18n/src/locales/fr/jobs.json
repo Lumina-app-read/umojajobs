@@ -413,7 +413,7 @@
   },
   "wallet": {
     "title": "Portefeuille",
-    "intro": "Vos gains de contributeur : 30 % de la valeur des crédits payés utilisés pour déverrouiller vos offres.",
+    "intro": "Les revenus issus des offres que vous avez partagées.",
     "seeCommissions": "Voir les commissions",
     "unavailable": "Le portefeuille est momentanément indisponible.",
     "available": "Disponible",
@@ -434,7 +434,7 @@
   },
   "commissions": {
     "title": "Commissions",
-    "intro": "Une commission par déverrouillage payé de vos offres, jamais sur vos propres achats.",
+    "intro": "Le détail de vos revenus, offre par offre.",
     "seeWallet": "Voir le portefeuille",
     "unavailable": "Les commissions sont momentanément indisponibles.",
     "empty": "Aucune commission pour le moment",

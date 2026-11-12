@@ -89,7 +89,7 @@
       "groups": {
         "offers": "Offers",
         "contribute": "Contribute",
-        "finances": "Finances",
+        "finances": "My earnings",
         "studio": "Career Studio",
         "account": "Account"
       },
@@ -136,7 +136,6 @@
       "done": "Done",
       "credits": "Credits",
       "unlocked": "Unlocked offers",
-      "earnings": "Available earnings",
       "documents": "Documents",
       "recommended": "Latest published offers",
       "recommendedEmpty": "No offers yet",
@@ -144,12 +143,13 @@
       "notifications": "Notifications",
       "notificationsEmpty": "No notifications",
       "notificationsEmptyBody": "Approvals, unlocks and payments will be reported here.",
-      "creditsHint": "Your wallet balance",
+      "creditsHint": "To unlock offers",
       "unlockedHint": "Offers whose contact details you obtained",
-      "earningsHint": "Commissions ready to withdraw",
       "documentsHint": "Created with the Career Studio",
       "documentsNone": "None",
-      "start": "Start"
+      "start": "Start",
+      "saved": "Saved offers",
+      "savedHint": "To read later"
     },
     "settings": {
       "intro": "Your profile, security and display preferences.",

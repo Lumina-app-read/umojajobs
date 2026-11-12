@@ -70,16 +70,16 @@
   },
   "share": {
     "eyebrow": "Contribute",
-    "title": "Share an offer, earn commissions",
-    "subtitle": "Spotted an offer on WhatsApp, Facebook, LinkedIn or in a newspaper? Share it for free. You earn a commission on every eligible unlock.",
+    "title": "Share the opportunities you find",
+    "subtitle": "Spotted an offer on WhatsApp, Facebook, LinkedIn or in a newspaper? Share it for free and help other candidates find it.",
     "step1Title": "Share the offer",
     "step1Body": "Add the source, the deadline and the application instructions.",
     "step2Title": "Moderation checks it",
     "step2Body": "An offer is only published after review. It may be sent back to you for correction.",
-    "step3Title": "Receive your commissions",
-    "step3Body": "After a security period, your earnings become available and can be withdrawn.",
-    "note": "Rate, security period and withdrawal threshold are shown in your account before you contribute.",
-    "cta": "Share my first offer"
+    "step3Title": "Your contribution is recognised",
+    "step3Body": "Your published offers stay in your space. Useful contributions are rewarded, under the publishing terms.",
+    "note": "The publishing terms are shown before your first share.",
+    "cta": "Share an offer"
   },
   "faq": {
     "eyebrow": "Frequently asked questions",
@@ -90,8 +90,8 @@
     "a2": "Yes. Creating an account, searching and sharing offers are free.",
     "q3": "What are credits for?",
     "a3": "Credits are bought in packs and are used to unlock the full details of an offer and to export your Career Studio documents.",
-    "q4": "How do commissions work?",
-    "a4": "When an offer you shared is unlocked by another user, you receive a share of its value. Earnings become available after a security period and can be withdrawn above a minimum threshold.",
+    "q4": "Are contributors rewarded?",
+    "a4": "Yes, under the publishing terms: when an offer you shared is used, part of its value comes back to you, after verification.",
     "q5": "Can AI make up information in my CV?",
     "a5": "No. AI rewords and structures what you entered. It never adds a degree, an experience or a skill.",
     "q6": "Is my data protected?",

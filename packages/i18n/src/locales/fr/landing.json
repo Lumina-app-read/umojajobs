@@ -70,16 +70,16 @@
   },
   "share": {
     "eyebrow": "Contribuer",
-    "title": "Partagez une offre, gagnez des commissions",
-    "subtitle": "Vous avez repéré une offre sur WhatsApp, Facebook, LinkedIn ou dans un journal ? Partagez-la gratuitement. Vous recevez une commission sur chaque déverrouillage éligible.",
+    "title": "Partagez les opportunités que vous trouvez",
+    "subtitle": "Vous avez repéré une offre sur WhatsApp, Facebook, LinkedIn ou dans un journal ? Partagez-la gratuitement et aidez d'autres candidats à la trouver.",
     "step1Title": "Partagez l'offre",
     "step1Body": "Indiquez la source, la date limite et les instructions de candidature.",
     "step2Title": "La modération la vérifie",
     "step2Body": "Une offre n'est publiée qu'après contrôle. Elle peut vous être renvoyée pour correction.",
-    "step3Title": "Recevez vos commissions",
-    "step3Body": "Après un délai de sécurité, vos gains deviennent disponibles et peuvent être retirés.",
-    "note": "Taux, délai et seuil de retrait sont indiqués dans votre espace avant toute contribution.",
-    "cta": "Partager ma première offre"
+    "step3Title": "Votre contribution est reconnue",
+    "step3Body": "Vos offres publiées restent dans votre espace. Les contributions utiles sont rémunérées, selon les conditions de publication.",
+    "note": "Les conditions de publication sont présentées avant votre premier partage.",
+    "cta": "Partager une offre"
   },
   "faq": {
     "eyebrow": "Questions fréquentes",
@@ -90,8 +90,8 @@
     "a2": "Non. La création du compte, la recherche et le partage d'offres sont gratuits.",
     "q3": "À quoi servent les crédits ?",
     "a3": "Les crédits s'achètent en packs et servent à déverrouiller les informations complètes d'une offre et à exporter vos documents du Career Studio.",
-    "q4": "Comment fonctionnent les commissions ?",
-    "a4": "Lorsqu'une offre que vous avez partagée est déverrouillée par un autre utilisateur, vous recevez une part de sa valeur. Les gains deviennent disponibles après un délai de sécurité et peuvent être retirés à partir d'un seuil minimum.",
+    "q4": "Les contributeurs sont-ils rémunérés ?",
+    "a4": "Oui, selon les conditions de publication : lorsqu'une offre que vous avez partagée est utilisée, une partie de sa valeur vous revient, après vérification.",
     "q5": "L'IA peut-elle inventer des informations dans mon CV ?",
     "a5": "Non. L'IA reformule et structure ce que vous avez saisi. Elle n'ajoute ni diplôme, ni expérience, ni compétence.",
     "q6": "Mes données sont-elles protégées ?",

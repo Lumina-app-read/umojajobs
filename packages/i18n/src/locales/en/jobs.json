@@ -413,7 +413,7 @@
   },
   "wallet": {
     "title": "Wallet",
-    "intro": "Your contributor earnings: 30% of the value of paid credits used to unlock your offers.",
+    "intro": "Earnings from the offers you shared.",
     "seeCommissions": "See commissions",
     "unavailable": "The wallet is temporarily unavailable.",
     "available": "Available",
@@ -434,7 +434,7 @@
   },
   "commissions": {
     "title": "Commissions",
-    "intro": "One commission per paid unlock of your offers, never on your own purchases.",
+    "intro": "The detail of your earnings, offer by offer.",
     "seeWallet": "See wallet",
     "unavailable": "Commissions are temporarily unavailable.",
     "empty": "No commissions yet",
