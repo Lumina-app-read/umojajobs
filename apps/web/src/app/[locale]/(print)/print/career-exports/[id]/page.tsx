@@ -45,15 +45,38 @@ export default async function CareerExportPrintPage({ params, searchParams }: Pr
   const countryIso2 = documentCountry(data.type, data.content);
   const country = countries.find((entry) => entry.iso2 === countryIso2);
 
+  /**
+   * Mise en page imprimée : chaque page reprend les marges intérieures des blocs coupés, pas de
+   * hauteur A4 minimale (sinon une page vide s'ajouterait), et colonne sombre du modèle Moderne
+   * peinte par le fond de page, donc sur toute la hauteur de chaque page et sans raccord visible.
+   */
+  const pageBackground =
+    data.type === 'cv' && data.templateKey === 'modern'
+      ? 'linear-gradient(to right, #0f2a4a 250px, #ffffff 250px)'
+      : '#ffffff';
+  const columnRule =
+    pageBackground === '#ffffff'
+      ? ''
+      : 'main article > aside { background: transparent !important; }';
+  const mainClass = pageBackground === '#ffffff' ? 'bg-white' : undefined;
+
   return (
     <>
       <style>{`@page { size: A4; margin: 0; }
-html, body { background: #ffffff !important; color-scheme: light; }
-body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }`}</style>
+html, body { background: ${pageBackground} !important; color-scheme: light; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+main article { min-height: 0 !important; }
+/* Chaque page reprend les marges intérieures du bloc coupé (haut et bas de page). */
+main article, main article > div, main article > aside {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+${columnRule}
+main p, main li { orphans: 3; widows: 3; }`}</style>
       <main
         data-print-ready="true"
         lang={data.language}
-        className="bg-white"
+        className={mainClass}
         style={{ width: A4_WIDTH }}
       >
         <StudioDocument
