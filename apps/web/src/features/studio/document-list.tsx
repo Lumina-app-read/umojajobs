@@ -185,11 +185,9 @@ export function StudioDocuments({ documents }: { documents: CareerDocumentSummar
                       <span className="text-sm font-semibold text-fg">{t(`types.${type}`)}</span>
                       {!available && <Badge tone="neutral">{t('soon')}</Badge>}
                     </span>
-                    {type === 'cv' && (
-                      <span className="mt-1 block text-[13px] text-fg-muted">
-                        {t('typeHints.cv')}
-                      </span>
-                    )}
+                    <span className="mt-1 block text-[13px] text-fg-muted">
+                      {t(`typeHints.${type}`)}
+                    </span>
                   </span>
                   {available && (
                     <Plus

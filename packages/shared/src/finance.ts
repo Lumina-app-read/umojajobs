@@ -38,6 +38,7 @@ export const CREDIT_SERVICES = [
   'doc_cv',
   'doc_cover_letter',
   'doc_application_letter',
+  'doc_other_letter',
   'doc_pack',
 ] as const;
 export type CreditService = (typeof CREDIT_SERVICES)[number];

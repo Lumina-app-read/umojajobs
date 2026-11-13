@@ -6,16 +6,11 @@ import {
   STUDIO_LIMITS,
   YEAR_MONTH,
 } from '@opportinities/shared';
+import { asObject, type ContentIssue, EMAIL, fieldReader, PHONE } from './content-fields';
 
-/** Erreur de validation localisée par chemin (« experiences.2.role »). */
-export interface ContentIssue {
-  field: string;
-  rule: string;
-}
+export type { ContentIssue } from './content-fields';
 
 const ID = /^[A-Za-z0-9_-]{1,40}$/;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE = /^\+?[0-9 ().-]{6,25}$/;
 
 /**
  * Valide et normalise le contenu d'un CV reçu du navigateur : seuls les champs connus sont
@@ -26,28 +21,7 @@ export function normalizeCv(input: unknown): { content: CvContent; issues: Conte
   const issues: ContentIssue[] = [];
   const root = asObject(input);
 
-  const text = (value: unknown, field: string, max: number): string => {
-    if (value === undefined || value === null) return '';
-    if (typeof value !== 'string') {
-      issues.push({ field, rule: 'isString' });
-      return '';
-    }
-    // Retours à la ligne conservés (descriptions), caractères de contrôle supprimés.
-    const cleaned = [...value]
-      .filter((char) => {
-        const code = char.charCodeAt(0);
-        return code >= 32 || code === 10 || code === 9;
-      })
-      .join('')
-      .trim();
-    if (cleaned.length > max) issues.push({ field, rule: 'maxLength' });
-    return cleaned.slice(0, max);
-  };
-  const pattern = (value: unknown, field: string, re: RegExp, max = 120): string => {
-    const result = text(value, field, max);
-    if (result && !re.test(result)) issues.push({ field, rule: 'matches' });
-    return result;
-  };
+  const { text, pattern } = fieldReader(issues);
   const list = <T>(
     value: unknown,
     field: string,
@@ -157,10 +131,4 @@ export function normalizeCv(input: unknown): { content: CvContent; issues: Conte
     }),
   };
   return { content, issues };
-}
-
-function asObject(value: unknown): Record<string, unknown> {
-  return value && typeof value === 'object' && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {};
 }

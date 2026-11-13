@@ -61,6 +61,8 @@ const INITIAL_COSTS: { service: CreditService; credits: number }[] = [
   { service: 'doc_cv', credits: 15 },
   { service: 'doc_cover_letter', credits: 10 },
   { service: 'doc_application_letter', credits: 10 },
+  // Décision du 13 novembre 2026 : tarif distinct pour les autres lettres, initialisé à 1 USD.
+  { service: 'doc_other_letter', credits: 10 },
   { service: 'doc_pack', credits: 25 },
 ];
 const COST_REASON = 'Valeur initiale : arbitrage A3 validé le 9 novembre 2026.';

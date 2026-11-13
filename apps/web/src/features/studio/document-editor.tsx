@@ -1,13 +1,16 @@
 'use client';
 
 import {
-  AVAILABLE_CV_TEMPLATES,
+  type CareerDocumentContent,
   type CareerDocumentResponse,
   type CountryResponse,
   type CvContent,
   type CvTemplate,
   ERROR_CODES,
+  isLetterType,
+  type LetterContent,
   STUDIO_LIMITS,
+  templatesFor,
 } from '@opportinities/shared';
 import {
   AlignJustify,
@@ -37,10 +40,11 @@ import { SelectMenu } from '@/components/ui/select-menu';
 import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
 import { cn } from '@/lib/cn';
-import { type CvLabels } from './cv-format';
-import { CvForm, validateCv } from './cv-form';
-import { CvPreview } from './cv-preview';
+import { type CvIssue, CvForm, validateCv } from './cv-form';
+import { A4Preview } from './cv-preview';
+import { documentCountry, StudioDocument, type StudioLabels } from './document-view';
 import { ExportDialog } from './export-dialog';
+import { type LetterIssue, LetterForm, validateLetter } from './letters/letter-form';
 
 /** Icône de chaque modèle dans le sélecteur. */
 const TEMPLATE_ICONS: Record<CvTemplate, LucideIcon> = {
@@ -63,7 +67,7 @@ const AUTOSAVE_DELAY_MS = 1_200;
 interface Draft {
   title: string;
   templateKey: string;
-  content: CvContent;
+  content: CareerDocumentContent;
 }
 
 function SaveIndicator({ state }: { state: SaveState }) {
@@ -90,18 +94,19 @@ function SaveIndicator({ state }: { state: SaveState }) {
 }
 
 /**
- * Éditeur de CV : formulaire à gauche, aperçu A4 à droite (onglets sur mobile).
+ * Éditeur d'un document du Studio (CV ou lettre) : formulaire à gauche, aperçu A4 à droite
+ * (onglets sur mobile).
  * Enregistrement automatique après une courte pause, avec la version lue : si le document a été
  * modifié dans un autre onglet, l'écriture est refusée et l'utilisateur recharge.
  */
-export function CvEditor({
+export function DocumentEditor({
   document,
   countries,
   labels,
 }: {
   document: CareerDocumentResponse;
   countries: CountryResponse[];
-  labels: Record<'fr' | 'en', CvLabels>;
+  labels: Record<'fr' | 'en', StudioLabels>;
 }) {
   const t = useTranslations('studio.editor');
   const tErrors = useTranslations('errors');
@@ -118,7 +123,14 @@ export function CvEditor({
   const [view, setView] = useState<'form' | 'preview'>('form');
   const version = useRef(document.version);
 
-  const issues = useMemo(() => validateCv(draft.content), [draft.content]);
+  const letter = isLetterType(document.type);
+  const issues = useMemo(
+    () =>
+      letter
+        ? validateLetter(draft.content as LetterContent)
+        : validateCv(draft.content as CvContent),
+    [draft.content, letter],
+  );
   const invalid = Object.keys(issues).length > 0;
   const blocked = outcome === 'conflict';
   const pendingChanges = revision !== savedRevision;
@@ -188,15 +200,19 @@ export function CvEditor({
     return () => window.removeEventListener('beforeunload', warn);
   }, [revision, savedRevision]);
 
-  const country = countries.find((entry) => entry.iso2 === draft.content.personal.countryIso2);
+  const countryIso2 = documentCountry(document.type, draft.content);
+  const country = countries.find((entry) => entry.iso2 === countryIso2);
   const preview = (
-    <CvPreview
-      content={draft.content}
-      templateKey={draft.templateKey}
-      labels={labels[document.language]}
-      countryName={country ? countryName(country, document.language) : ''}
-      label={t('previewTab')}
-    />
+    <A4Preview label={t('previewTab')}>
+      <StudioDocument
+        type={document.type}
+        templateKey={draft.templateKey}
+        content={draft.content}
+        labels={labels[document.language]}
+        language={document.language}
+        countryName={country ? countryName(country, document.language) : ''}
+      />
+    </A4Preview>
   );
 
   return (
@@ -226,10 +242,10 @@ export function CvEditor({
             value={draft.templateKey}
             disabled={blocked}
             onChange={(templateKey) => update({ templateKey })}
-            options={AVAILABLE_CV_TEMPLATES.map((key) => ({
-              value: key as string,
-              label: t(`templates.${key}`),
-              icon: TEMPLATE_ICONS[key],
+            options={templatesFor(document.type).map((key) => ({
+              value: key,
+              label: t(`templates.${key as CvTemplate}`),
+              icon: TEMPLATE_ICONS[key as CvTemplate],
             }))}
             triggerClassName={buttonClasses('secondary', 'md')}
             trigger={
@@ -280,13 +296,24 @@ export function CvEditor({
           className={cn('min-w-0', view === 'preview' && 'hidden lg:block')}
           lang={locale}
         >
-          <CvForm
-            documentId={document.id}
-            content={draft.content}
-            countries={countries}
-            issues={issues}
-            onChange={(content) => update({ content })}
-          />
+          {isLetterType(document.type) ? (
+            <LetterForm
+              documentId={document.id}
+              type={document.type}
+              content={draft.content as LetterContent}
+              countries={countries}
+              issues={issues as Record<string, LetterIssue>}
+              onChange={(content) => update({ content })}
+            />
+          ) : (
+            <CvForm
+              documentId={document.id}
+              content={draft.content as CvContent}
+              countries={countries}
+              issues={issues as Record<string, CvIssue>}
+              onChange={(content) => update({ content })}
+            />
+          )}
         </fieldset>
         <div
           className={cn(

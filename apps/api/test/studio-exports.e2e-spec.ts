@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { type INestApplication } from '@nestjs/common';
 import {
   type CareerDocumentResponse,
+  type CvContent,
   type CareerExportDownloadResponse,
   type CareerExportRenderData,
   type CareerExportResponse,
@@ -58,14 +59,14 @@ describe('Career Studio : export PDF payé en crédits (intégration)', () => {
     return { api, userId: user.id };
   }
 
-  async function cv(api: ApiClient): Promise<CareerDocumentResponse> {
+  async function cv(api: ApiClient): Promise<CareerDocumentResponse<CvContent>> {
     return (
       await api.post('/api/v1/me/career-documents', {
         type: 'cv',
         title: 'CV / comptable : 2026',
         language: 'fr',
       })
-    ).body as CareerDocumentResponse;
+    ).body as CareerDocumentResponse<CvContent>;
   }
 
   const exportPath = (id: string) => `/api/v1/me/career-documents/${id}/exports`;
@@ -120,7 +121,7 @@ describe('Career Studio : export PDF payé en crédits (intégration)', () => {
     const call = renderer.calls.at(-1);
     expect(call?.url).toContain(`/fr/print/career-exports/${exported.id}?token=`);
     expect(call?.data).toMatchObject({ templateKey: 'classic', language: 'fr' });
-    expect(call?.data.content.personal.fullName).toBe('Awa Diallo');
+    expect((call?.data.content as CvContent | undefined)?.personal.fullName).toBe('Awa Diallo');
 
     // Double clic : même export, aucun second débit ni second rendu.
     const callsBefore = renderer.calls.length;
@@ -131,7 +132,7 @@ describe('Career Studio : export PDF payé en crédits (intégration)', () => {
 
     // Correction après paiement : ré-export gratuit dans la période.
     const latest = (await api.get(`/api/v1/me/career-documents/${doc.id}`))
-      .body as CareerDocumentResponse;
+      .body as CareerDocumentResponse<CvContent>;
     await api.patch(`/api/v1/me/career-documents/${doc.id}`, {
       version: latest.version,
       templateKey: 'executive',

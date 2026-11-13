@@ -3,6 +3,9 @@ import { type INestApplication } from '@nestjs/common';
 import {
   type AiSuggestionResponse,
   type CareerDocumentResponse,
+  type CareerExportsResponse,
+  type CvContent,
+  type LetterContent,
   type CareerDocumentSummary,
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
@@ -92,7 +95,7 @@ describe('Career Studio : documents (intégration)', () => {
       language: 'fr',
     });
     expect(created.status).toBe(201);
-    const cv = created.body as CareerDocumentResponse;
+    const cv = created.body as CareerDocumentResponse<CvContent>;
     expect(cv.content.personal).toMatchObject({
       fullName: 'Awa Diallo',
       email,
@@ -110,7 +113,7 @@ describe('Career Studio : documents (intégration)', () => {
       },
     });
     expect(saved.status).toBe(200);
-    const after = saved.body as CareerDocumentResponse;
+    const after = saved.body as CareerDocumentResponse<CvContent>;
     expect(after.version).toBe(2);
     expect(after.content.personal.headline).toBe('Comptable confirmée');
 
@@ -140,20 +143,13 @@ describe('Career Studio : documents (intégration)', () => {
         title: 'Mon CV',
         language: 'en',
       })
-    ).body as CareerDocumentResponse;
+    ).body as CareerDocumentResponse<CvContent>;
 
     expect((await other.api.get(`/api/v1/me/career-documents/${cv.id}`)).status).toBe(404);
     expect(
       (await other.api.patch(`/api/v1/me/career-documents/${cv.id}`, { version: 1, title: 'X' }))
         .status,
     ).toBe(404);
-
-    const unavailable = await owner.api.post('/api/v1/me/career-documents', {
-      type: 'resignation_letter',
-      title: 'Démission',
-      language: 'fr',
-    });
-    expect((unavailable.body as { code: string }).code).toBe('CAREER_DOCUMENT_TYPE_UNAVAILABLE');
 
     expect((await owner.api.delete(`/api/v1/me/career-documents/${cv.id}`)).status).toBe(204);
     const list = (await owner.api.get('/api/v1/me/career-documents'))
@@ -166,7 +162,7 @@ describe('Career Studio : documents (intégration)', () => {
     const { api } = await member();
     const cv = (
       await api.post('/api/v1/me/career-documents', { type: 'cv', title: 'CV IA', language: 'fr' })
-    ).body as CareerDocumentResponse;
+    ).body as CareerDocumentResponse<CvContent>;
     const improve = (text: string) =>
       api.post(`/api/v1/me/career-documents/${cv.id}/ai/improve`, {
         target: 'experience',
@@ -217,7 +213,7 @@ describe('Career Studio : documents (intégration)', () => {
         title: 'CV',
         language: 'en',
       })
-    ).body as CareerDocumentResponse;
+    ).body as CareerDocumentResponse<CvContent>;
     const path = `/api/v1/me/career-documents/${cv.id}/ai/improve`;
 
     expect((await owner.api.post(path, { target: 'summary', text: 'Trop court' })).status).toBe(
@@ -237,5 +233,61 @@ describe('Career Studio : documents (intégration)', () => {
     });
     expect(down.status).toBe(503);
     expect((down.body as { code: string }).code).toBe('AI_UNAVAILABLE');
+  });
+
+  it('crée une lettre avec les formules dans la langue du document et son propre tarif', async () => {
+    const { api, email } = await member();
+    const created = await api.post('/api/v1/me/career-documents', {
+      type: 'cover_letter',
+      title: 'Motivation comptable',
+      language: 'fr',
+    });
+    expect(created.status).toBe(201);
+    const letter = created.body as CareerDocumentResponse<LetterContent>;
+    expect(letter.templateKey).toBe('classic');
+    expect(letter.content.sender).toMatchObject({ fullName: 'Awa Diallo', email });
+    expect(letter.content.salutation).toBe('Madame, Monsieur,');
+
+    const saved = await api.patch(`/api/v1/me/career-documents/${letter.id}`, {
+      version: letter.version,
+      templateKey: 'modern',
+      content: {
+        ...letter.content,
+        subject: 'Candidature au poste de comptable',
+        date: '2026-11-13',
+        body: 'Premier paragraphe.\n\nSecond paragraphe.',
+        unknown: 'ignoré',
+      },
+    });
+    expect(saved.status).toBe(200);
+    const after = saved.body as CareerDocumentResponse<LetterContent>;
+    expect(after.content.body).toBe('Premier paragraphe.\n\nSecond paragraphe.');
+    expect(after.content).not.toHaveProperty('unknown');
+
+    // Un modèle de CV n'existe pas pour une lettre ; une date impossible est refusée.
+    const badTemplate = await api.patch(`/api/v1/me/career-documents/${letter.id}`, {
+      version: after.version,
+      templateKey: 'executive',
+    });
+    expect(badTemplate.status).toBe(400);
+    const badDate = await api.patch(`/api/v1/me/career-documents/${letter.id}`, {
+      version: after.version,
+      content: { ...after.content, date: '2026-13-01' },
+    });
+    expect((badDate.body as { details: { field: string }[] }).details[0]?.field).toBe(
+      'content.date',
+    );
+
+    const english = (
+      await api.post('/api/v1/me/career-documents', {
+        type: 'resignation_letter',
+        title: 'Resignation',
+        language: 'en',
+      })
+    ).body as CareerDocumentResponse<LetterContent>;
+    expect(english.content.salutation).toBe('Dear Sir or Madam,');
+    const prices = (await api.get(`/api/v1/me/career-documents/${english.id}/exports`))
+      .body as CareerExportsResponse;
+    expect(prices.cost).toBe(10);
   });
 });

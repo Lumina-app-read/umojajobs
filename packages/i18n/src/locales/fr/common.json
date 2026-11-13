@@ -327,6 +327,7 @@
         "doc_cv": "CV",
         "doc_cover_letter": "Lettre de motivation",
         "doc_application_letter": "Demande d’emploi",
+        "doc_other_letter": "Autre lettre (stage, démission, relance…)",
         "doc_pack": "Pack CV et lettre"
       },
       "grant": {

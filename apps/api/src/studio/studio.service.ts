@@ -6,21 +6,25 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import {
-  AVAILABLE_CV_TEMPLATES,
   AVAILABLE_DOCUMENT_TYPES,
   type CareerDocumentCreateInput,
   type CareerDocumentResponse,
   type CareerDocumentSummary,
   type CareerDocumentUpdateInput,
-  type CvContent,
+  type CareerDocumentContent,
   emptyCv,
+  emptyLetter,
+  isLetterType,
+  templatesFor,
   ERROR_CODES,
   STUDIO_LIMITS,
 } from '@opportinities/shared';
+import { getTranslator } from '@opportinities/i18n';
 import { type AuthContext } from '../auth/auth-context';
 import { type CareerDocument, type Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { normalizeCv } from './cv-content';
+import { normalizeLetter } from './letter-content';
 
 const toSummary = (row: CareerDocument): CareerDocumentSummary => ({
   id: row.id,
@@ -34,7 +38,7 @@ const toSummary = (row: CareerDocument): CareerDocumentSummary => ({
 
 const toResponse = (row: CareerDocument): CareerDocumentResponse => ({
   ...toSummary(row),
-  content: row.content as unknown as CvContent,
+  content: row.content as unknown as CareerDocumentContent,
   createdAt: row.createdAt.toISOString(),
 });
 
@@ -60,7 +64,10 @@ export class StudioService {
     return toResponse(await this.find(userId, id));
   }
 
-  /** Nouveau CV prérempli avec les informations du compte (nom, email, téléphone, pays). */
+  /**
+   * Nouveau document prérempli avec les informations du compte (nom, email, téléphone, pays) ;
+   * une lettre reçoit en plus les formules d'appel et de politesse dans la langue du document.
+   */
   async create(
     auth: AuthContext,
     input: CareerDocumentCreateInput,
@@ -76,19 +83,27 @@ export class StudioService {
     if (count >= STUDIO_LIMITS.documentsMax) {
       throw new UnprocessableEntityException({ code: ERROR_CODES.CAREER_DOCUMENT_LIMIT });
     }
-    const content = emptyCv({
+    const identity = {
       fullName: `${auth.user.firstName} ${auth.user.lastName}`,
       email: auth.user.email,
       phone: auth.user.phoneE164 ?? '',
       countryIso2: auth.user.countryIso2,
-    });
+    };
+    const t = getTranslator(input.language, 'studio');
+    const content: CareerDocumentContent = isLetterType(input.type)
+      ? emptyLetter(identity, {
+          salutation: t('letterDefaults.salutation'),
+          closing: t('letterDefaults.closing'),
+          subject: '',
+        })
+      : emptyCv(identity);
     const row = await this.prisma.careerDocument.create({
       data: {
         userId: auth.user.id,
         type: input.type,
         title: input.title,
         language: input.language,
-        templateKey: AVAILABLE_CV_TEMPLATES[0] as string,
+        templateKey: templatesFor(input.type)[0] as string,
         content: content as unknown as Prisma.InputJsonValue,
       },
     });
@@ -100,12 +115,12 @@ export class StudioService {
     id: string,
     input: CareerDocumentUpdateInput,
   ): Promise<CareerDocumentResponse> {
-    await this.find(userId, id);
+    const existing = await this.find(userId, id);
     const data: Prisma.CareerDocumentUpdateManyMutationInput = { version: { increment: 1 } };
     if (input.title !== undefined) data.title = input.title;
     if (input.language !== undefined) data.language = input.language;
     if (input.templateKey !== undefined) {
-      if (!(AVAILABLE_CV_TEMPLATES as readonly string[]).includes(input.templateKey)) {
+      if (!templatesFor(existing.type).includes(input.templateKey)) {
         throw new BadRequestException({
           code: ERROR_CODES.VALIDATION_FAILED,
           details: [{ field: 'templateKey', rules: ['isIn'] }],
@@ -114,7 +129,9 @@ export class StudioService {
       data.templateKey = input.templateKey;
     }
     if (input.content !== undefined) {
-      const { content, issues } = normalizeCv(input.content);
+      const { content, issues } = isLetterType(existing.type)
+        ? normalizeLetter(input.content)
+        : normalizeCv(input.content);
       if (issues.length > 0) {
         throw new BadRequestException({
           code: ERROR_CODES.VALIDATION_FAILED,

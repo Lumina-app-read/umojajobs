@@ -327,6 +327,7 @@
         "doc_cv": "CV",
         "doc_cover_letter": "Cover letter",
         "doc_application_letter": "Job application letter",
+        "doc_other_letter": "Other letter (internship, resignation, follow-up…)",
         "doc_pack": "CV and letter pack"
       },
       "grant": {

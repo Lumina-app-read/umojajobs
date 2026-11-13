@@ -25,7 +25,14 @@
       "thank_you_letter": "Lettre de remerciement"
     },
     "typeHints": {
-      "cv": "Expériences, formations, compétences et langues, mis en page en un clic."
+      "cv": "Expériences, formations, compétences et langues, mis en page en un clic.",
+      "cover_letter": "Pour répondre à une offre précise.",
+      "application_letter": "Candidature spontanée, sans offre publiée.",
+      "internship_request": "Pour obtenir un stage.",
+      "recommendation_draft": "Brouillon à faire signer par un référent.",
+      "resignation_letter": "Pour quitter un poste dans les règles.",
+      "follow_up_letter": "Pour relancer une candidature restée sans réponse.",
+      "thank_you_letter": "Après un entretien."
     },
     "create": "Créer",
     "newTitle": "Titre du document",
@@ -221,5 +228,91 @@
     "cancel": "Fermer",
     "loadError": "Impossible de charger les informations d'export.",
     "ready": "Prêt"
+  },
+  "letterDefaults": {
+    "salutation": "Madame, Monsieur,",
+    "closing": "Je vous prie d’agréer, Madame, Monsieur, l’expression de mes salutations distinguées."
+  },
+  "letterPrint": {
+    "subject": "Objet :",
+    "reference": "Réf. :",
+    "enclosures": "Pièces jointes :",
+    "placeDate": "{place}, le {date}"
+  },
+  "letter": {
+    "sections": {
+      "sender": "Expéditeur",
+      "recipient": "Destinataire",
+      "details": "Lieu, date et objet",
+      "body": "Contenu de la lettre",
+      "closing": "Formules et pièces jointes"
+    },
+    "hints": {
+      "recipient": "Indiquez la personne ou le service à qui vous écrivez, si vous le connaissez.",
+      "date": "Laissez vide pour utiliser la date du jour.",
+      "body": "Séparez les paragraphes par une ligne vide. N’écrivez que des informations exactes.",
+      "enclosures": "Une pièce par ligne, par exemple « Curriculum vitae »."
+    },
+    "fields": {
+      "fullName": "Nom complet",
+      "email": "Email",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "city": "Ville",
+      "country": "Pays",
+      "recipientName": "Nom du destinataire",
+      "recipientRole": "Fonction",
+      "organization": "Entreprise ou organisme",
+      "recipientAddress": "Adresse",
+      "recipientCity": "Ville",
+      "place": "Lieu d’écriture",
+      "date": "Date",
+      "subject": "Objet",
+      "reference": "Référence",
+      "salutation": "Formule d’appel",
+      "body": "Corps de la lettre",
+      "closing": "Formule de politesse",
+      "enclosures": "Pièces jointes"
+    },
+    "placeholders": {
+      "fullName": "Ex. : Awa Diallo",
+      "email": "Ex. : awa.diallo@example.com",
+      "phone": "Ex. : +221 77 123 45 67",
+      "address": "Ex. : Sacré-Cœur 3, villa 12",
+      "city": "Ex. : Dakar",
+      "recipientName": "Ex. : M. Moussa Ndiaye",
+      "recipientRole": "Ex. : Directeur des ressources humaines",
+      "organization": "Ex. : Logistique Ouest SA",
+      "recipientAddress": "Ex. : Route de Rufisque, BP 1234",
+      "recipientCity": "Ex. : Dakar",
+      "place": "Ex. : Dakar",
+      "date": "AAAA-MM-JJ",
+      "reference": "Ex. : Offre n° RH-2026-14",
+      "salutation": "Ex. : Madame, Monsieur,",
+      "closing": "Ex. : Je vous prie d’agréer mes salutations distinguées.",
+      "enclosures": "Ex. : Curriculum vitae"
+    },
+    "subjects": {
+      "cover_letter": "Ex. : Candidature au poste de comptable",
+      "application_letter": "Ex. : Demande d’emploi en comptabilité",
+      "internship_request": "Ex. : Demande de stage de six mois en comptabilité",
+      "recommendation_draft": "Ex. : Lettre de recommandation pour Awa Diallo",
+      "resignation_letter": "Ex. : Démission du poste de comptable",
+      "follow_up_letter": "Ex. : Relance de ma candidature au poste de comptable",
+      "thank_you_letter": "Ex. : Remerciements suite à notre entretien"
+    },
+    "guides": {
+      "cover_letter": "Expliquez pourquoi ce poste vous intéresse, ce que vous apportez à l’entreprise et proposez un entretien.",
+      "application_letter": "Présentez votre profil, le type de poste recherché et votre disponibilité, même sans offre publiée.",
+      "internship_request": "Précisez votre formation, la durée et les dates du stage, et ce que vous souhaitez apprendre.",
+      "recommendation_draft": "Brouillon à faire relire et signer par la personne qui vous recommande : faits exacts uniquement.",
+      "resignation_letter": "Indiquez votre décision, la date de fin souhaitée en tenant compte du préavis, et vos remerciements.",
+      "follow_up_letter": "Rappelez la date et le poste de votre candidature, et redites brièvement votre intérêt.",
+      "thank_you_letter": "Remerciez pour l’entretien, rappelez un point marquant de l’échange et confirmez votre intérêt."
+    },
+    "bodyPlaceholder": "Ex. : Titulaire d’une licence en comptabilité, je vous propose ma candidature…",
+    "dateInvalid": "Format attendu : AAAA-MM-JJ, par exemple 2026-11-13.",
+    "emailInvalid": "Adresse email invalide.",
+    "phoneInvalid": "Numéro invalide, par exemple +221 77 123 45 67."
   }
 }

@@ -1,3 +1,5 @@
+import { type CreditService } from './finance';
+
 /**
  * Career Studio (cahier des charges §11) : documents professionnels assistés.
  * Le remplissage et l'aperçu sont gratuits ; l'export PDF est payé en crédits.
@@ -15,8 +17,15 @@ export const CAREER_DOCUMENT_TYPES = [
 ] as const;
 export type CareerDocumentType = (typeof CAREER_DOCUMENT_TYPES)[number];
 
-/** Types déjà disponibles dans le Studio (les autres arrivent avec les étapes suivantes). */
-export const AVAILABLE_DOCUMENT_TYPES: readonly CareerDocumentType[] = ['cv'];
+/** Types disponibles dans le Studio. */
+export const AVAILABLE_DOCUMENT_TYPES: readonly CareerDocumentType[] = CAREER_DOCUMENT_TYPES;
+
+/** Lettres : tous les types sauf le CV, avec un même modèle de contenu. */
+export const LETTER_TYPES = CAREER_DOCUMENT_TYPES.filter(
+  (type): type is Exclude<CareerDocumentType, 'cv'> => type !== 'cv',
+);
+export type LetterType = (typeof LETTER_TYPES)[number];
+export const isLetterType = (type: CareerDocumentType): type is LetterType => type !== 'cv';
 
 /** Modèles de CV (§11.2). */
 export const CV_TEMPLATES = [
@@ -132,8 +141,10 @@ export interface CareerDocumentSummary {
   updatedAt: string;
 }
 
-export interface CareerDocumentResponse extends CareerDocumentSummary {
-  content: CvContent;
+export interface CareerDocumentResponse<
+  C extends CareerDocumentContent = CareerDocumentContent,
+> extends CareerDocumentSummary {
+  content: C;
   createdAt: string;
 }
 
@@ -149,7 +160,7 @@ export interface CareerDocumentUpdateInput {
   title?: string;
   language?: 'fr' | 'en';
   templateKey?: string;
-  content?: CvContent;
+  content?: CareerDocumentContent;
 }
 
 /** CV vide, prérempli avec les informations connues du compte. */
@@ -177,7 +188,13 @@ export function emptyCv(personal: Partial<CvPersonal> = {}): CvContent {
 }
 
 /** Textes que l'assistant IA peut reformuler (jamais compléter). */
-export const AI_IMPROVE_TARGETS = ['summary', 'experience', 'education', 'project'] as const;
+export const AI_IMPROVE_TARGETS = [
+  'summary',
+  'experience',
+  'education',
+  'project',
+  'letter',
+] as const;
 export type AiImproveTarget = (typeof AI_IMPROVE_TARGETS)[number];
 
 export const AI_LIMITS = {
@@ -201,8 +218,16 @@ export interface AiSuggestionResponse {
 }
 
 /** Service payé en crédits pour l'export PDF de chaque type de document. */
-export const EXPORT_SERVICE_BY_TYPE: Partial<Record<CareerDocumentType, 'doc_cv'>> = {
+export const EXPORT_SERVICE_BY_TYPE: Record<CareerDocumentType, CreditService> = {
   cv: 'doc_cv',
+  cover_letter: 'doc_cover_letter',
+  application_letter: 'doc_application_letter',
+  // Décision du 13 novembre 2026 : tarif distinct « Autre lettre », réglable dans l'administration.
+  internship_request: 'doc_other_letter',
+  recommendation_draft: 'doc_other_letter',
+  resignation_letter: 'doc_other_letter',
+  follow_up_letter: 'doc_other_letter',
+  thank_you_letter: 'doc_other_letter',
 };
 
 export const CAREER_EXPORT_STATUSES = ['pending', 'ready', 'failed'] as const;
@@ -248,8 +273,97 @@ export interface CareerExportDownloadResponse {
 
 /** Données d'impression d'un export (route interne, protégée par un jeton signé). */
 export interface CareerExportRenderData {
+  type: CareerDocumentType;
   templateKey: string;
   language: 'fr' | 'en';
   title: string;
-  content: CvContent;
+  content: CareerDocumentContent;
+}
+
+/** Modèles de lettre. */
+export const LETTER_TEMPLATES = ['classic', 'modern'] as const;
+export type LetterTemplate = (typeof LETTER_TEMPLATES)[number];
+
+/** Modèles proposés pour un type de document. */
+export function templatesFor(type: CareerDocumentType): readonly string[] {
+  return type === 'cv' ? AVAILABLE_CV_TEMPLATES : LETTER_TEMPLATES;
+}
+
+export const LETTER_LIMITS = {
+  shortText: 120,
+  addressMax: 200,
+  subjectMax: 200,
+  salutationMax: 120,
+  closingMax: 400,
+  bodyMax: 5_000,
+} as const;
+
+/** Date au format « AAAA-MM-JJ ». */
+export const ISO_DATE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+
+export interface LetterSender {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  countryIso2: string;
+}
+
+export interface LetterRecipient {
+  /** Personne destinataire, si elle est connue (sinon « Madame, Monsieur »). */
+  name: string;
+  role: string;
+  organization: string;
+  address: string;
+  city: string;
+}
+
+/**
+ * Contenu d'une lettre (§11) : expéditeur, destinataire, lieu et date, objet, corps et formules.
+ * Le même modèle sert à toutes les lettres ; seuls les exemples et formules par défaut changent.
+ */
+export interface LetterContent {
+  sender: LetterSender;
+  recipient: LetterRecipient;
+  /** Ville d'écriture (« Dakar, le 13 novembre 2026 »). */
+  place: string;
+  date: string;
+  subject: string;
+  /** Référence de l'offre ou du dossier, facultative. */
+  reference: string;
+  salutation: string;
+  /** Paragraphes séparés par une ligne vide. */
+  body: string;
+  closing: string;
+  /** Pièces jointes, une par ligne (facultatif). */
+  enclosures: string;
+}
+
+export type CareerDocumentContent = CvContent | LetterContent;
+
+export function emptyLetter(
+  sender: Partial<LetterSender>,
+  defaults: { salutation: string; closing: string; subject: string; place?: string },
+): LetterContent {
+  return {
+    sender: {
+      fullName: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      countryIso2: '',
+      ...sender,
+    },
+    recipient: { name: '', role: '', organization: '', address: '', city: '' },
+    place: defaults.place ?? sender.city ?? '',
+    date: '',
+    subject: defaults.subject,
+    reference: '',
+    salutation: defaults.salutation,
+    body: '',
+    closing: defaults.closing,
+    enclosures: '',
+  };
 }

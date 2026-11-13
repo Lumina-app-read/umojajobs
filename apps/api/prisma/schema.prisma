@@ -666,6 +666,8 @@ enum CreditService {
   doc_cv
   doc_cover_letter
   doc_application_letter
+  /// Autres lettres : demande de stage, recommandation, démission, relance, remerciement.
+  doc_other_letter
   doc_pack
 
   @@map("credit_service")

@@ -19,6 +19,7 @@ import {
   type AiImproveTarget,
   type AiSuggestionResponse,
   CAREER_DOCUMENT_TYPES,
+  LETTER_LIMITS,
   type CareerExportCreateInput,
   type CareerExportDownloadResponse,
   type CareerExportRenderData,
@@ -122,10 +123,10 @@ class AiImproveDto implements AiImproveInput {
   @IsIn(AI_IMPROVE_TARGETS)
   target!: AiImproveTarget;
 
-  @ApiProperty({ minLength: AI_LIMITS.textMin, maxLength: STUDIO_LIMITS.descriptionMax })
+  @ApiProperty({ minLength: AI_LIMITS.textMin, maxLength: LETTER_LIMITS.bodyMax })
   @Transform(trim)
   @IsString()
-  @Length(AI_LIMITS.textMin, STUDIO_LIMITS.descriptionMax)
+  @Length(AI_LIMITS.textMin, LETTER_LIMITS.bodyMax)
   text!: string;
 
   @ApiPropertyOptional({ type: AiContextDto })

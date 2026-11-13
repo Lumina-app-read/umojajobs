@@ -1,40 +1,34 @@
 'use client';
 
-import { type CvContent } from '@opportinities/shared';
-import { useEffect, useRef, useState } from 'react';
-import { type CvLabels } from './cv-format';
-import { A4_HEIGHT, A4_WIDTH, CvDocument } from './templates';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { A4_HEIGHT, A4_WIDTH } from './templates';
 
-const PAGE_WIDTH = A4_WIDTH;
-const PAGE_HEIGHT = A4_HEIGHT;
-
-/** Aperçu fidèle du CV : même rendu que le futur PDF, à l'échelle du conteneur. */
-export function CvPreview({
-  content,
-  templateKey,
-  labels,
-  countryName,
+/**
+ * Aperçu A4 fidèle d'un document du Studio : la page est dessinée à taille réelle (comme dans le
+ * PDF), puis réduite à la largeur disponible.
+ */
+export function A4Preview({
   label,
+  children,
 }: {
-  content: CvContent;
-  templateKey: string;
-  labels: CvLabels;
-  countryName: string;
   /** Nom accessible de l'aperçu. */
   label: string;
+  children: ReactNode;
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
-  const [height, setHeight] = useState(PAGE_HEIGHT);
+  const [height, setHeight] = useState(A4_HEIGHT);
 
   useEffect(() => {
     const frame = frameRef.current;
     const page = pageRef.current;
     if (!frame || !page) return undefined;
     const update = () => {
-      setScale(Math.min(1, frame.clientWidth / PAGE_WIDTH));
-      setHeight(Math.max(PAGE_HEIGHT, page.scrollHeight));
+      // Aperçu masqué (onglet Saisie sur mobile) : largeur nulle, on garde la dernière échelle.
+      if (frame.clientWidth === 0) return;
+      setScale(Math.min(1, frame.clientWidth / A4_WIDTH));
+      setHeight(Math.max(A4_HEIGHT, page.scrollHeight));
     };
     update();
     const observer = new ResizeObserver(update);
@@ -45,21 +39,13 @@ export function CvPreview({
 
   return (
     <div ref={frameRef} className="w-full" role="region" aria-label={label}>
-      <div
-        className="relative mx-auto"
-        style={{ width: PAGE_WIDTH * scale, height: height * scale }}
-      >
+      <div className="relative mx-auto" style={{ width: A4_WIDTH * scale, height: height * scale }}>
         <div
           ref={pageRef}
           className="absolute top-0 left-0 origin-top-left overflow-hidden rounded-[3px] bg-white shadow-[0_1px_3px_rgb(15_23_42/0.12),0_8px_28px_rgb(15_23_42/0.10)] ring-1 ring-black/5"
-          style={{ width: PAGE_WIDTH, minHeight: PAGE_HEIGHT, transform: `scale(${scale})` }}
+          style={{ width: A4_WIDTH, minHeight: A4_HEIGHT, transform: `scale(${scale})` }}
         >
-          <CvDocument
-            templateKey={templateKey}
-            content={content}
-            labels={labels}
-            countryName={countryName}
-          />
+          {children}
         </div>
       </div>
     </div>

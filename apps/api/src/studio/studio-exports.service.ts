@@ -14,7 +14,8 @@ import {
   type CareerExportResponse,
   type CareerExportsResponse,
   type CareerExportSummary,
-  type CvContent,
+  type CareerDocumentContent,
+  type CreditService,
   ERROR_CODES,
   EXPORT_SERVICE_BY_TYPE,
 } from '@opportinities/shared';
@@ -31,6 +32,13 @@ import { RenderTokenService } from './render-token';
 type Tx = Prisma.TransactionClient;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Nom du signataire : titulaire du CV ou expéditeur de la lettre (obligatoire avant tout export). */
+function signerName(content: unknown): string {
+  const value = content as { personal?: { fullName?: unknown }; sender?: { fullName?: unknown } };
+  const name = value.personal?.fullName ?? value.sender?.fullName;
+  return typeof name === 'string' ? name : '';
+}
 /** Au-delà, un PDF de CV est anormal (page d'erreur imprimée, boucle de rendu). */
 const MAX_PDF_BYTES = 10 * 1024 * 1024;
 
@@ -119,8 +127,7 @@ export class StudioExportsService {
         code: ERROR_CODES.CAREER_DOCUMENT_TYPE_UNAVAILABLE,
       });
     }
-    const content = document.content as unknown as CvContent;
-    if (!content.personal?.fullName?.trim()) {
+    if (!signerName(document.content).trim()) {
       throw new UnprocessableEntityException({ code: ERROR_CODES.CAREER_EXPORT_INCOMPLETE });
     }
     // Aucun débit si l'impression est impossible de toute façon.
@@ -201,6 +208,7 @@ export class StudioExportsService {
     const row = this.tokens.verify(exportId, token)
       ? await this.prisma.careerDocumentExport.findFirst({
           where: { id: exportId, status: 'pending' },
+          include: { document: { select: { type: true } } },
         })
       : null;
     if (!row) throw new NotFoundException({ code: ERROR_CODES.CAREER_EXPORT_NOT_FOUND });
@@ -208,7 +216,8 @@ export class StudioExportsService {
       templateKey: row.templateKey,
       language: row.language === 'en' ? 'en' : 'fr',
       title: row.title,
-      content: row.content as unknown as CvContent,
+      type: row.document.type,
+      content: row.content as unknown as CareerDocumentContent,
     };
   }
 
@@ -234,7 +243,7 @@ export class StudioExportsService {
 
   private async charge(
     tx: Tx,
-    input: { userId: string; documentId: string; service: 'doc_cv'; idempotencyKey: string },
+    input: { userId: string; documentId: string; service: CreditService; idempotencyKey: string },
   ): Promise<string> {
     const cost = await this.settings.requireCost(input.service, tx).catch(() => {
       throw new ServiceUnavailableException({ code: ERROR_CODES.CAREER_EXPORT_PRICE_MISSING });

@@ -1,4 +1,4 @@
-import { type AiImproveTarget, STUDIO_LIMITS } from '@opportinities/shared';
+import { type AiImproveTarget, LETTER_LIMITS, STUDIO_LIMITS } from '@opportinities/shared';
 
 /** Longueur maximale de la suggestion : celle du champ qu'elle remplacera. */
 export const TARGET_MAX: Record<AiImproveTarget, number> = {
@@ -6,6 +6,7 @@ export const TARGET_MAX: Record<AiImproveTarget, number> = {
   experience: STUDIO_LIMITS.descriptionMax,
   education: STUDIO_LIMITS.descriptionMax,
   project: STUDIO_LIMITS.descriptionMax,
+  letter: LETTER_LIMITS.bodyMax,
 };
 
 const TARGET_LABEL: Record<AiImproveTarget, string> = {
@@ -15,6 +16,8 @@ const TARGET_LABEL: Record<AiImproveTarget, string> = {
     'description of duties and results for one job (one bullet per line, each line starting with "- ")',
   education: 'description of a degree or training (short, one bullet per line starting with "- ")',
   project: 'description of a project (short, one bullet per line starting with "- ")',
+  letter:
+    'body of a formal letter (paragraphs separated by an empty line, without salutation, closing formula or signature)',
 };
 
 const LANGUAGE_NAME = { fr: 'French', en: 'English' } as const;
@@ -30,7 +33,7 @@ export function buildPrompt(input: {
   context?: { title?: string; organization?: string };
 }): { system: string; user: string } {
   const system = [
-    'You are an editor who improves the wording of CV (resume) text for job seekers in Africa.',
+    'You are an editor who improves the wording of CV (resume) and job-related letter text for job seekers in Africa.',
     `Rewrite the text as a ${TARGET_LABEL[input.target]}.`,
     `Write in ${LANGUAGE_NAME[input.language]}, in a professional, concise and factual tone.`,
     'Strict rules:',

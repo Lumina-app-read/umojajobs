@@ -23,7 +23,6 @@ import {
   Home,
   Languages,
   Link2,
-  type LucideIcon,
   Mail,
   MapPin,
   Phone,
@@ -42,6 +41,7 @@ import { Button, IconButton } from '@/components/ui/button';
 import { FormSelect, TextAreaField } from '@/components/ui/form-controls';
 import { Checkbox, FormField } from '@/components/ui/form-field';
 import { AiAssist } from './ai-assist';
+import { Section } from './form-section';
 
 type ListKey =
   'experiences' | 'education' | 'languages' | 'certifications' | 'projects' | 'references';
@@ -110,36 +110,6 @@ const FACTORIES: { [K in ListKey]: () => Item<K> } = {
   projects: () => ({ id: newId(), name: '', description: '', url: '' }),
   references: () => ({ id: newId(), name: '', role: '', organization: '', contact: '' }),
 };
-
-function Section({
-  icon: Icon,
-  title,
-  hint,
-  children,
-  action,
-}: {
-  icon: LucideIcon;
-  title: string;
-  hint?: string;
-  children: ReactNode;
-  action?: ReactNode;
-}) {
-  return (
-    <section className="rounded-xl border border-line bg-surface p-4 shadow-xs sm:p-5">
-      <div className="flex items-start gap-3">
-        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-brand">
-          <Icon className="size-4" aria-hidden="true" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h2 className="text-[15px] font-semibold text-fg">{title}</h2>
-          {hint && <p className="mt-0.5 text-[13px] text-fg-muted">{hint}</p>}
-        </div>
-      </div>
-      <div className="mt-4 grid gap-4">{children}</div>
-      {action && <div className="mt-4">{action}</div>}
-    </section>
-  );
-}
 
 /** Formulaire complet du CV. Chaque modification remonte un nouveau contenu (immuable). */
 export function CvForm({

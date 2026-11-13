@@ -25,7 +25,14 @@
       "thank_you_letter": "Thank-you letter"
     },
     "typeHints": {
-      "cv": "Experience, education, skills and languages, laid out in one click."
+      "cv": "Experience, education, skills and languages, laid out in one click.",
+      "cover_letter": "To answer a specific vacancy.",
+      "application_letter": "Unsolicited application, without a vacancy.",
+      "internship_request": "To obtain an internship.",
+      "recommendation_draft": "Draft for a referee to sign.",
+      "resignation_letter": "To leave a position properly.",
+      "follow_up_letter": "To follow up on an unanswered application.",
+      "thank_you_letter": "After an interview."
     },
     "create": "Create",
     "newTitle": "Document title",
@@ -221,5 +228,91 @@
     "cancel": "Close",
     "loadError": "Export details could not be loaded.",
     "ready": "Ready"
+  },
+  "letterDefaults": {
+    "salutation": "Dear Sir or Madam,",
+    "closing": "Yours faithfully,"
+  },
+  "letterPrint": {
+    "subject": "Subject:",
+    "reference": "Ref.:",
+    "enclosures": "Enclosures:",
+    "placeDate": "{place}, {date}"
+  },
+  "letter": {
+    "sections": {
+      "sender": "Sender",
+      "recipient": "Recipient",
+      "details": "Place, date and subject",
+      "body": "Letter content",
+      "closing": "Closing and enclosures"
+    },
+    "hints": {
+      "recipient": "Enter the person or department you are writing to, if you know it.",
+      "date": "Leave empty to use today’s date.",
+      "body": "Separate paragraphs with an empty line. Only write accurate information.",
+      "enclosures": "One item per line, for example “Curriculum vitae”."
+    },
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "recipientName": "Recipient name",
+      "recipientRole": "Position",
+      "organization": "Company or organisation",
+      "recipientAddress": "Address",
+      "recipientCity": "City",
+      "place": "Place of writing",
+      "date": "Date",
+      "subject": "Subject",
+      "reference": "Reference",
+      "salutation": "Salutation",
+      "body": "Letter body",
+      "closing": "Closing",
+      "enclosures": "Enclosures"
+    },
+    "placeholders": {
+      "fullName": "E.g. Awa Diallo",
+      "email": "E.g. awa.diallo@example.com",
+      "phone": "E.g. +221 77 123 45 67",
+      "address": "E.g. Sacré-Cœur 3, villa 12",
+      "city": "E.g. Dakar",
+      "recipientName": "E.g. Mr Moussa Ndiaye",
+      "recipientRole": "E.g. Human resources director",
+      "organization": "E.g. Logistique Ouest SA",
+      "recipientAddress": "E.g. Route de Rufisque, PO Box 1234",
+      "recipientCity": "E.g. Dakar",
+      "place": "E.g. Dakar",
+      "date": "YYYY-MM-DD",
+      "reference": "E.g. Job ref. HR-2026-14",
+      "salutation": "E.g. Dear Sir or Madam,",
+      "closing": "E.g. Yours faithfully,",
+      "enclosures": "E.g. Curriculum vitae"
+    },
+    "subjects": {
+      "cover_letter": "E.g. Application for the accountant position",
+      "application_letter": "E.g. Job application in accounting",
+      "internship_request": "E.g. Request for a six-month accounting internship",
+      "recommendation_draft": "E.g. Letter of recommendation for Awa Diallo",
+      "resignation_letter": "E.g. Resignation from the accountant position",
+      "follow_up_letter": "E.g. Follow-up on my application for the accountant position",
+      "thank_you_letter": "E.g. Thank you for our interview"
+    },
+    "guides": {
+      "cover_letter": "Explain why this position interests you, what you bring to the company, and suggest an interview.",
+      "application_letter": "Present your profile, the kind of position you are looking for and your availability, even without a published vacancy.",
+      "internship_request": "State your studies, the length and dates of the internship, and what you hope to learn.",
+      "recommendation_draft": "Draft for the person recommending you to review and sign: accurate facts only.",
+      "resignation_letter": "State your decision, the intended last day taking notice into account, and your thanks.",
+      "follow_up_letter": "Recall the date and position of your application and briefly restate your interest.",
+      "thank_you_letter": "Thank them for the interview, mention a highlight of the conversation and confirm your interest."
+    },
+    "bodyPlaceholder": "E.g. With a bachelor’s degree in accounting, I would like to apply…",
+    "dateInvalid": "Expected format: YYYY-MM-DD, for example 2026-11-13.",
+    "emailInvalid": "Invalid email address.",
+    "phoneInvalid": "Invalid number, for example +221 77 123 45 67."
   }
 }

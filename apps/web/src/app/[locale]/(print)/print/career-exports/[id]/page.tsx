@@ -1,8 +1,9 @@
 import { type CareerExportRenderData, type CountryResponse } from '@opportinities/shared';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { cvLabels } from '@/features/studio/cv-labels';
-import { A4_WIDTH, CvDocument } from '@/features/studio/templates';
+import { studioLabels } from '@/features/studio/cv-labels';
+import { documentCountry, StudioDocument } from '@/features/studio/document-view';
+import { A4_WIDTH } from '@/features/studio/templates';
 import { getCountries } from '@/lib/api/server';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -38,10 +39,11 @@ export default async function CareerExportPrintPage({ params, searchParams }: Pr
   if (!data) notFound();
 
   const [labels, countries] = await Promise.all([
-    cvLabels(data.language),
+    studioLabels(data.language),
     getCountries().catch((): CountryResponse[] => []),
   ]);
-  const country = countries.find((entry) => entry.iso2 === data.content.personal.countryIso2);
+  const countryIso2 = documentCountry(data.type, data.content);
+  const country = countries.find((entry) => entry.iso2 === countryIso2);
 
   return (
     <>
@@ -54,7 +56,9 @@ body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }`}</style>
         className="bg-white"
         style={{ width: A4_WIDTH }}
       >
-        <CvDocument
+        <StudioDocument
+          type={data.type}
+          language={data.language}
           templateKey={data.templateKey}
           content={data.content}
           labels={labels}
