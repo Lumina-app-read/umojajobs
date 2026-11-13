@@ -2,22 +2,20 @@
 
 import {
   AI_LIMITS,
-  type AiGenerationResponse,
   type AiImproveInput,
   type AiImproveTarget,
   ERROR_CODES,
 } from '@opportinities/shared';
 import { Check, Coins, ShieldCheck, Sparkles, WandSparkles, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ButtonLink } from '@/components/ui/button-link';
 import { FieldError, FieldHint } from '@/components/ui/form-field';
 import { toast } from '@/components/ui/toast';
-import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
 import { useFormErrors } from '@/lib/use-form-errors';
-import { useStudioAi } from './ai-context';
+import { GenerationLostError, runAiOperation, useStudioAi } from './ai-context';
 
 /**
  * Amélioration d'un texte existant par l'IA (mode B), payée en crédits : le prix figure sur le
@@ -38,36 +36,31 @@ export function AiAssist({
   onApply: (suggestion: string) => void;
 }) {
   const t = useTranslations('studio.editor.ai');
+  const tGeneration = useTranslations('studio.generation');
   const { fromApiError } = useFormErrors();
   const { prices, setBalance } = useStudioAi();
   const [pending, setPending] = useState(false);
   const [suggestion, setSuggestion] = useState<{ text: string; charged: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [insufficient, setInsufficient] = useState(false);
-  /** Une clé par opération : un double clic ou une relance réseau ne débite qu'une fois. */
-  const key = useRef<string | null>(null);
   const tooShort = text.trim().length < AI_LIMITS.textMin;
   const price = prices?.improve ?? null;
 
   async function request() {
-    key.current ??= crypto.randomUUID();
     setPending(true);
     setError(null);
     setInsufficient(false);
     setSuggestion(null);
     try {
-      const input: AiImproveInput = { idempotencyKey: key.current, target, text: text.trim() };
+      const input: Omit<AiImproveInput, 'idempotencyKey'> = { target, text: text.trim() };
       if (context?.title || context?.organization) {
         input.context = {
           title: context.title?.trim().slice(0, AI_LIMITS.contextMax) || undefined,
           organization: context.organization?.trim().slice(0, AI_LIMITS.contextMax) || undefined,
         };
       }
-      const result = await api.post<AiGenerationResponse>(
-        `/me/career-documents/${documentId}/ai/improve`,
-        input,
-      );
-      key.current = null;
+      // Clé unique par opération ; après une coupure, l'état est vérifié avant toute relance.
+      const result = await runAiOperation(documentId, 'improve', { ...input });
       setBalance(result.balance);
       if (result.status === 'succeeded' && result.result?.kind === 'text') {
         setSuggestion({
@@ -78,9 +71,9 @@ export function AiAssist({
         setError(t('refunded'));
       }
     } catch (caught) {
-      // Après une erreur, la tentative suivante reçoit une nouvelle clé (aucun double débit).
-      key.current = null;
-      if (caught instanceof ApiError && caught.code === ERROR_CODES.INSUFFICIENT_CREDITS) {
+      if (caught instanceof GenerationLostError) {
+        setError(tGeneration('lost'));
+      } else if (caught instanceof ApiError && caught.code === ERROR_CODES.INSUFFICIENT_CREDITS) {
         setInsufficient(true);
       } else {
         setError(fromApiError(caught).message);

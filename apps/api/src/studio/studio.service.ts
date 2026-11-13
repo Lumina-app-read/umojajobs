@@ -93,8 +93,10 @@ export class StudioService {
       countryIso2: auth.user.countryIso2,
     };
     const t = getTranslator(input.language, 'studio');
+    // Lettre de recommandation : signée par le recommandant ; le titulaire du compte est le candidat.
+    const recommendation = input.type === 'recommendation_draft';
     const content: CareerDocumentContent = isLetterType(input.type)
-      ? emptyLetter(identity, {
+      ? emptyLetter(recommendation ? { countryIso2: identity.countryIso2 } : identity, {
           salutation: t('letterDefaults.salutation'),
           closing: t('letterDefaults.closing'),
           subject: '',
@@ -108,6 +110,7 @@ export class StudioService {
         language: input.language,
         templateKey: templatesFor(input.type)[0] as string,
         content: content as unknown as Prisma.InputJsonValue,
+        brief: recommendation ? { candidateName: identity.fullName } : {},
       },
     });
     return toResponse(row);

@@ -1,7 +1,7 @@
 {
   "list": {
     "title": "Career Studio",
-    "intro": "Create polished professional documents. Writing and previewing are free; you only pay for the PDF export.",
+    "intro": "Fill in your information: the AI writes your documents without inventing anything. Writing, editing and previewing are free; AI generation and PDF export are paid in credits.",
     "myDocuments": "My documents",
     "empty": "No documents yet",
     "emptyBody": "Start with your CV: it will be the basis for your letters.",
@@ -318,5 +318,227 @@
     "dateInvalid": "Expected format: YYYY-MM-DD, for example 2026-11-13.",
     "emailInvalid": "Invalid email address.",
     "phoneInvalid": "Invalid number, for example +221 77 123 45 67."
+  },
+  "wizard": {
+    "tabs": {
+      "info": "Information",
+      "letter": "Letter"
+    },
+    "steps": {
+      "sender": "You",
+      "signer": "The signatory",
+      "recipient": "Recipient",
+      "post": "The position",
+      "profile": "Your profile",
+      "motivation": "Your motivation",
+      "studies": "Your studies",
+      "internship": "The internship",
+      "candidate": "The person recommended",
+      "knowledge": "What you know about them",
+      "job": "Your position",
+      "departure": "Your departure",
+      "initial": "Your application",
+      "thanks": "The context",
+      "generate": "Generation"
+    },
+    "stepHints": {
+      "sender": "Your details appear at the top of the letter.",
+      "signer": "Details of the person who will sign the recommendation: the letter is a draft for them to review and sign.",
+      "recipient": "Who are you writing to? Leave empty what you do not know.",
+      "generate": "Check the style you want, then let the AI write your letter."
+    },
+    "next": "Continue",
+    "back": "Back",
+    "optional": "(optional)",
+    "notesHint": "Notes are enough: the AI writes the sentences.",
+    "tone": "Tone",
+    "tones": {
+      "formal": "Formal",
+      "dynamic": "Dynamic",
+      "sober": "Sober"
+    },
+    "length": "Length",
+    "lengths": {
+      "short": "Short",
+      "standard": "Standard",
+      "detailed": "Detailed"
+    },
+    "generate": "Generate my letter",
+    "regenerateAll": "Regenerate the letter",
+    "missing": "Missing: {fields}.",
+    "ready": "All set. The AI writes from your information, without inventing anything.",
+    "importCv": "Use my CV",
+    "importCvTitle": "Use the information from a CV",
+    "importCvBody": "Empty fields are filled with the information from your CV. Nothing is sent to the AI at this stage.",
+    "noCv": "You do not have a CV in the Studio yet.",
+    "imported": "Information taken from your CV",
+    "importCancel": "Close",
+    "generated": "Letter written by the AI",
+    "generatedBody": "Review it and adjust it freely: edits are free.",
+    "undo": "Undo the generation",
+    "undone": "Previous version restored",
+    "restart": "Review the information",
+    "redo": "Restore the generated letter"
+  },
+  "generation": {
+    "title": "Generate with AI",
+    "cost": "This generation will cost {count, plural, one {# credit} other {# credits}}.",
+    "balance": "Your balance: {count, plural, one {# credit} other {# credits}}",
+    "overwrite": "The current text will be replaced. You can go back to the previous version with “Undo the generation”.",
+    "insufficient": "Not enough credits for this generation.",
+    "topUp": "Top up credits",
+    "confirm": "Generate · {count, plural, one {# credit} other {# credits}}",
+    "cancel": "Cancel",
+    "waitSave": "Wait until your information has been saved.",
+    "priceMissing": "Generation is not available yet.",
+    "working": "Writing…",
+    "workingHint": "The AI is writing from your information. This takes a few seconds.",
+    "checking": "Connection interrupted: checking the generation…",
+    "failed": "The generation failed. Your credits have been refunded.",
+    "lost": "The generation cannot be checked right now. If it succeeded, it will appear in a moment.",
+    "charged": "{count, plural, one {# credit charged} other {# credits charged}}",
+    "price": "{count, plural, one {# credit} other {# credits}}"
+  },
+  "section": {
+    "regenerate": "Regenerate",
+    "confirm": "Replace the current text? Cost: {count, plural, one {# credit} other {# credits}}.",
+    "yes": "Replace",
+    "no": "Cancel",
+    "undo": "Go back to the previous text",
+    "done": "Section regenerated"
+  },
+  "briefFields": {
+    "jobTitle": {
+      "label": "Job title",
+      "placeholder": "E.g. Accountant"
+    },
+    "offerText": {
+      "label": "Job advert",
+      "placeholder": "Paste the advert here: the letter will match its requirements."
+    },
+    "currentPosition": {
+      "label": "Your current situation",
+      "placeholder": "E.g. Accountant in a distribution SME"
+    },
+    "experience": {
+      "label": "Relevant experience",
+      "placeholder": "E.g. Five years of general accounting; monthly closing cut from 10 to 5 days."
+    },
+    "skills": {
+      "label": "Skills",
+      "placeholder": "E.g. SYSCOHADA, advanced Excel, payroll"
+    },
+    "motivation": {
+      "label": "Why this position or company?",
+      "placeholder": "E.g. Well-known logistics company, wish to join a larger team."
+    },
+    "strengths": {
+      "label": "Your strengths",
+      "placeholder": "E.g. Rigour, meeting deadlines"
+    },
+    "availability": {
+      "label": "Availability",
+      "placeholder": "E.g. Available from January 2027"
+    },
+    "school": {
+      "label": "School or university",
+      "placeholder": "E.g. Cheikh Anta Diop University"
+    },
+    "studyField": {
+      "label": "Field of study",
+      "placeholder": "E.g. Accounting and finance"
+    },
+    "studyLevel": {
+      "label": "Level of study",
+      "placeholder": "E.g. Third year of bachelor"
+    },
+    "internshipDomain": {
+      "label": "Internship field",
+      "placeholder": "E.g. Audit and management control"
+    },
+    "internshipDuration": {
+      "label": "Preferred length",
+      "placeholder": "E.g. Three months, March to May 2027"
+    },
+    "internshipGoals": {
+      "label": "Internship goals",
+      "placeholder": "E.g. Apply cost accounting in a company."
+    },
+    "position": {
+      "label": "Position held",
+      "placeholder": "E.g. Accountant"
+    },
+    "startDate": {
+      "label": "Start date",
+      "placeholder": "E.g. 1 March 2021"
+    },
+    "lastDay": {
+      "label": "Intended last working day",
+      "placeholder": "E.g. 31 January 2027"
+    },
+    "notice": {
+      "label": "Notice period",
+      "placeholder": "E.g. One month, under my contract"
+    },
+    "reason": {
+      "label": "Reason",
+      "placeholder": "E.g. New career opportunity"
+    },
+    "candidateName": {
+      "label": "Person recommended",
+      "placeholder": "E.g. Awa Diallo"
+    },
+    "recommenderRole": {
+      "label": "Signatory’s position",
+      "placeholder": "E.g. Finance director, Logistique Ouest SA"
+    },
+    "relationship": {
+      "label": "Working relationship",
+      "placeholder": "E.g. Awa’s line manager from 2021 to 2026"
+    },
+    "qualities": {
+      "label": "Qualities actually observed",
+      "placeholder": "E.g. Rigour, reliability, team spirit"
+    },
+    "purpose": {
+      "label": "Purpose of the recommendation",
+      "placeholder": "E.g. Application for a chief accountant position"
+    },
+    "initialSubject": {
+      "label": "Position or subject of the application",
+      "placeholder": "E.g. Application for the accountant position"
+    },
+    "initialDate": {
+      "label": "Application date",
+      "placeholder": "E.g. 15 October 2026"
+    },
+    "context": {
+      "label": "Context",
+      "placeholder": "E.g. No answer for three weeks"
+    }
+  },
+  "briefOverrides": {
+    "recommendation_draft": {
+      "experience": {
+        "label": "Known duties and achievements",
+        "placeholder": "E.g. Kept the accounts of three subsidiaries"
+      }
+    },
+    "thank_you_letter": {
+      "context": {
+        "label": "Occasion",
+        "placeholder": "E.g. Interview on 12 November 2026 with Mr Ndiaye"
+      },
+      "reason": {
+        "label": "What you are thankful for",
+        "placeholder": "E.g. The time given and the team presentation"
+      }
+    },
+    "follow_up_letter": {
+      "jobTitle": {
+        "label": "Job title",
+        "placeholder": "E.g. Accountant"
+      }
+    }
   }
 }

@@ -547,9 +547,9 @@ export const LETTER_BRIEF_BY_TYPE: Record<LetterType, readonly LetterBriefField[
     'skills',
     'availability',
   ],
+  // Le recommandant est l'expéditeur de la lettre (bloc « expéditeur ») : son nom n'est pas redemandé.
   recommendation_draft: [
     'candidateName',
-    'recommenderName',
     'recommenderRole',
     'relationship',
     'qualities',
@@ -595,3 +595,14 @@ export interface AiUsageResponse {
   }[];
   byAction: { action: AiGenerationAction; generations: number; netCredits: number }[];
 }
+
+/** Informations indispensables avant de générer une lettre (aucun débit sans elles). */
+export const LETTER_REQUIRED_FIELDS: Record<LetterType, readonly LetterBriefField[]> = {
+  cover_letter: ['jobTitle'],
+  application_letter: ['jobTitle'],
+  internship_request: ['studyField', 'internshipDomain'],
+  recommendation_draft: ['candidateName', 'qualities'],
+  resignation_letter: ['position', 'lastDay'],
+  follow_up_letter: ['initialSubject'],
+  thank_you_letter: ['context'],
+};

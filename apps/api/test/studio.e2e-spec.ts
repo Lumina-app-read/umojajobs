@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { type INestApplication } from '@nestjs/common';
 import {
   type CareerDocumentResponse,
@@ -167,5 +168,29 @@ describe('Career Studio : documents (intégration)', () => {
     const prices = (await api.get(`/api/v1/me/career-documents/${english.id}/exports`))
       .body as CareerExportsResponse;
     expect(prices.cost).toBe(10);
+  });
+
+  it('prépare une recommandation au nom du signataire, le titulaire étant le candidat', async () => {
+    const { api } = await member();
+    const draft = (
+      await api.post('/api/v1/me/career-documents', {
+        type: 'recommendation_draft',
+        title: 'Recommandation',
+        language: 'fr',
+      })
+    ).body as CareerDocumentResponse<LetterContent>;
+    // L'expéditeur est le recommandant (à renseigner) ; le titulaire du compte est le candidat.
+    expect(draft.content.sender.fullName).toBe('');
+    expect(draft.content.sender.email).toBe('');
+    expect(draft.brief).toEqual({ candidateName: 'Awa Diallo' });
+
+    const incomplete = await api.post(`/api/v1/me/career-documents/${draft.id}/ai/generate`, {
+      idempotencyKey: randomUUID(),
+    });
+    expect(
+      (incomplete.body as { code: string; details: { field: string }[] }).details.map(
+        (d) => d.field,
+      ),
+    ).toEqual(['sender.fullName', 'qualities']);
   });
 });

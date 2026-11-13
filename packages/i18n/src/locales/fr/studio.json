@@ -1,7 +1,7 @@
 {
   "list": {
     "title": "Career Studio",
-    "intro": "Créez des documents professionnels soignés. La saisie et l'aperçu sont gratuits ; vous ne payez que l'export PDF.",
+    "intro": "Renseignez vos informations : l’IA rédige vos documents, sans rien inventer. Saisie, modifications et aperçu sont gratuits ; la génération par l’IA et l’export PDF se paient en crédits.",
     "myDocuments": "Mes documents",
     "empty": "Aucun document pour le moment",
     "emptyBody": "Commencez par votre CV : il servira de base à vos lettres.",
@@ -318,5 +318,227 @@
     "dateInvalid": "Format attendu : AAAA-MM-JJ, par exemple 2026-11-13.",
     "emailInvalid": "Adresse email invalide.",
     "phoneInvalid": "Numéro invalide, par exemple +221 77 123 45 67."
+  },
+  "wizard": {
+    "tabs": {
+      "info": "Informations",
+      "letter": "Lettre"
+    },
+    "steps": {
+      "sender": "Vous",
+      "signer": "Le signataire",
+      "recipient": "Destinataire",
+      "post": "Le poste",
+      "profile": "Votre profil",
+      "motivation": "Vos motivations",
+      "studies": "Vos études",
+      "internship": "Le stage",
+      "candidate": "La personne recommandée",
+      "knowledge": "Ce que vous savez d’elle",
+      "job": "Votre poste",
+      "departure": "Votre départ",
+      "initial": "Votre candidature",
+      "thanks": "Le contexte",
+      "generate": "Génération"
+    },
+    "stepHints": {
+      "sender": "Vos coordonnées figurent en haut de la lettre.",
+      "signer": "Coordonnées de la personne qui signera la recommandation : la lettre est un brouillon à lui faire relire et signer.",
+      "recipient": "À qui écrivez-vous ? Laissez vide ce que vous ignorez.",
+      "generate": "Vérifiez le style souhaité, puis laissez l’IA rédiger votre lettre."
+    },
+    "next": "Continuer",
+    "back": "Retour",
+    "optional": "(facultatif)",
+    "notesHint": "Des notes suffisent : l’IA rédige les phrases.",
+    "tone": "Ton",
+    "tones": {
+      "formal": "Formel",
+      "dynamic": "Dynamique",
+      "sober": "Sobre"
+    },
+    "length": "Longueur",
+    "lengths": {
+      "short": "Courte",
+      "standard": "Standard",
+      "detailed": "Détaillée"
+    },
+    "generate": "Générer ma lettre",
+    "regenerateAll": "Régénérer la lettre",
+    "missing": "Il manque : {fields}.",
+    "ready": "Tout est prêt. L’IA rédige à partir de vos informations, sans rien inventer.",
+    "importCv": "Reprendre mon CV",
+    "importCvTitle": "Reprendre les informations d’un CV",
+    "importCvBody": "Les champs vides sont remplis avec les informations de votre CV. Rien n’est envoyé à l’IA à ce stade.",
+    "noCv": "Vous n’avez pas encore de CV dans le Studio.",
+    "imported": "Informations reprises de votre CV",
+    "importCancel": "Fermer",
+    "generated": "Lettre rédigée par l’IA",
+    "generatedBody": "Relisez-la et ajustez-la librement : les modifications sont gratuites.",
+    "undo": "Annuler la génération",
+    "undone": "Version précédente restaurée",
+    "restart": "Revoir les informations",
+    "redo": "Rétablir la lettre générée"
+  },
+  "generation": {
+    "title": "Générer avec l’IA",
+    "cost": "Cette génération coûtera {count, plural, one {# crédit} other {# crédits}}.",
+    "balance": "Votre solde : {count, plural, one {# crédit} other {# crédits}}",
+    "overwrite": "Le texte actuel sera remplacé. Vous pourrez revenir à la version précédente avec « Annuler la génération ».",
+    "insufficient": "Solde insuffisant pour cette génération.",
+    "topUp": "Recharger des crédits",
+    "confirm": "Générer · {count, plural, one {# crédit} other {# crédits}}",
+    "cancel": "Annuler",
+    "waitSave": "Attendez la fin de l’enregistrement de vos informations.",
+    "priceMissing": "La génération n’est pas encore disponible.",
+    "working": "Rédaction en cours…",
+    "workingHint": "L’IA rédige à partir de vos informations. Cela prend quelques secondes.",
+    "checking": "Connexion interrompue : vérification de la génération…",
+    "failed": "La génération a échoué. Vos crédits ont été remboursés.",
+    "lost": "Impossible de vérifier la génération pour le moment. Si elle a abouti, elle sera visible dans quelques instants.",
+    "charged": "{count, plural, one {# crédit débité} other {# crédits débités}}",
+    "price": "{count, plural, one {# crédit} other {# crédits}}"
+  },
+  "section": {
+    "regenerate": "Régénérer",
+    "confirm": "Remplacer le texte actuel ? Coût : {count, plural, one {# crédit} other {# crédits}}.",
+    "yes": "Remplacer",
+    "no": "Annuler",
+    "undo": "Revenir au texte précédent",
+    "done": "Section régénérée"
+  },
+  "briefFields": {
+    "jobTitle": {
+      "label": "Intitulé du poste",
+      "placeholder": "Ex. : Comptable"
+    },
+    "offerText": {
+      "label": "Texte de l’offre",
+      "placeholder": "Collez ici l’annonce : la lettre sera adaptée à ses exigences."
+    },
+    "currentPosition": {
+      "label": "Votre situation actuelle",
+      "placeholder": "Ex. : Comptable dans une PME de distribution"
+    },
+    "experience": {
+      "label": "Expériences utiles",
+      "placeholder": "Ex. : Cinq ans en comptabilité générale ; clôture mensuelle ramenée de 10 à 5 jours."
+    },
+    "skills": {
+      "label": "Compétences",
+      "placeholder": "Ex. : SYSCOHADA, Excel avancé, paie"
+    },
+    "motivation": {
+      "label": "Pourquoi ce poste ou cette entreprise ?",
+      "placeholder": "Ex. : Entreprise reconnue dans la logistique, envie de rejoindre une équipe plus grande."
+    },
+    "strengths": {
+      "label": "Vos atouts",
+      "placeholder": "Ex. : Rigueur, respect des délais"
+    },
+    "availability": {
+      "label": "Disponibilité",
+      "placeholder": "Ex. : Disponible dès janvier 2027"
+    },
+    "school": {
+      "label": "Établissement",
+      "placeholder": "Ex. : Université Cheikh Anta Diop"
+    },
+    "studyField": {
+      "label": "Filière",
+      "placeholder": "Ex. : Comptabilité et finance"
+    },
+    "studyLevel": {
+      "label": "Niveau d’études",
+      "placeholder": "Ex. : Licence 3"
+    },
+    "internshipDomain": {
+      "label": "Domaine du stage",
+      "placeholder": "Ex. : Audit et contrôle de gestion"
+    },
+    "internshipDuration": {
+      "label": "Durée souhaitée",
+      "placeholder": "Ex. : Trois mois, de mars à mai 2027"
+    },
+    "internshipGoals": {
+      "label": "Objectifs du stage",
+      "placeholder": "Ex. : Mettre en pratique la comptabilité analytique en entreprise."
+    },
+    "position": {
+      "label": "Poste occupé",
+      "placeholder": "Ex. : Comptable"
+    },
+    "startDate": {
+      "label": "Date d’entrée en fonction",
+      "placeholder": "Ex. : 1er mars 2021"
+    },
+    "lastDay": {
+      "label": "Dernier jour de travail souhaité",
+      "placeholder": "Ex. : 31 janvier 2027"
+    },
+    "notice": {
+      "label": "Préavis",
+      "placeholder": "Ex. : Un mois, selon mon contrat"
+    },
+    "reason": {
+      "label": "Motif",
+      "placeholder": "Ex. : Nouvelle opportunité professionnelle"
+    },
+    "candidateName": {
+      "label": "Personne recommandée",
+      "placeholder": "Ex. : Awa Diallo"
+    },
+    "recommenderRole": {
+      "label": "Fonction du signataire",
+      "placeholder": "Ex. : Directeur financier, Logistique Ouest SA"
+    },
+    "relationship": {
+      "label": "Relation professionnelle",
+      "placeholder": "Ex. : Responsable hiérarchique d’Awa de 2021 à 2026"
+    },
+    "qualities": {
+      "label": "Qualités réellement constatées",
+      "placeholder": "Ex. : Rigueur, fiabilité, sens de l’équipe"
+    },
+    "purpose": {
+      "label": "Objet de la recommandation",
+      "placeholder": "Ex. : Candidature à un poste de chef comptable"
+    },
+    "initialSubject": {
+      "label": "Poste ou objet de la candidature",
+      "placeholder": "Ex. : Candidature au poste de comptable"
+    },
+    "initialDate": {
+      "label": "Date de la candidature",
+      "placeholder": "Ex. : 15 octobre 2026"
+    },
+    "context": {
+      "label": "Contexte",
+      "placeholder": "Ex. : Pas de réponse depuis trois semaines"
+    }
+  },
+  "briefOverrides": {
+    "recommendation_draft": {
+      "experience": {
+        "label": "Missions et réalisations connues",
+        "placeholder": "Ex. : Tenue de la comptabilité de trois filiales"
+      }
+    },
+    "thank_you_letter": {
+      "context": {
+        "label": "Occasion",
+        "placeholder": "Ex. : Entretien du 12 novembre 2026 avec M. Ndiaye"
+      },
+      "reason": {
+        "label": "Ce dont vous remerciez",
+        "placeholder": "Ex. : Le temps accordé et la présentation de l’équipe"
+      }
+    },
+    "follow_up_letter": {
+      "jobTitle": {
+        "label": "Intitulé du poste",
+        "placeholder": "Ex. : Comptable"
+      }
+    }
   }
 }

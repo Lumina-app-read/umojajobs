@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  type CareerDocumentBrief,
   type CareerDocumentContent,
   type CareerDocumentResponse,
   type CountryResponse,
@@ -8,6 +9,7 @@ import {
   type CvTemplate,
   ERROR_CODES,
   isLetterType,
+  type LetterBrief,
   type LetterContent,
   STUDIO_LIMITS,
   templatesFor,
@@ -17,6 +19,7 @@ import {
   ArrowLeft,
   ChevronDown,
   CircleAlert,
+  ClipboardList,
   CloudCheck,
   Crown,
   Globe,
@@ -27,7 +30,9 @@ import {
   PanelLeft,
   PencilLine,
   Rocket,
+  Redo2,
   RotateCw,
+  Undo2,
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -37,6 +42,7 @@ import { Button, buttonClasses } from '@/components/ui/button';
 import { ButtonLink } from '@/components/ui/button-link';
 import { SegmentedControl } from '@/components/ui/navigation';
 import { SelectMenu } from '@/components/ui/select-menu';
+import { toast } from '@/components/ui/toast';
 import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
 import { cn } from '@/lib/cn';
@@ -47,6 +53,7 @@ import { A4Preview } from './cv-preview';
 import { documentCountry, StudioDocument, type StudioLabels } from './document-view';
 import { ExportDialog } from './export-dialog';
 import { type LetterIssue, LetterForm, validateLetter } from './letters/letter-form';
+import { LetterWizard } from './letters/letter-wizard';
 
 /** Icône de chaque modèle dans le sélecteur. */
 const TEMPLATE_ICONS: Record<CvTemplate, LucideIcon> = {
@@ -70,6 +77,7 @@ interface Draft {
   title: string;
   templateKey: string;
   content: CareerDocumentContent;
+  brief: CareerDocumentBrief;
 }
 
 function SaveIndicator({ state }: { state: SaveState }) {
@@ -112,12 +120,23 @@ export function DocumentEditor({
 }) {
   const t = useTranslations('studio.editor');
   const tErrors = useTranslations('errors');
+  const tWizard = useTranslations('studio.wizard');
   const locale = useLocale();
   const [draft, setDraft] = useState<Draft>({
     title: document.title,
     templateKey: document.templateKey,
     content: document.content,
+    brief: document.brief,
   });
+  const letterDocument = isLetterType(document.type);
+  /** Lettre : questionnaire tant qu'aucun texte n'est rédigé, puis le texte lui-même. */
+  const [panel, setPanel] = useState<'info' | 'letter'>(
+    letterDocument && !(document.content as LetterContent).body.trim() ? 'info' : 'letter',
+  );
+  /** Contenu avant la dernière génération complète (annulation). */
+  const [beforeGeneration, setBeforeGeneration] = useState<CareerDocumentContent | null>(null);
+  /** Lettre générée mise de côté par « Annuler la génération » : elle reste récupérable. */
+  const [afterGeneration, setAfterGeneration] = useState<CareerDocumentContent | null>(null);
   const [revision, setRevision] = useState(0);
   const [savedRevision, setSavedRevision] = useState(0);
   const [outcome, setOutcome] = useState<Outcome>('ok');
@@ -164,6 +183,7 @@ export function DocumentEditor({
             title: snapshot.title.trim() || document.title,
             templateKey: snapshot.templateKey,
             content: snapshot.content,
+            brief: snapshot.brief,
           },
         );
         version.current = saved.version;
@@ -218,7 +238,7 @@ export function DocumentEditor({
   );
 
   return (
-    <StudioAiProvider documentId={document.id}>
+    <StudioAiProvider documentId={document.id} saved={state === 'saved'}>
       <div className="grid grid-cols-1 gap-5">
         <div className="flex flex-col gap-3 lg:sticky lg:top-16 lg:z-20 lg:-mx-2 lg:flex-row lg:items-center lg:justify-between lg:bg-canvas/90 lg:px-2 lg:py-2.5 lg:backdrop-blur-md">
           <div className="flex min-w-0 items-center gap-2">
@@ -300,14 +320,91 @@ export function DocumentEditor({
             lang={locale}
           >
             {isLetterType(document.type) ? (
-              <LetterForm
-                documentId={document.id}
-                type={document.type}
-                content={draft.content as LetterContent}
-                countries={countries}
-                issues={issues as Record<string, LetterIssue>}
-                onChange={(content) => update({ content })}
-              />
+              <div className="grid gap-4">
+                <SegmentedControl
+                  label={t('titleLabel')}
+                  value={panel}
+                  onChange={setPanel}
+                  options={[
+                    { value: 'info', label: tWizard('tabs.info') },
+                    { value: 'letter', label: tWizard('tabs.letter') },
+                  ]}
+                />
+                {panel === 'info' ? (
+                  <LetterWizard
+                    documentId={document.id}
+                    type={document.type}
+                    content={draft.content as LetterContent}
+                    brief={draft.brief as LetterBrief}
+                    countries={countries}
+                    issues={issues as Record<string, LetterIssue>}
+                    onContent={(content) => update({ content })}
+                    onBrief={(brief) => update({ brief })}
+                    onGenerated={(content) => {
+                      setBeforeGeneration(draft.content);
+                      update({ content });
+                      setPanel('letter');
+                      toast.success(tWizard('generated'), tWizard('generatedBody'));
+                    }}
+                  />
+                ) : (
+                  <>
+                    {beforeGeneration && (
+                      <Alert tone="info">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <span>
+                            <strong>{tWizard('generated')}.</strong> {tWizard('generatedBody')}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            icon={Undo2}
+                            onClick={() => {
+                              setAfterGeneration(draft.content);
+                              update({ content: beforeGeneration });
+                              setBeforeGeneration(null);
+                              toast.success(tWizard('undone'));
+                            }}
+                          >
+                            {tWizard('undo')}
+                          </Button>
+                        </div>
+                      </Alert>
+                    )}
+                    {afterGeneration && (
+                      <Alert tone="info">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <span>{tWizard('undone')}.</span>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            icon={Redo2}
+                            onClick={() => {
+                              setBeforeGeneration(draft.content);
+                              update({ content: afterGeneration });
+                              setAfterGeneration(null);
+                            }}
+                          >
+                            {tWizard('redo')}
+                          </Button>
+                        </div>
+                      </Alert>
+                    )}
+                    <LetterForm
+                      documentId={document.id}
+                      type={document.type}
+                      content={draft.content as LetterContent}
+                      issues={issues as Record<string, LetterIssue>}
+                      onChange={(content) => update({ content })}
+                    />
+                    <div>
+                      <Button variant="ghost" icon={ClipboardList} onClick={() => setPanel('info')}>
+                        {tWizard('restart')}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
             ) : (
               <CvForm
                 documentId={document.id}
