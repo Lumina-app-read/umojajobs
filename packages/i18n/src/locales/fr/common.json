@@ -211,7 +211,8 @@
       "auditLogs": "Journaux d'audit",
       "securityEvents": "Événements de sécurité",
       "back": "Mon espace",
-      "enter": "Administration"
+      "enter": "Administration",
+      "aiUsage": "Usage de l’IA"
     },
     "soonNext": "Cette rubrique sera construite dans une prochaine étape.",
     "overview": {
@@ -381,6 +382,37 @@
         "save": "Enregistrer",
         "cancel": "Annuler",
         "saved": "Pack enregistré"
+      }
+    },
+    "aiUsage": {
+      "title": "Usage de l’IA",
+      "intro": "Générations du Career Studio : crédits encaissés et coûts estimés d’OpenAI. Aucun contenu de document ni aucune identité n’est affiché.",
+      "period": "Période",
+      "days": "{count} jours",
+      "generations": "Générations",
+      "generationsHint": "{succeeded} réussies · {failed} échouées et remboursées",
+      "credits": "Crédits nets consommés",
+      "creditsHint": "{charged} débités · {refunded} remboursés",
+      "revenue": "Recette (valeur des crédits)",
+      "cost": "Coût OpenAI estimé",
+      "costMissing": "Tarifs OpenAI non configurés",
+      "costMissingHint": "Renseignez OPENAI_PRICE_INPUT_USD_PER_MTOK et OPENAI_PRICE_OUTPUT_USD_PER_MTOK.",
+      "tokens": "Tokens",
+      "tokensHint": "{input} en entrée · {output} en sortie",
+      "requests": "Appels OpenAI",
+      "requestsHint": "{failed} en échec ou rejetés",
+      "byType": "Par type de document",
+      "byAction": "Par action",
+      "type": "Type",
+      "action": "Action",
+      "count": "Générations",
+      "netCredits": "Crédits nets",
+      "empty": "Aucune génération sur la période.",
+      "unavailable": "Statistiques indisponibles pour le moment.",
+      "actions": {
+        "generate": "Génération complète",
+        "regenerate_section": "Régénération d’une section",
+        "improve": "Amélioration d’un texte"
       }
     }
   }

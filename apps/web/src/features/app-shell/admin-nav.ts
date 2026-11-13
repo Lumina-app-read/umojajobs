@@ -1,5 +1,6 @@
 import { PERMISSIONS, type PermissionCode } from '@opportinities/shared';
 import {
+  Sparkles,
   ArrowDownToLine,
   BadgePercent,
   Bell,
@@ -33,6 +34,7 @@ export interface AdminNavItem {
     | 'unlocks'
     | 'commissions'
     | 'withdrawals'
+    | 'aiUsage'
     | 'pricing'
     | 'notifications'
     | 'translations'
@@ -124,6 +126,13 @@ export const ADMIN_NAV: AdminNavGroup[] = [
         icon: ArrowDownToLine,
         // Coordonnées de versement déchiffrées : réservé à la gestion financière.
         permission: PERMISSIONS.FINANCE_MANAGE,
+        phase: null,
+      },
+      {
+        key: 'aiUsage',
+        href: '/admin/ai-usage',
+        icon: Sparkles,
+        permission: FINANCE_PERMISSION,
         phase: null,
       },
     ],

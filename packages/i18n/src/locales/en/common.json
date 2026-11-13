@@ -211,7 +211,8 @@
       "auditLogs": "Audit logs",
       "securityEvents": "Security events",
       "back": "My space",
-      "enter": "Administration"
+      "enter": "Administration",
+      "aiUsage": "AI usage"
     },
     "soonNext": "This section will be built in an upcoming step.",
     "overview": {
@@ -381,6 +382,37 @@
         "save": "Save",
         "cancel": "Cancel",
         "saved": "Pack saved"
+      }
+    },
+    "aiUsage": {
+      "title": "AI usage",
+      "intro": "Career Studio generations: credits collected and estimated OpenAI costs. No document content or identity is shown.",
+      "period": "Period",
+      "days": "{count} days",
+      "generations": "Generations",
+      "generationsHint": "{succeeded} succeeded · {failed} failed and refunded",
+      "credits": "Net credits used",
+      "creditsHint": "{charged} charged · {refunded} refunded",
+      "revenue": "Revenue (credit value)",
+      "cost": "Estimated OpenAI cost",
+      "costMissing": "OpenAI prices not configured",
+      "costMissingHint": "Set OPENAI_PRICE_INPUT_USD_PER_MTOK and OPENAI_PRICE_OUTPUT_USD_PER_MTOK.",
+      "tokens": "Tokens",
+      "tokensHint": "{input} input · {output} output",
+      "requests": "OpenAI calls",
+      "requestsHint": "{failed} failed or rejected",
+      "byType": "By document type",
+      "byAction": "By action",
+      "type": "Type",
+      "action": "Action",
+      "count": "Generations",
+      "netCredits": "Net credits",
+      "empty": "No generation in this period.",
+      "unavailable": "Statistics are not available right now.",
+      "actions": {
+        "generate": "Full generation",
+        "regenerate_section": "Section regeneration",
+        "improve": "Text improvement"
       }
     }
   }

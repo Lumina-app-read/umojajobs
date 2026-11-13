@@ -1,5 +1,6 @@
 import 'server-only';
 import {
+  type AiUsageResponse,
   type CareerDocumentResponse,
   type CareerDocumentSummary,
   type CommissionResponse,
@@ -268,6 +269,14 @@ export async function getCareerDocuments(): Promise<CareerDocumentSummary[] | nu
 /** Un document du Career Studio (null s'il n'existe pas ou n'appartient pas à l'utilisateur). */
 export async function getCareerDocument(id: string): Promise<CareerDocumentResponse | null> {
   const result = await serverGet<CareerDocumentResponse>(`/me/career-documents/${id}`).catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Usage de l'IA du Career Studio (administration ; null si l'API refuse ou ne répond pas). */
+export async function getAiUsage(days: number): Promise<AiUsageResponse | null> {
+  const result = await serverGet<AiUsageResponse>(`/admin/studio/ai-usage?days=${days}`).catch(
     () => null,
   );
   return result?.data ?? null;
