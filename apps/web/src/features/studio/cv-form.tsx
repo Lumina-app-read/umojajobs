@@ -41,6 +41,7 @@ import { CountrySelect } from '@/components/forms/country-select';
 import { Button, IconButton } from '@/components/ui/button';
 import { FormSelect, TextAreaField } from '@/components/ui/form-controls';
 import { Checkbox, FormField } from '@/components/ui/form-field';
+import { AiAssist } from './ai-assist';
 
 type ListKey =
   'experiences' | 'education' | 'languages' | 'certifications' | 'projects' | 'references';
@@ -142,6 +143,7 @@ function Section({
 
 /** Formulaire complet du CV. Chaque modification remonte un nouveau contenu (immuable). */
 export function CvForm({
+  documentId,
   content,
   onChange,
   countries,
@@ -151,6 +153,8 @@ export function CvForm({
   onChange: (next: CvContent) => void;
   countries: CountryResponse[];
   issues: Record<string, CvIssue>;
+  /** Document concerné par les suggestions de l'IA. */
+  documentId: string;
 }) {
   const t = useTranslations('studio.editor');
   const [skillDraft, setSkillDraft] = useState('');
@@ -358,6 +362,13 @@ export function CvForm({
           value={personal.summary}
           onChange={(event) => setPersonal('summary', event.target.value)}
         />
+        <AiAssist
+          documentId={documentId}
+          target="summary"
+          text={personal.summary}
+          context={{ title: personal.headline }}
+          onApply={(suggestion) => setPersonal('summary', suggestion)}
+        />
       </Section>
 
       <Section icon={Briefcase} title={t('sections.experiences')} action={addButton('experiences')}>
@@ -435,6 +446,13 @@ export function CvForm({
                   setItem('experiences', index, { description: event.target.value })
                 }
               />
+              <AiAssist
+                documentId={documentId}
+                target="experience"
+                text={item.description}
+                context={{ title: item.role, organization: item.organization }}
+                onApply={(suggestion) => setItem('experiences', index, { description: suggestion })}
+              />
             </>,
           ),
         )}
@@ -501,6 +519,13 @@ export function CvForm({
                 onChange={(event) =>
                   setItem('education', index, { description: event.target.value })
                 }
+              />
+              <AiAssist
+                documentId={documentId}
+                target="education"
+                text={item.description}
+                context={{ title: item.degree, organization: item.school }}
+                onApply={(suggestion) => setItem('education', index, { description: suggestion })}
               />
             </>,
           ),
@@ -661,6 +686,13 @@ export function CvForm({
                 onChange={(event) =>
                   setItem('projects', index, { description: event.target.value })
                 }
+              />
+              <AiAssist
+                documentId={documentId}
+                target="project"
+                text={item.description}
+                context={{ title: item.name, organization: undefined }}
+                onApply={(suggestion) => setItem('projects', index, { description: suggestion })}
               />
             </>,
           ),

@@ -213,6 +213,7 @@ model User {
   withdrawalEvents    WithdrawalEvent[]       @relation("WithdrawalEventActor")
   creditOrders        CreditOrder[]           @relation("CreditOrderBuyer")
   careerDocuments     CareerDocument[]        @relation("CareerDocumentOwner")
+  aiRequests          AiRequest[]             @relation("AiRequestUser")
 
   @@index([countryId])
   @@map("users")
@@ -1218,4 +1219,32 @@ model CareerDocument {
 
   @@index([userId, deletedAt, updatedAt(sort: Desc)])
   @@map("career_documents")
+}
+
+enum AiRequestStatus {
+  succeeded
+  rejected
+  failed
+
+  @@map("ai_request_status")
+}
+
+/// Journal des appels à l'IA : quota, coûts et incidents. Aucun texte n'y est conservé.
+model AiRequest {
+  id           String          @id @default(uuid(7)) @db.Uuid
+  userId       String          @map("user_id") @db.Uuid
+  documentId   String?         @map("document_id") @db.Uuid
+  feature      String          @db.VarChar(40)
+  model        String          @db.VarChar(80)
+  status       AiRequestStatus
+  inputTokens  Int?            @map("input_tokens")
+  outputTokens Int?            @map("output_tokens")
+  latencyMs    Int             @map("latency_ms")
+  errorCode    String?         @map("error_code") @db.VarChar(60)
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation("AiRequestUser", fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("ai_requests")
 }

@@ -12,6 +12,11 @@ import {
 import { ApiOkResponse, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
+  AI_IMPROVE_TARGETS,
+  AI_LIMITS,
+  type AiImproveInput,
+  type AiImproveTarget,
+  type AiSuggestionResponse,
   CAREER_DOCUMENT_TYPES,
   type CareerDocumentCreateInput,
   type CareerDocumentResponse,
@@ -22,10 +27,22 @@ import {
   STUDIO_LIMITS,
   SUPPORTED_LOCALES,
 } from '@opportinities/shared';
-import { Transform } from 'class-transformer';
-import { IsIn, IsInt, IsObject, IsOptional, IsString, IsUUID, Length, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsIn,
+  IsInt,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Length,
+  MaxLength,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { type AuthContext } from '../auth/auth-context';
 import { CurrentAuth } from '../security/decorators';
+import { StudioAiService } from './studio-ai.service';
 import { StudioService } from './studio.service';
 
 const trim = ({ value }: { value: unknown }): unknown =>
@@ -77,6 +94,40 @@ class UpdateDocumentDto implements CareerDocumentUpdateInput {
   content?: CvContent;
 }
 
+class AiContextDto {
+  @ApiPropertyOptional({ example: 'Comptable' })
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @MaxLength(AI_LIMITS.contextMax)
+  title?: string;
+
+  @ApiPropertyOptional({ example: 'Logistique Ouest SA' })
+  @IsOptional()
+  @Transform(trim)
+  @IsString()
+  @MaxLength(AI_LIMITS.contextMax)
+  organization?: string;
+}
+
+class AiImproveDto implements AiImproveInput {
+  @ApiProperty({ enum: AI_IMPROVE_TARGETS })
+  @IsIn(AI_IMPROVE_TARGETS)
+  target!: AiImproveTarget;
+
+  @ApiProperty({ minLength: AI_LIMITS.textMin, maxLength: STUDIO_LIMITS.descriptionMax })
+  @Transform(trim)
+  @IsString()
+  @Length(AI_LIMITS.textMin, STUDIO_LIMITS.descriptionMax)
+  text!: string;
+
+  @ApiPropertyOptional({ type: AiContextDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AiContextDto)
+  context?: AiContextDto;
+}
+
 class IdParamDto {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()
@@ -87,7 +138,10 @@ class IdParamDto {
 @ApiTags('studio')
 @Controller('me/career-documents')
 export class StudioController {
-  constructor(private readonly studio: StudioService) {}
+  constructor(
+    private readonly studio: StudioService,
+    private readonly studioAi: StudioAiService,
+  ) {}
 
   @Get()
   @ApiOkResponse({ description: 'Documents, du plus récemment modifié au plus ancien.' })
@@ -122,6 +176,19 @@ export class StudioController {
     @Body() body: UpdateDocumentDto,
   ): Promise<CareerDocumentResponse> {
     return this.studio.update(auth.user.id, params.id, body);
+  }
+
+  /** Reformulation par l'IA : renvoie une suggestion, jamais appliquée d'office. */
+  @Post(':id/ai/improve')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @ApiOkResponse({ description: "Suggestion et nombre de suggestions restantes aujourd'hui." })
+  improve(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+    @Body() body: AiImproveDto,
+  ): Promise<AiSuggestionResponse> {
+    return this.studioAi.improve(auth.user.id, params.id, body);
   }
 
   @Delete(':id')

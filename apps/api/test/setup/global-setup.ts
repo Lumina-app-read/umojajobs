@@ -100,6 +100,11 @@ export default async function globalSetup(): Promise<void> {
     CHARIOW_API_BASE_URL: 'http://127.0.0.1:4599/v1',
     CHARIOW_API_KEY: 'test_chariow_key',
     CHARIOW_PULSE_SECRET: 'whsec_test_secret',
+    // Faux serveur OpenAI démarré par la suite du Career Studio.
+    OPENAI_API_BASE_URL: 'http://127.0.0.1:4598/v1',
+    OPENAI_API_KEY: 'test_openai_key',
+    OPENAI_MODEL: 'test-model',
+    STUDIO_AI_DAILY_LIMIT: '4',
     // Le cycle de vie des offres est testé directement, sans minuterie.
     SCHEDULED_TASKS_ENABLED: 'false',
     S3_ENDPOINT: `http://${storage.container.getHost()}:${storage.container.getMappedPort(3900)}`,

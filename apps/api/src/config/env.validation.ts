@@ -124,6 +124,25 @@ export class EnvironmentVariables {
   @IsString()
   CHARIOW_PULSE_SECRET?: string;
 
+  /** API OpenAI (Career Studio). Sans clé ni modèle, l'assistant IA reste fermé. */
+  @IsUrl({ require_tld: false, protocols: ['http', 'https'], require_protocol: true })
+  OPENAI_API_BASE_URL = 'https://api.openai.com/v1';
+
+  @IsOptional()
+  @IsString()
+  OPENAI_API_KEY?: string;
+
+  @IsOptional()
+  @IsString()
+  OPENAI_MODEL?: string;
+
+  /** Suggestions IA par utilisateur et par période de 24 heures. */
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(1000)
+  STUDIO_AI_DAILY_LIMIT = 30;
+
   @IsOptional()
   @IsString()
   SMTP_USER?: string;

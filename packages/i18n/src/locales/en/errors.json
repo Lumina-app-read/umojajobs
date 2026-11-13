@@ -67,5 +67,8 @@
   "CAREER_DOCUMENT_NOT_FOUND": "This document cannot be found.",
   "CAREER_DOCUMENT_VERSION_CONFLICT": "The document was changed in another tab. Reload the page to get the latest version.",
   "CAREER_DOCUMENT_TYPE_UNAVAILABLE": "This document type is not available yet.",
-  "CAREER_DOCUMENT_LIMIT": "You have reached the maximum number of documents. Delete one to create a new one."
+  "CAREER_DOCUMENT_LIMIT": "You have reached the maximum number of documents. Delete one to create a new one.",
+  "AI_UNAVAILABLE": "The AI assistant is temporarily unavailable. Please try again later.",
+  "AI_QUOTA_EXCEEDED": "You have used all your AI suggestions for today. Try again tomorrow.",
+  "AI_SUGGESTION_REJECTED": "The suggestion added information that is not in your text, so it was discarded. Add more detail and try again."
 }

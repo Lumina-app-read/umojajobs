@@ -251,6 +251,7 @@ export function CvEditor({
           lang={locale}
         >
           <CvForm
+            documentId={document.id}
             content={draft.content}
             countries={countries}
             issues={issues}

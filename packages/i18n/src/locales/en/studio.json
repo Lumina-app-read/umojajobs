@@ -148,7 +148,19 @@
       "phone": "Invalid number, for example +221 77 123 45 67."
     },
     "titleLabel": "Document title",
-    "viewLabel": "View"
+    "viewLabel": "View",
+    "ai": {
+      "improve": "Improve with AI",
+      "improving": "Rewriting…",
+      "tooShort": "Write at least {min} characters to request a rewrite.",
+      "title": "AI suggestion",
+      "review": "Review it: the AI rewords your text without adding anything.",
+      "replace": "Replace my text",
+      "dismiss": "Dismiss",
+      "remaining": "{count, plural, =0 {No suggestions left today} one {# suggestion left today} other {# suggestions left today}}",
+      "privacy": "Your text is sent to our AI provider only to be reworded.",
+      "applied": "Text replaced"
+    }
   },
   "cv": {
     "summary": "Profile",

@@ -175,3 +175,27 @@ export function emptyCv(personal: Partial<CvPersonal> = {}): CvContent {
     references: [],
   };
 }
+
+/** Textes que l'assistant IA peut reformuler (jamais compléter). */
+export const AI_IMPROVE_TARGETS = ['summary', 'experience', 'education', 'project'] as const;
+export type AiImproveTarget = (typeof AI_IMPROVE_TARGETS)[number];
+
+export const AI_LIMITS = {
+  /** Texte minimal à reformuler : en dessous, l'IA n'aurait que des faits à inventer. */
+  textMin: 20,
+  contextMax: 120,
+} as const;
+
+export interface AiImproveInput {
+  target: AiImproveTarget;
+  /** Texte saisi (éventuellement pas encore enregistré). */
+  text: string;
+  /** Contexte facultatif : poste, employeur ou diplôme concerné. */
+  context?: { title?: string; organization?: string };
+}
+
+export interface AiSuggestionResponse {
+  suggestion: string;
+  /** Suggestions encore disponibles aujourd'hui. */
+  remaining: number;
+}
