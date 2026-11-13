@@ -437,8 +437,9 @@ describe('Career Studio : génération IA payée en crédits (intégration)', ()
     expect(usage.credits.net).toBe(usage.credits.charged - usage.credits.refunded);
     expect(Number(usage.credits.revenueUsd)).toBeGreaterThan(0);
     expect(usage.openai.inputTokens).toBeGreaterThan(0);
-    // Tarifs OpenAI non configurés dans les tests : pas de coût inventé.
-    expect(usage.openai.estimatedCostUsd).toBeNull();
+    // Coût estimé aux tarifs de test (1 USD et 2 USD par million de tokens d'entrée et de sortie).
+    const expected = (usage.openai.inputTokens * 1 + usage.openai.outputTokens * 2) / 1_000_000;
+    expect(Number(usage.openai.estimatedCostUsd)).toBeCloseTo(expected, 6);
     expect(usage.byDocumentType.map((row) => row.documentType)).toContain('cover_letter');
     const raw = JSON.stringify(usage);
     expect(raw).not.toContain('Premier paragraphe');

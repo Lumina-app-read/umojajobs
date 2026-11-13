@@ -106,6 +106,9 @@ export default async function globalSetup(): Promise<void> {
     OPENAI_MODEL: 'test-model',
     STUDIO_AI_DAILY_LIMIT: '20',
     OPENAI_TIMEOUT_MS: '1500',
+    // Tarifs fixes pour vérifier le calcul du coût estimé (indépendants du .env local).
+    OPENAI_PRICE_INPUT_USD_PER_MTOK: '1',
+    OPENAI_PRICE_OUTPUT_USD_PER_MTOK: '2',
     // Le cycle de vie des offres est testé directement, sans minuterie.
     SCHEDULED_TASKS_ENABLED: 'false',
     S3_ENDPOINT: `http://${storage.container.getHost()}:${storage.container.getMappedPort(3900)}`,
