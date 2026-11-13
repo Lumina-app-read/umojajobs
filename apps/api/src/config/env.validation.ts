@@ -136,6 +136,17 @@ export class EnvironmentVariables {
   @IsString()
   OPENAI_MODEL?: string;
 
+  /**
+   * Export PDF du Career Studio : adresse interne de l'application web (page d'impression) et
+   * chemin du navigateur Chromium sans interface. Sans chemin, l'export reste fermé.
+   */
+  @IsUrl({ require_tld: false, protocols: ['http', 'https'], require_protocol: true })
+  STUDIO_RENDER_BASE_URL = 'http://localhost:3000';
+
+  @IsOptional()
+  @IsString()
+  CHROMIUM_EXECUTABLE_PATH?: string;
+
   /** Suggestions IA par utilisateur et par période de 24 heures. */
   @Type(() => Number)
   @IsInt()

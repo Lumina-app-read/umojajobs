@@ -70,5 +70,10 @@
   "CAREER_DOCUMENT_LIMIT": "Vous avez atteint le nombre maximal de documents. Supprimez-en un pour en créer un nouveau.",
   "AI_UNAVAILABLE": "L'assistant IA est momentanément indisponible. Réessayez plus tard.",
   "AI_QUOTA_EXCEEDED": "Vous avez utilisé toutes vos suggestions IA pour aujourd'hui. Réessayez demain.",
-  "AI_SUGGESTION_REJECTED": "La suggestion ajoutait des informations absentes de votre texte : elle a été écartée. Précisez votre texte puis réessayez."
+  "AI_SUGGESTION_REJECTED": "La suggestion ajoutait des informations absentes de votre texte : elle a été écartée. Précisez votre texte puis réessayez.",
+  "CAREER_EXPORT_NOT_FOUND": "Cet export est introuvable.",
+  "CAREER_EXPORT_NOT_READY": "Le PDF n'est pas encore prêt.",
+  "CAREER_EXPORT_FAILED": "La création du PDF a échoué. Réessayez : votre paiement reste valable et ne sera pas débité une seconde fois.",
+  "CAREER_EXPORT_INCOMPLETE": "Ajoutez au moins votre nom complet avant d'exporter le document.",
+  "CAREER_EXPORT_PRICE_MISSING": "L'export PDF n'est pas encore disponible. Réessayez plus tard."
 }

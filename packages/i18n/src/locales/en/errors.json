@@ -70,5 +70,10 @@
   "CAREER_DOCUMENT_LIMIT": "You have reached the maximum number of documents. Delete one to create a new one.",
   "AI_UNAVAILABLE": "The AI assistant is temporarily unavailable. Please try again later.",
   "AI_QUOTA_EXCEEDED": "You have used all your AI suggestions for today. Try again tomorrow.",
-  "AI_SUGGESTION_REJECTED": "The suggestion added information that is not in your text, so it was discarded. Add more detail and try again."
+  "AI_SUGGESTION_REJECTED": "The suggestion added information that is not in your text, so it was discarded. Add more detail and try again.",
+  "CAREER_EXPORT_NOT_FOUND": "This export could not be found.",
+  "CAREER_EXPORT_NOT_READY": "The PDF is not ready yet.",
+  "CAREER_EXPORT_FAILED": "The PDF could not be created. Try again: your payment remains valid and will not be charged twice.",
+  "CAREER_EXPORT_INCOMPLETE": "Add at least your full name before exporting the document.",
+  "CAREER_EXPORT_PRICE_MISSING": "PDF export is not available yet. Please try again later."
 }

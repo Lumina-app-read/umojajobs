@@ -55,7 +55,6 @@
       "graduate": "Recent graduate",
       "executive": "Executive"
     },
-    "exportSoon": "PDF export coming soon",
     "add": "Add",
     "remove": "Remove",
     "moveUp": "Move up",
@@ -194,5 +193,33 @@
       "08": "Aug",
       "09": "Sep"
     }
+  },
+  "export": {
+    "open": "Export to PDF",
+    "title": "Export to PDF",
+    "intro": "The PDF matches the preview exactly, in the chosen template.",
+    "cost": "Export cost",
+    "credits": "{count, plural, one {# credit} other {# credits}}",
+    "balance": "Your balance",
+    "window": "{days, plural, =0 {Each new export is charged.} one {Then edits and re-exports are free for # day.} other {Then edits and re-exports are free for # days.}}",
+    "covered": "Free re-export until {date}",
+    "coveredBody": "You have already paid to export this document: no credits will be charged.",
+    "insufficient": "Not enough credits for this export.",
+    "topUp": "Top up credits",
+    "pay": "Pay {count, plural, one {# credit} other {# credits}} and export",
+    "exportFree": "Export the PDF",
+    "exporting": "Creating the PDF…",
+    "saving": "Wait until your changes have been saved.",
+    "priceMissing": "PDF export is not available yet.",
+    "history": "Previous exports",
+    "download": "Download",
+    "paid": "Paid",
+    "included": "Included",
+    "failed": "Failed",
+    "pending": "In progress",
+    "done": "PDF ready, download started",
+    "cancel": "Close",
+    "loadError": "Export details could not be loaded.",
+    "ready": "Ready"
   }
 }

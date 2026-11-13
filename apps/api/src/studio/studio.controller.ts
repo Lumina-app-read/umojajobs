@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -18,6 +19,11 @@ import {
   type AiImproveTarget,
   type AiSuggestionResponse,
   CAREER_DOCUMENT_TYPES,
+  type CareerExportCreateInput,
+  type CareerExportDownloadResponse,
+  type CareerExportRenderData,
+  type CareerExportResponse,
+  type CareerExportsResponse,
   type CareerDocumentCreateInput,
   type CareerDocumentResponse,
   type CareerDocumentSummary,
@@ -41,8 +47,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { type AuthContext } from '../auth/auth-context';
-import { CurrentAuth } from '../security/decorators';
+import { CurrentAuth, Public } from '../security/decorators';
 import { StudioAiService } from './studio-ai.service';
+import { StudioExportsService } from './studio-exports.service';
 import { StudioService } from './studio.service';
 
 const trim = ({ value }: { value: unknown }): unknown =>
@@ -128,6 +135,25 @@ class AiImproveDto implements AiImproveInput {
   context?: AiContextDto;
 }
 
+class CreateExportDto implements CareerExportCreateInput {
+  @ApiProperty({ format: 'uuid', description: 'Identifiant aléatoire généré par le navigateur.' })
+  @IsUUID()
+  idempotencyKey!: string;
+}
+
+class ExportIdParamDto {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  exportId!: string;
+}
+
+class RenderTokenQueryDto {
+  @ApiProperty()
+  @IsString()
+  @Length(10, 200)
+  token!: string;
+}
+
 class IdParamDto {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()
@@ -141,6 +167,7 @@ export class StudioController {
   constructor(
     private readonly studio: StudioService,
     private readonly studioAi: StudioAiService,
+    private readonly exports: StudioExportsService,
   ) {}
 
   @Get()
@@ -191,9 +218,66 @@ export class StudioController {
     return this.studioAi.improve(auth.user.id, params.id, body);
   }
 
+  @Get(':id/exports')
+  @ApiOkResponse({ description: 'Exports du document, coût et période de ré-export gratuit.' })
+  listExports(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+  ): Promise<CareerExportsResponse> {
+    return this.exports.list(auth.user.id, params.id);
+  }
+
+  /** Export PDF : débite les crédits sauf pendant une période de ré-export gratuit. */
+  @Post(':id/exports')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @ApiOkResponse({ description: 'Export créé (ou rejoué pour la même clé).' })
+  createExport(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+    @Body() body: CreateExportDto,
+  ): Promise<CareerExportResponse> {
+    return this.exports.create(auth.user.id, params.id, body.idempotencyKey);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@CurrentAuth() auth: AuthContext, @Param() params: IdParamDto): Promise<void> {
     return this.studio.remove(auth.user.id, params.id);
+  }
+}
+
+/** Téléchargement des PDF exportés par l'utilisateur connecté. */
+@ApiTags('studio')
+@Controller('me/career-exports')
+export class CareerExportsController {
+  constructor(private readonly exports: StudioExportsService) {}
+
+  @Get(':exportId/download')
+  @ApiOkResponse({ description: 'Lien signé de courte durée vers le PDF.' })
+  download(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: ExportIdParamDto,
+  ): Promise<CareerExportDownloadResponse> {
+    return this.exports.download(auth.user.id, params.exportId);
+  }
+}
+
+/**
+ * Lecture interne de l'instantané à imprimer, par la page d'impression de l'application web.
+ * Aucune session : accès réservé au jeton signé, propre à l'export et valable deux minutes.
+ */
+@ApiTags('studio')
+@Controller('internal/career-exports')
+export class CareerExportRenderController {
+  constructor(private readonly exports: StudioExportsService) {}
+
+  @Public()
+  @Get(':exportId/render-data')
+  renderData(
+    @Param() params: ExportIdParamDto,
+    @Query() query: RenderTokenQueryDto,
+  ): Promise<CareerExportRenderData> {
+    return this.exports.renderData(params.exportId, query.token);
   }
 }

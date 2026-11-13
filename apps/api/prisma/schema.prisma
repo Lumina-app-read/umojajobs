@@ -183,37 +183,39 @@ model User {
   createdAt                  DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt                  DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  country             Country                 @relation(fields: [countryId], references: [id], onDelete: Restrict)
-  roles               UserRole[]              @relation("UserRoles")
-  rolesAssigned       UserRole[]              @relation("RoleAssignedBy")
-  sessions            Session[]
-  verificationTokens  VerificationToken[]
-  recoveryCodes       MfaRecoveryCode[]
-  securityEvents      SecurityEvent[]
-  jobOffers           JobOffer[]              @relation("JobOfferContributor")
-  reviewedJobOffers   JobOffer[]              @relation("JobOfferReviewer")
-  jobStatusChanges    JobOfferStatusHistory[] @relation("JobOfferStatusActor")
-  jobRevisions        JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
-  jobFiles            JobOfferFile[]          @relation("JobOfferFileUploader")
-  fileDownloads       FileDownloadLog[]       @relation("FileDownloader")
-  savedJobs           SavedJob[]
-  financialSettings   FinancialSetting[]      @relation("FinancialSettingAuthor")
-  serviceCosts        ServiceCreditCost[]     @relation("ServiceCostAuthor")
-  creditAccount       CreditAccount?
-  creditMovements     CreditMovement[]        @relation("CreditMovementActor")
-  ledgerAccounts      LedgerAccount[]         @relation("LedgerAccountOwner")
-  ledgerTransactions  LedgerTransaction[]     @relation("LedgerTransactionActor")
-  jobUnlocks          JobUnlock[]             @relation("JobUnlockUser")
-  commissions         Commission[]            @relation("CommissionContributor")
-  commissionEvents    CommissionEvent[]       @relation("CommissionEventActor")
-  withdrawalMethods   WithdrawalMethod[]      @relation("WithdrawalMethodOwner")
-  withdrawals         WithdrawalRequest[]     @relation("WithdrawalRequester")
-  approvedWithdrawals WithdrawalRequest[]     @relation("WithdrawalApprover")
-  paidWithdrawals     WithdrawalRequest[]     @relation("WithdrawalPayer")
-  withdrawalEvents    WithdrawalEvent[]       @relation("WithdrawalEventActor")
-  creditOrders        CreditOrder[]           @relation("CreditOrderBuyer")
-  careerDocuments     CareerDocument[]        @relation("CareerDocumentOwner")
-  aiRequests          AiRequest[]             @relation("AiRequestUser")
+  country               Country                 @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  roles                 UserRole[]              @relation("UserRoles")
+  rolesAssigned         UserRole[]              @relation("RoleAssignedBy")
+  sessions              Session[]
+  verificationTokens    VerificationToken[]
+  recoveryCodes         MfaRecoveryCode[]
+  securityEvents        SecurityEvent[]
+  jobOffers             JobOffer[]              @relation("JobOfferContributor")
+  reviewedJobOffers     JobOffer[]              @relation("JobOfferReviewer")
+  jobStatusChanges      JobOfferStatusHistory[] @relation("JobOfferStatusActor")
+  jobRevisions          JobOfferRevision[]      @relation("JobOfferRevisionAuthor")
+  jobFiles              JobOfferFile[]          @relation("JobOfferFileUploader")
+  fileDownloads         FileDownloadLog[]       @relation("FileDownloader")
+  savedJobs             SavedJob[]
+  financialSettings     FinancialSetting[]      @relation("FinancialSettingAuthor")
+  serviceCosts          ServiceCreditCost[]     @relation("ServiceCostAuthor")
+  creditAccount         CreditAccount?
+  creditMovements       CreditMovement[]        @relation("CreditMovementActor")
+  ledgerAccounts        LedgerAccount[]         @relation("LedgerAccountOwner")
+  ledgerTransactions    LedgerTransaction[]     @relation("LedgerTransactionActor")
+  jobUnlocks            JobUnlock[]             @relation("JobUnlockUser")
+  commissions           Commission[]            @relation("CommissionContributor")
+  commissionEvents      CommissionEvent[]       @relation("CommissionEventActor")
+  withdrawalMethods     WithdrawalMethod[]      @relation("WithdrawalMethodOwner")
+  withdrawals           WithdrawalRequest[]     @relation("WithdrawalRequester")
+  approvedWithdrawals   WithdrawalRequest[]     @relation("WithdrawalApprover")
+  paidWithdrawals       WithdrawalRequest[]     @relation("WithdrawalPayer")
+  withdrawalEvents      WithdrawalEvent[]       @relation("WithdrawalEventActor")
+  creditOrders          CreditOrder[]           @relation("CreditOrderBuyer")
+  careerDocuments       CareerDocument[]        @relation("CareerDocumentOwner")
+  careerDocumentPasses  CareerDocumentPass[]    @relation("CareerDocumentPassUser")
+  careerDocumentExports CareerDocumentExport[]  @relation("CareerDocumentExportUser")
+  aiRequests            AiRequest[]             @relation("AiRequestUser")
 
   @@index([countryId])
   @@map("users")
@@ -651,6 +653,8 @@ enum FinancialSettingKey {
   new_contributor_period_days
   /// Montant de retrait à partir duquel deux administrateurs distincts sont requis, en USD.
   withdrawal_dual_approval_usd
+  /// Career Studio : jours pendant lesquels un export payé permet de ré-exporter gratuitement.
+  studio_reexport_window_days
 
   @@map("financial_setting_key")
 }
@@ -798,10 +802,11 @@ model CreditMovement {
   reason         String?            @db.VarChar(500)
   createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
 
-  jobUnlock   JobUnlock?
-  account     CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
-  actor       User?                 @relation("CreditMovementActor", fields: [actorId], references: [id], onDelete: Restrict)
-  allocations CreditLotAllocation[]
+  jobUnlock          JobUnlock?
+  careerDocumentPass CareerDocumentPass?
+  account            CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  actor              User?                 @relation("CreditMovementActor", fields: [actorId], references: [id], onDelete: Restrict)
+  allocations        CreditLotAllocation[]
 
   @@index([accountId, createdAt(sort: Desc)])
   @@map("credit_movements")
@@ -1215,7 +1220,9 @@ model CareerDocument {
   /// Suppression par l'utilisateur : la ligne est conservée (exports déjà payés).
   deletedAt   DateTime?          @map("deleted_at") @db.Timestamptz(3)
 
-  user User @relation("CareerDocumentOwner", fields: [userId], references: [id], onDelete: Restrict)
+  user    User                   @relation("CareerDocumentOwner", fields: [userId], references: [id], onDelete: Restrict)
+  passes  CareerDocumentPass[]
+  exports CareerDocumentExport[]
 
   @@index([userId, deletedAt, updatedAt(sort: Desc)])
   @@map("career_documents")
@@ -1247,4 +1254,65 @@ model AiRequest {
 
   @@index([userId, createdAt(sort: Desc)])
   @@map("ai_requests")
+}
+
+/// Paiement en crédits de l'export d'un document : ouvre une fenêtre de ré-exports gratuits.
+model CareerDocumentPass {
+  id         String        @id @default(uuid(7)) @db.Uuid
+  userId     String        @map("user_id") @db.Uuid
+  documentId String        @map("document_id") @db.Uuid
+  service    CreditService
+  credits    Int
+  movementId String        @unique @map("movement_id") @db.Uuid
+  valueUsd   Decimal       @map("value_usd") @db.Decimal(20, 6)
+  /// Fin de la fenêtre de ré-export gratuit (égale à la création si la fenêtre vaut 0 jour).
+  validUntil DateTime      @map("valid_until") @db.Timestamptz(3)
+  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user     User                   @relation("CareerDocumentPassUser", fields: [userId], references: [id], onDelete: Restrict)
+  document CareerDocument         @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  movement CreditMovement         @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  exports  CareerDocumentExport[]
+
+  @@index([documentId, validUntil(sort: Desc)])
+  @@map("career_document_passes")
+}
+
+enum CareerExportStatus {
+  pending
+  ready
+  failed
+
+  @@map("career_export_status")
+}
+
+/// Export PDF d'un document : instantané du contenu et du modèle au moment de l'export.
+model CareerDocumentExport {
+  id              String             @id @default(uuid(7)) @db.Uuid
+  userId          String             @map("user_id") @db.Uuid
+  documentId      String             @map("document_id") @db.Uuid
+  passId          String             @map("pass_id") @db.Uuid
+  /// Clé fournie par le navigateur : un double clic ne crée pas deux exports.
+  idempotencyKey  String             @map("idempotency_key") @db.VarChar(100)
+  /// Vrai si cet export a déclenché le paiement (les ré-exports couverts valent faux).
+  charged         Boolean
+  templateKey     String             @map("template_key") @db.VarChar(40)
+  language        Locale
+  documentVersion Int                @map("document_version")
+  title           String             @db.VarChar(120)
+  content         Json
+  status          CareerExportStatus @default(pending)
+  storageKey      String?            @map("storage_key") @db.VarChar(300)
+  sizeBytes       Int?               @map("size_bytes")
+  failureReason   String?            @map("failure_reason") @db.VarChar(120)
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  completedAt     DateTime?          @map("completed_at") @db.Timestamptz(3)
+
+  user     User               @relation("CareerDocumentExportUser", fields: [userId], references: [id], onDelete: Restrict)
+  document CareerDocument     @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  pass     CareerDocumentPass @relation(fields: [passId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, idempotencyKey])
+  @@index([documentId, createdAt(sort: Desc)])
+  @@map("career_document_exports")
 }

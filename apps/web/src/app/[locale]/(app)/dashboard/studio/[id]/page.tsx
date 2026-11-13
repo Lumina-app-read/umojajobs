@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Alert } from '@/components/ui/alert';
 import { type CvLabels } from '@/features/studio/cv-format';
 import { CvEditor } from '@/features/studio/cv-editor';
+import { cvLabels } from '@/features/studio/cv-labels';
 import { getCareerDocument, getCountries } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
 
@@ -18,15 +19,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: document?.title ?? t('title') };
 }
 
-/** Libellés imprimés sur le CV, dans chacune des langues de document. */
-async function cvLabels(): Promise<Record<'fr' | 'en', CvLabels>> {
-  const [fr, en] = await Promise.all([
-    getTranslations({ locale: 'fr', namespace: 'studio' }),
-    getTranslations({ locale: 'en', namespace: 'studio' }),
-  ]);
-  // Sous-arbre complet (libellés et mois) : `raw` attend une feuille dans le typage de next-intl.
-  const raw = (t: typeof fr) => (t.raw as (key: string) => unknown)('cv') as CvLabels;
-  return { fr: raw(fr), en: raw(en) };
+async function bothLabels(): Promise<Record<'fr' | 'en', CvLabels>> {
+  const [fr, en] = await Promise.all([cvLabels('fr'), cvLabels('en')]);
+  return { fr, en };
 }
 
 /** Éditeur d'un document du Career Studio. */
@@ -36,7 +31,7 @@ export default async function StudioDocumentPage({ params }: { params: Params })
   const [document, countries, labels, tErrors] = await Promise.all([
     UUID.test(id) ? getCareerDocument(id) : Promise.resolve(null),
     getCountries().catch(() => null),
-    cvLabels(),
+    bothLabels(),
     getTranslations('errors'),
   ]);
   if (!document) notFound();

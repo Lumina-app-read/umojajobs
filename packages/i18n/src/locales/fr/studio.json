@@ -55,7 +55,6 @@
       "graduate": "Jeune diplômé",
       "executive": "Cadre et dirigeant"
     },
-    "exportSoon": "Export PDF bientôt disponible",
     "add": "Ajouter",
     "remove": "Retirer",
     "moveUp": "Monter",
@@ -194,5 +193,33 @@
       "08": "août",
       "09": "sept."
     }
+  },
+  "export": {
+    "open": "Exporter en PDF",
+    "title": "Exporter en PDF",
+    "intro": "Le PDF reprend exactement l'aperçu, dans le modèle choisi.",
+    "cost": "Coût de l'export",
+    "credits": "{count, plural, one {# crédit} other {# crédits}}",
+    "balance": "Votre solde",
+    "window": "{days, plural, =0 {Chaque nouvel export est payant.} one {Ensuite, corrections et ré-exports sont gratuits pendant # jour.} other {Ensuite, corrections et ré-exports sont gratuits pendant # jours.}}",
+    "covered": "Ré-export gratuit jusqu'au {date}",
+    "coveredBody": "Vous avez déjà payé l'export de ce document : aucun crédit ne sera débité.",
+    "insufficient": "Solde insuffisant pour cet export.",
+    "topUp": "Recharger des crédits",
+    "pay": "Payer {count, plural, one {# crédit} other {# crédits}} et exporter",
+    "exportFree": "Exporter le PDF",
+    "exporting": "Création du PDF…",
+    "saving": "Attendez la fin de l'enregistrement de vos modifications.",
+    "priceMissing": "L'export PDF n'est pas encore disponible.",
+    "history": "Exports précédents",
+    "download": "Télécharger",
+    "paid": "Payé",
+    "included": "Inclus",
+    "failed": "Échec",
+    "pending": "En cours",
+    "done": "PDF prêt, téléchargement lancé",
+    "cancel": "Fermer",
+    "loadError": "Impossible de charger les informations d'export.",
+    "ready": "Prêt"
   }
 }

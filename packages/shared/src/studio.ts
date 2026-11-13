@@ -199,3 +199,57 @@ export interface AiSuggestionResponse {
   /** Suggestions encore disponibles aujourd'hui. */
   remaining: number;
 }
+
+/** Service payé en crédits pour l'export PDF de chaque type de document. */
+export const EXPORT_SERVICE_BY_TYPE: Partial<Record<CareerDocumentType, 'doc_cv'>> = {
+  cv: 'doc_cv',
+};
+
+export const CAREER_EXPORT_STATUSES = ['pending', 'ready', 'failed'] as const;
+export type CareerExportStatus = (typeof CAREER_EXPORT_STATUSES)[number];
+
+export interface CareerExportSummary {
+  id: string;
+  status: CareerExportStatus;
+  /** Vrai si cet export a déclenché le paiement ; faux pour un ré-export couvert. */
+  charged: boolean;
+  templateKey: string;
+  documentVersion: number;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+/** Exports d'un document, avec ce qu'un nouvel export coûterait maintenant. */
+export interface CareerExportsResponse {
+  /** Coût en crédits d'un export payant (null si le tarif n'est pas configuré). */
+  cost: number | null;
+  balance: number;
+  /** Fin de la période de ré-export gratuit en cours, ou null. */
+  coveredUntil: string | null;
+  /** Durée de ré-export gratuit ouverte par un export payé, en jours. */
+  reexportWindowDays: number;
+  exports: CareerExportSummary[];
+}
+
+export interface CareerExportCreateInput {
+  /** Identifiant aléatoire fourni par le navigateur : un double clic ne paie pas deux fois. */
+  idempotencyKey: string;
+}
+
+export interface CareerExportResponse extends CareerExportSummary {
+  balance: number;
+  coveredUntil: string | null;
+}
+
+export interface CareerExportDownloadResponse {
+  url: string;
+  expiresAt: string;
+}
+
+/** Données d'impression d'un export (route interne, protégée par un jeton signé). */
+export interface CareerExportRenderData {
+  templateKey: string;
+  language: 'fr' | 'en';
+  title: string;
+  content: CvContent;
+}

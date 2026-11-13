@@ -313,7 +313,8 @@
         "commission_hold_days": "Commission holding period",
         "commission_hold_days_new_contributor": "Holding period (new contributor)",
         "new_contributor_period_days": "New contributor period",
-        "withdrawal_dual_approval_usd": "Dual approval of withdrawals from"
+        "withdrawal_dual_approval_usd": "Dual approval of withdrawals from",
+        "studio_reexport_window_days": "Free re-exports after a paid export (Career Studio)"
       },
       "placeholders": {
         "usd": "E.g. 0.10",

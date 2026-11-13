@@ -1,14 +1,17 @@
 import { type INestApplication } from '@nestjs/common';
 import { type NestExpressApplication } from '@nestjs/platform-express';
-import { Test } from '@nestjs/testing';
+import { Test, type TestingModuleBuilder } from '@nestjs/testing';
 import type Redis from 'ioredis';
 import { AppModule } from '../src/app.module';
 import { configureApp } from '../src/app.setup';
 import { REDIS_CLIENT } from '../src/redis/redis.module';
 
 /** Application complète (même configuration HTTP que la production), branchée sur la base de test. */
-export async function createTestApp(): Promise<INestApplication> {
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+export async function createTestApp(
+  /** Remplacement de fournisseurs externes (navigateur d'impression, par exemple). */
+  configure: (builder: TestingModuleBuilder) => TestingModuleBuilder = (builder) => builder,
+): Promise<INestApplication> {
+  const moduleRef = await configure(Test.createTestingModule({ imports: [AppModule] })).compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>({ rawBody: true });
   configureApp(app, { enableSwagger: false });
   await app.init();

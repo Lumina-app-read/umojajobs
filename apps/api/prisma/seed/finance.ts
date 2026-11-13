@@ -48,6 +48,11 @@ const INITIAL_SETTINGS: { key: FinancialSettingKey; value: string; reason: strin
     value: '50',
     reason: 'Décision N5 du 12 novembre 2026 : double validation à partir de 50 USD.',
   },
+  {
+    key: 'studio_reexport_window_days',
+    value: '7',
+    reason: 'Décision du 13 novembre 2026 : un export payé ouvre 7 jours de ré-exports gratuits.',
+  },
 ];
 
 const INITIAL_COSTS: { service: CreditService; credits: number }[] = [

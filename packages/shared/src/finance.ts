@@ -15,6 +15,7 @@ export const FINANCIAL_SETTING_KEYS = [
   'commission_hold_days_new_contributor',
   'new_contributor_period_days',
   'withdrawal_dual_approval_usd',
+  'studio_reexport_window_days',
 ] as const;
 export type FinancialSettingKey = (typeof FINANCIAL_SETTING_KEYS)[number];
 
@@ -27,6 +28,7 @@ export const FINANCIAL_SETTING_UNITS: Record<FinancialSettingKey, 'usd' | 'rate'
   commission_hold_days_new_contributor: 'days',
   new_contributor_period_days: 'days',
   withdrawal_dual_approval_usd: 'usd',
+  studio_reexport_window_days: 'days',
 };
 
 /** Services payables en crédits. */

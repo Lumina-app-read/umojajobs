@@ -313,7 +313,8 @@
         "commission_hold_days": "Délai de retenue des commissions",
         "commission_hold_days_new_contributor": "Délai de retenue (nouveau contributeur)",
         "new_contributor_period_days": "Ancienneté d’un nouveau contributeur",
-        "withdrawal_dual_approval_usd": "Double validation des retraits à partir de"
+        "withdrawal_dual_approval_usd": "Double validation des retraits à partir de",
+        "studio_reexport_window_days": "Ré-exports gratuits après un export payé (Career Studio)"
       },
       "placeholders": {
         "usd": "Ex. : 0.10",

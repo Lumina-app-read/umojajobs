@@ -1,27 +1,12 @@
 'use client';
 
-import { type CvContent, type CvTemplate } from '@opportinities/shared';
+import { type CvContent } from '@opportinities/shared';
 import { useEffect, useRef, useState } from 'react';
 import { type CvLabels } from './cv-format';
-import { AcademicTemplate } from './templates/academic';
-import { ClassicTemplate } from './templates/classic';
-import { ExecutiveTemplate } from './templates/executive';
-import { GraduateTemplate } from './templates/graduate';
-import { InternationalTemplate } from './templates/international';
-import { ModernTemplate } from './templates/modern';
+import { A4_HEIGHT, A4_WIDTH, CvDocument } from './templates';
 
-/** Format A4 à 96 ppp : la page est dessinée à taille réelle puis réduite à la largeur disponible. */
-const PAGE_WIDTH = 794;
-const PAGE_HEIGHT = 1123;
-
-const TEMPLATES = {
-  classic: ClassicTemplate,
-  modern: ModernTemplate,
-  international: InternationalTemplate,
-  academic: AcademicTemplate,
-  graduate: GraduateTemplate,
-  executive: ExecutiveTemplate,
-} as const satisfies Record<CvTemplate, unknown>;
+const PAGE_WIDTH = A4_WIDTH;
+const PAGE_HEIGHT = A4_HEIGHT;
 
 /** Aperçu fidèle du CV : même rendu que le futur PDF, à l'échelle du conteneur. */
 export function CvPreview({
@@ -58,8 +43,6 @@ export function CvPreview({
     return () => observer.disconnect();
   }, []);
 
-  const Template = TEMPLATES[templateKey as keyof typeof TEMPLATES] ?? ClassicTemplate;
-
   return (
     <div ref={frameRef} className="w-full" role="region" aria-label={label}>
       <div
@@ -71,7 +54,12 @@ export function CvPreview({
           className="absolute top-0 left-0 origin-top-left overflow-hidden rounded-[3px] bg-white shadow-[0_1px_3px_rgb(15_23_42/0.12),0_8px_28px_rgb(15_23_42/0.10)] ring-1 ring-black/5"
           style={{ width: PAGE_WIDTH, minHeight: PAGE_HEIGHT, transform: `scale(${scale})` }}
         >
-          <Template content={content} labels={labels} countryName={countryName} />
+          <CvDocument
+            templateKey={templateKey}
+            content={content}
+            labels={labels}
+            countryName={countryName}
+          />
         </div>
       </div>
     </div>

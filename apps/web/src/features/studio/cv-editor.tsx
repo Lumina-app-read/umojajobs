@@ -16,7 +16,6 @@ import {
   CircleAlert,
   CloudCheck,
   Crown,
-  FileDown,
   Globe,
   GraduationCap,
   LayoutTemplate,
@@ -41,6 +40,7 @@ import { cn } from '@/lib/cn';
 import { type CvLabels } from './cv-format';
 import { CvForm, validateCv } from './cv-form';
 import { CvPreview } from './cv-preview';
+import { ExportDialog } from './export-dialog';
 
 /** Icône de chaque modèle dans le sélecteur. */
 const TEMPLATE_ICONS: Record<CvTemplate, LucideIcon> = {
@@ -241,9 +241,7 @@ export function CvEditor({
               </>
             }
           />
-          <Button variant="secondary" icon={FileDown} disabled title={t('exportSoon')}>
-            {t('exportSoon')}
-          </Button>
+          <ExportDialog documentId={document.id} saved={state === 'saved'} disabled={blocked} />
         </div>
       </div>
 
