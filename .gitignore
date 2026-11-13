@@ -35,3 +35,6 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Outils locaux (comptes de test, réglages personnels) : jamais versionnés.
+.claude/
