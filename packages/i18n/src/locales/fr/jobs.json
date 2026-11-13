@@ -561,7 +561,7 @@
   },
   "credits": {
     "title": "Mes crédits",
-    "intro": "Les crédits servent à déverrouiller les offres et, bientôt, à exporter vos documents.",
+    "intro": "Les crédits servent à déverrouiller les offres, à rédiger vos documents avec l’IA et à les exporter en PDF.",
     "balance": "Solde",
     "packsTitle": "Recharger",
     "unavailable": "La recharge de crédits ouvre très prochainement.",
@@ -590,11 +590,16 @@
     "noHistory": "Aucun mouvement pour le moment",
     "movements": {
       "purchase": "Recharge",
-      "consume": "Déverrouillage",
+      "consume": "Utilisation de crédits",
       "grant": "Crédits offerts",
       "refund": "Remboursement",
       "expire": "Expiration",
       "adjust": "Ajustement"
+    },
+    "movementReferences": {
+      "job_unlock": "Déverrouillage d’une offre",
+      "career_document_pass": "Export PDF",
+      "ai_generation": "Génération IA"
     }
   }
 }

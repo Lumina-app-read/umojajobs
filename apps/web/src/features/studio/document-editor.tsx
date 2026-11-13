@@ -40,7 +40,9 @@ import { SelectMenu } from '@/components/ui/select-menu';
 import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
 import { cn } from '@/lib/cn';
-import { type CvIssue, CvForm, validateCv } from './cv-form';
+import { CvForm } from './cv-form';
+import { type CvIssue, validateCv } from './cv-validation';
+import { StudioAiProvider } from './ai-context';
 import { A4Preview } from './cv-preview';
 import { documentCountry, StudioDocument, type StudioLabels } from './document-view';
 import { ExportDialog } from './export-dialog';
@@ -216,115 +218,117 @@ export function DocumentEditor({
   );
 
   return (
-    <div className="grid grid-cols-1 gap-5">
-      <div className="flex flex-col gap-3 lg:sticky lg:top-16 lg:z-20 lg:-mx-2 lg:flex-row lg:items-center lg:justify-between lg:bg-canvas/90 lg:px-2 lg:py-2.5 lg:backdrop-blur-md">
-        <div className="flex min-w-0 items-center gap-2">
-          <ButtonLink href="/dashboard/studio" variant="ghost" size="sm" icon={ArrowLeft}>
-            {t('back')}
-          </ButtonLink>
-          <label className="sr-only" htmlFor="studio-title">
-            {t('titleLabel')}
-          </label>
-          <input
-            id="studio-title"
-            size={1}
-            value={draft.title}
-            maxLength={STUDIO_LIMITS.titleMax}
-            disabled={blocked}
-            onChange={(event) => update({ title: event.target.value })}
-            className="min-w-0 flex-1 truncate rounded-md border border-transparent bg-transparent px-2 py-1 text-xl font-bold tracking-[-0.02em] text-fg outline-none hover:border-line focus:border-primary focus:ring-[3px] focus:ring-ring"
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <SaveIndicator state={state} />
-          <SelectMenu
-            label={t('template')}
-            value={draft.templateKey}
-            disabled={blocked}
-            onChange={(templateKey) => update({ templateKey })}
-            options={templatesFor(document.type).map((key) => ({
-              value: key,
-              label: t(`templates.${key as CvTemplate}`),
-              icon: TEMPLATE_ICONS[key as CvTemplate],
-            }))}
-            triggerClassName={buttonClasses('secondary', 'md')}
-            trigger={
-              <>
-                <LayoutTemplate className="size-4" aria-hidden="true" />
-                <span className="text-fg-muted">{t('template')} :</span>
-                <span>{t(`templates.${draft.templateKey as CvTemplate}`)}</span>
-                <ChevronDown className="size-4 text-fg-subtle" aria-hidden="true" />
-              </>
-            }
-          />
-          <ExportDialog documentId={document.id} saved={state === 'saved'} disabled={blocked} />
-        </div>
-      </div>
-
-      {blocked && (
-        <Alert tone="error">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span>{t('conflict')}</span>
-            <Button
-              size="sm"
-              variant="secondary"
-              icon={RotateCw}
-              onClick={() => window.location.reload()}
-            >
-              {t('reload')}
-            </Button>
+    <StudioAiProvider documentId={document.id}>
+      <div className="grid grid-cols-1 gap-5">
+        <div className="flex flex-col gap-3 lg:sticky lg:top-16 lg:z-20 lg:-mx-2 lg:flex-row lg:items-center lg:justify-between lg:bg-canvas/90 lg:px-2 lg:py-2.5 lg:backdrop-blur-md">
+          <div className="flex min-w-0 items-center gap-2">
+            <ButtonLink href="/dashboard/studio" variant="ghost" size="sm" icon={ArrowLeft}>
+              {t('back')}
+            </ButtonLink>
+            <label className="sr-only" htmlFor="studio-title">
+              {t('titleLabel')}
+            </label>
+            <input
+              id="studio-title"
+              size={1}
+              value={draft.title}
+              maxLength={STUDIO_LIMITS.titleMax}
+              disabled={blocked}
+              onChange={(event) => update({ title: event.target.value })}
+              className="min-w-0 flex-1 truncate rounded-md border border-transparent bg-transparent px-2 py-1 text-xl font-bold tracking-[-0.02em] text-fg outline-none hover:border-line focus:border-primary focus:ring-[3px] focus:ring-ring"
+            />
           </div>
-        </Alert>
-      )}
-      {state === 'error' && <Alert tone="error">{tErrors('NETWORK')}</Alert>}
-
-      <div className="lg:hidden">
-        <SegmentedControl
-          label={t('viewLabel')}
-          value={view}
-          onChange={setView}
-          options={[
-            { value: 'form', label: t('formTab') },
-            { value: 'preview', label: t('previewTab') },
-          ]}
-        />
-      </div>
-
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <fieldset
-          disabled={blocked}
-          className={cn('min-w-0', view === 'preview' && 'hidden lg:block')}
-          lang={locale}
-        >
-          {isLetterType(document.type) ? (
-            <LetterForm
-              documentId={document.id}
-              type={document.type}
-              content={draft.content as LetterContent}
-              countries={countries}
-              issues={issues as Record<string, LetterIssue>}
-              onChange={(content) => update({ content })}
+          <div className="flex flex-wrap items-center gap-3">
+            <SaveIndicator state={state} />
+            <SelectMenu
+              label={t('template')}
+              value={draft.templateKey}
+              disabled={blocked}
+              onChange={(templateKey) => update({ templateKey })}
+              options={templatesFor(document.type).map((key) => ({
+                value: key,
+                label: t(`templates.${key as CvTemplate}`),
+                icon: TEMPLATE_ICONS[key as CvTemplate],
+              }))}
+              triggerClassName={buttonClasses('secondary', 'md')}
+              trigger={
+                <>
+                  <LayoutTemplate className="size-4" aria-hidden="true" />
+                  <span className="text-fg-muted">{t('template')} :</span>
+                  <span>{t(`templates.${draft.templateKey as CvTemplate}`)}</span>
+                  <ChevronDown className="size-4 text-fg-subtle" aria-hidden="true" />
+                </>
+              }
             />
-          ) : (
-            <CvForm
-              documentId={document.id}
-              content={draft.content as CvContent}
-              countries={countries}
-              issues={issues as Record<string, CvIssue>}
-              onChange={(content) => update({ content })}
-            />
-          )}
-        </fieldset>
-        <div
-          className={cn(
-            'min-w-0 rounded-xl border border-line bg-surface-2 p-3 sm:p-5 lg:sticky lg:top-34 lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto',
-            view === 'form' && 'hidden lg:block',
-          )}
-          lang={document.language}
-        >
-          {preview}
+            <ExportDialog documentId={document.id} saved={state === 'saved'} disabled={blocked} />
+          </div>
+        </div>
+
+        {blocked && (
+          <Alert tone="error">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span>{t('conflict')}</span>
+              <Button
+                size="sm"
+                variant="secondary"
+                icon={RotateCw}
+                onClick={() => window.location.reload()}
+              >
+                {t('reload')}
+              </Button>
+            </div>
+          </Alert>
+        )}
+        {state === 'error' && <Alert tone="error">{tErrors('NETWORK')}</Alert>}
+
+        <div className="lg:hidden">
+          <SegmentedControl
+            label={t('viewLabel')}
+            value={view}
+            onChange={setView}
+            options={[
+              { value: 'form', label: t('formTab') },
+              { value: 'preview', label: t('previewTab') },
+            ]}
+          />
+        </div>
+
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <fieldset
+            disabled={blocked}
+            className={cn('min-w-0', view === 'preview' && 'hidden lg:block')}
+            lang={locale}
+          >
+            {isLetterType(document.type) ? (
+              <LetterForm
+                documentId={document.id}
+                type={document.type}
+                content={draft.content as LetterContent}
+                countries={countries}
+                issues={issues as Record<string, LetterIssue>}
+                onChange={(content) => update({ content })}
+              />
+            ) : (
+              <CvForm
+                documentId={document.id}
+                content={draft.content as CvContent}
+                countries={countries}
+                issues={issues as Record<string, CvIssue>}
+                onChange={(content) => update({ content })}
+              />
+            )}
+          </fieldset>
+          <div
+            className={cn(
+              'min-w-0 rounded-xl border border-line bg-surface-2 p-3 sm:p-5 lg:sticky lg:top-34 lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto',
+              view === 'form' && 'hidden lg:block',
+            )}
+            lang={document.language}
+          >
+            {preview}
+          </div>
         </div>
       </div>
-    </div>
+    </StudioAiProvider>
   );
 }

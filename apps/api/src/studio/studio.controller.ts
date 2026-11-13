@@ -17,7 +17,6 @@ import {
   AI_LIMITS,
   type AiImproveInput,
   type AiImproveTarget,
-  type AiSuggestionResponse,
   CAREER_DOCUMENT_TYPES,
   LETTER_LIMITS,
   type CareerExportCreateInput,
@@ -30,9 +29,21 @@ import {
   type CareerDocumentSummary,
   type CareerDocumentType,
   type CareerDocumentUpdateInput,
-  type CvContent,
   STUDIO_LIMITS,
   SUPPORTED_LOCALES,
+  AI_LENGTHS,
+  AI_TONES,
+  type AiGenerateInput,
+  type AiGenerationOptions,
+  type AiGenerationResponse,
+  type AiLength,
+  type AiPricesResponse,
+  type AiSectionInput,
+  type AiTone,
+  type AiUsageResponse,
+  PERMISSIONS,
+  type CareerDocumentBrief,
+  type CareerDocumentContent,
 } from '@opportinities/shared';
 import { Transform, Type } from 'class-transformer';
 import {
@@ -43,13 +54,15 @@ import {
   IsString,
   IsUUID,
   Length,
+  Max,
   MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
 import { type AuthContext } from '../auth/auth-context';
-import { CurrentAuth, Public } from '../security/decorators';
-import { StudioAiService } from './studio-ai.service';
+import { CurrentAuth, Public, RequirePermissions } from '../security/decorators';
+import { StudioGenerationService } from './studio-generation.service';
+import { StudioUsageService } from './studio-usage.service';
 import { StudioExportsService } from './studio-exports.service';
 import { StudioService } from './studio.service';
 
@@ -99,7 +112,13 @@ class UpdateDocumentDto implements CareerDocumentUpdateInput {
   @ApiPropertyOptional({ type: 'object', additionalProperties: true })
   @IsOptional()
   @IsObject()
-  content?: CvContent;
+  content?: CareerDocumentContent;
+
+  /** Informations de départ de la génération, validées par le service selon le type. */
+  @ApiPropertyOptional({ type: 'object', additionalProperties: true })
+  @IsOptional()
+  @IsObject()
+  brief?: CareerDocumentBrief;
 }
 
 class AiContextDto {
@@ -119,6 +138,13 @@ class AiContextDto {
 }
 
 class AiImproveDto implements AiImproveInput {
+  @ApiProperty({
+    format: 'uuid',
+    description: 'Identifiant aléatoire de l’opération (débit unique).',
+  })
+  @IsUUID()
+  idempotencyKey!: string;
+
   @ApiProperty({ enum: AI_IMPROVE_TARGETS })
   @IsIn(AI_IMPROVE_TARGETS)
   target!: AiImproveTarget;
@@ -155,6 +181,50 @@ class RenderTokenQueryDto {
   token!: string;
 }
 
+class AiOptionsDto implements AiGenerationOptions {
+  @ApiPropertyOptional({ enum: AI_TONES })
+  @IsOptional()
+  @IsIn(AI_TONES)
+  tone?: AiTone;
+
+  @ApiPropertyOptional({ enum: AI_LENGTHS })
+  @IsOptional()
+  @IsIn(AI_LENGTHS)
+  length?: AiLength;
+}
+
+class AiGenerateDto implements AiGenerateInput {
+  @ApiProperty({
+    format: 'uuid',
+    description: 'Identifiant aléatoire de l’opération (débit unique).',
+  })
+  @IsUUID()
+  idempotencyKey!: string;
+
+  @ApiPropertyOptional({ type: AiOptionsDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AiOptionsDto)
+  options?: AiOptionsDto;
+}
+
+class AiSectionDto extends AiGenerateDto implements AiSectionInput {
+  @ApiProperty({ example: 'summary' })
+  @IsString()
+  @Length(1, 60)
+  section!: string;
+}
+
+class GenerationKeyParamDto {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  id!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  key!: string;
+}
+
 class IdParamDto {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()
@@ -167,7 +237,7 @@ class IdParamDto {
 export class StudioController {
   constructor(
     private readonly studio: StudioService,
-    private readonly studioAi: StudioAiService,
+    private readonly generation: StudioGenerationService,
     private readonly exports: StudioExportsService,
   ) {}
 
@@ -206,17 +276,62 @@ export class StudioController {
     return this.studio.update(auth.user.id, params.id, body);
   }
 
-  /** Reformulation par l'IA : renvoie une suggestion, jamais appliquée d'office. */
-  @Post(':id/ai/improve')
+  /** Tarifs de l'IA pour ce document (fixés par le serveur) et solde de l'utilisateur. */
+  @Get(':id/ai/prices')
+  aiPrices(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+  ): Promise<AiPricesResponse> {
+    return this.generation.prices(auth.user.id, params.id);
+  }
+
+  /**
+   * Génération complète par l'IA, payée en crédits. La réponse décrit la génération : réussie
+   * (résultat), échouée (crédits remboursés) ou encore en cours (à consulter ensuite).
+   */
+  @Post(':id/ai/generate')
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
-  @ApiOkResponse({ description: "Suggestion et nombre de suggestions restantes aujourd'hui." })
+  @ApiOkResponse({ description: 'Génération et son résultat.' })
+  generate(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+    @Body() body: AiGenerateDto,
+  ): Promise<AiGenerationResponse> {
+    return this.generation.generate(auth.user.id, params.id, body);
+  }
+
+  /** Régénération d'une seule section (1 crédit). */
+  @Post(':id/ai/sections')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
+  regenerateSection(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+    @Body() body: AiSectionDto,
+  ): Promise<AiGenerationResponse> {
+    return this.generation.regenerateSection(auth.user.id, params.id, body);
+  }
+
+  /** Amélioration d'un texte existant (1 crédit) : suggestion jamais appliquée d'office. */
+  @Post(':id/ai/improve')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
   improve(
     @CurrentAuth() auth: AuthContext,
     @Param() params: IdParamDto,
     @Body() body: AiImproveDto,
-  ): Promise<AiSuggestionResponse> {
-    return this.studioAi.improve(auth.user.id, params.id, body);
+  ): Promise<AiGenerationResponse> {
+    return this.generation.improve(auth.user.id, params.id, body);
+  }
+
+  /** État d'une génération par sa clé : à consulter avant de relancer après une coupure. */
+  @Get(':id/ai/generations/:key')
+  generationStatus(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: GenerationKeyParamDto,
+  ): Promise<AiGenerationResponse> {
+    return this.generation.status(auth.user.id, params.id, params.key);
   }
 
   @Get(':id/exports')
@@ -280,5 +395,29 @@ export class CareerExportRenderController {
     @Query() query: RenderTokenQueryDto,
   ): Promise<CareerExportRenderData> {
     return this.exports.renderData(params.exportId, query.token);
+  }
+}
+
+class UsageQueryDto {
+  @ApiPropertyOptional({ minimum: 1, maximum: 365, default: 30 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(365)
+  days?: number;
+}
+
+/** Usage de l'IA du Career Studio pour l'administration (agrégats, aucun contenu privé). */
+@ApiTags('studio')
+@Controller('admin/studio')
+@RequirePermissions(PERMISSIONS.ADMIN_ACCESS, PERMISSIONS.FINANCE_READ)
+export class StudioAdminController {
+  constructor(private readonly usage: StudioUsageService) {}
+
+  @Get('ai-usage')
+  @ApiOkResponse({ description: 'Générations, crédits, recettes et coûts OpenAI estimés.' })
+  aiUsage(@Query() query: UsageQueryDto): Promise<AiUsageResponse> {
+    return this.usage.summary(query.days ?? 30);
   }
 }

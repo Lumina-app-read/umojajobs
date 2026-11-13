@@ -13,6 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** Mes crédits : solde, recharge par pack (paiement Chariow) et historique des mouvements. */
+const REFERENCES = ['job_unlock', 'career_document_pass', 'ai_generation'] as const;
+
 export default async function CreditsPage({
   searchParams,
 }: {
@@ -26,6 +28,12 @@ export default async function CreditsPage({
   const [balance, packs] = await Promise.all([getCreditBalance(), getCreditPacks()]);
   const usd = (value: string) =>
     format.number(Number(value), { style: 'currency', currency: 'USD' });
+
+  /** Ce que la consommation ou le remboursement concerne (export, génération IA…). */
+  const referenceLabel = (reference: string | null) =>
+    reference && (REFERENCES as readonly string[]).includes(reference)
+      ? t(`movementReferences.${reference as (typeof REFERENCES)[number]}`)
+      : null;
 
   return (
     <div className="grid gap-6">
@@ -94,7 +102,11 @@ export default async function CreditsPage({
             {balance.movements.map((movement) => (
               <li key={movement.id} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium text-fg">{t(`movements.${movement.type}`)}</p>
+                  <p className="text-sm font-medium text-fg">
+                    {[t(`movements.${movement.type}`), referenceLabel(movement.referenceType)]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
                   <p className="text-xs text-fg-subtle">
                     {format.dateTime(new Date(movement.createdAt), {
                       dateStyle: 'medium',

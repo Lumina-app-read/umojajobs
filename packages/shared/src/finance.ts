@@ -40,6 +40,16 @@ export const CREDIT_SERVICES = [
   'doc_application_letter',
   'doc_other_letter',
   'doc_pack',
+  'ai_generate_cv',
+  'ai_generate_cover_letter',
+  'ai_generate_application_letter',
+  'ai_generate_internship_request',
+  'ai_generate_recommendation',
+  'ai_generate_resignation',
+  'ai_generate_follow_up',
+  'ai_generate_thank_you',
+  'ai_regenerate_section',
+  'ai_improve_text',
 ] as const;
 export type CreditService = (typeof CREDIT_SERVICES)[number];
 
@@ -226,7 +236,14 @@ export const WITHDRAWAL_STATUSES = [
 export type WithdrawalStatus = (typeof WITHDRAWAL_STATUSES)[number];
 
 /** Décisions de l'administration sur une demande de retrait. */
-export const WITHDRAWAL_ACTIONS = ['review', 'approve', 'process', 'pay', 'fail', 'reject'] as const;
+export const WITHDRAWAL_ACTIONS = [
+  'review',
+  'approve',
+  'process',
+  'pay',
+  'fail',
+  'reject',
+] as const;
 export type WithdrawalAction = (typeof WITHDRAWAL_ACTIONS)[number];
 
 export const WITHDRAWAL_LIMITS = {

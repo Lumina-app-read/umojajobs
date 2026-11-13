@@ -156,14 +156,18 @@
     "titleLabel": "Document title",
     "viewLabel": "View",
     "ai": {
-      "improve": "Improve with AI",
-      "improving": "Rewriting…",
-      "tooShort": "Write at least {min} characters to request a rewrite.",
+      "improve": "Improve my text",
+      "price": "{count, plural, one {# credit} other {# credits}}",
+      "improving": "Improving…",
+      "tooShort": "Write at least {min} characters to request an improvement.",
       "title": "AI suggestion",
       "review": "Review it: the AI rewords your text without adding anything.",
       "replace": "Replace my text",
       "dismiss": "Dismiss",
-      "remaining": "{count, plural, =0 {No suggestions left today} one {# suggestion left today} other {# suggestions left today}}",
+      "charged": "{count, plural, one {# credit charged} other {# credits charged}} · balance: {balance}",
+      "refunded": "The improvement failed: your credits have been refunded.",
+      "insufficient": "Not enough credits: you have {balance} {balance, plural, one {credit} other {credits}} left.",
+      "topUp": "Top up",
       "privacy": "Your text is sent to our AI provider only to be reworded.",
       "applied": "Text replaced"
     }

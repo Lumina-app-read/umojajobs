@@ -136,6 +136,13 @@ export class EnvironmentVariables {
   @IsString()
   OPENAI_MODEL?: string;
 
+  /** Délai maximal d'un appel à OpenAI (ms). */
+  @Type(() => Number)
+  @IsInt()
+  @Min(1_000)
+  @Max(120_000)
+  OPENAI_TIMEOUT_MS = 30_000;
+
   /**
    * Export PDF du Career Studio : adresse interne de l'application web (page d'impression) et
    * chemin du navigateur Chromium sans interface. Sans chemin, l'export reste fermé.
@@ -147,12 +154,24 @@ export class EnvironmentVariables {
   @IsString()
   CHROMIUM_EXECUTABLE_PATH?: string;
 
-  /** Suggestions IA par utilisateur et par période de 24 heures. */
+  /**
+   * Garde-fou : générations IA (payées) par utilisateur et par période de 24 heures, contre les
+   * scripts et les abus. Le prix en crédits est fixé dans l'administration (coûts des services).
+   */
   @Type(() => Number)
   @IsInt()
   @Min(0)
   @Max(1000)
-  STUDIO_AI_DAILY_LIMIT = 30;
+  STUDIO_AI_DAILY_LIMIT = 60;
+
+  /** Tarifs OpenAI du modèle configuré, en USD par million de tokens (estimation des coûts). */
+  @IsOptional()
+  @Matches(/^\d+(\.\d+)?$/)
+  OPENAI_PRICE_INPUT_USD_PER_MTOK?: string;
+
+  @IsOptional()
+  @Matches(/^\d+(\.\d+)?$/)
+  OPENAI_PRICE_OUTPUT_USD_PER_MTOK?: string;
 
   @IsOptional()
   @IsString()

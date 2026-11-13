@@ -1,7 +1,7 @@
 import { emptyCv } from '@opportinities/shared';
 import { describe, expect, it } from 'vitest';
 import { type CvLabels, formatPeriod, splitDescription } from './cv-format';
-import { validateCv } from './cv-form';
+import { validateCv } from './cv-validation';
 
 const labels = {
   present: "Aujourd'hui",

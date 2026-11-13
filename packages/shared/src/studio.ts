@@ -145,6 +145,8 @@ export interface CareerDocumentResponse<
   C extends CareerDocumentContent = CareerDocumentContent,
 > extends CareerDocumentSummary {
   content: C;
+  /** Informations factuelles fournies pour la génération par l'IA. */
+  brief: CareerDocumentBrief;
   createdAt: string;
 }
 
@@ -161,6 +163,7 @@ export interface CareerDocumentUpdateInput {
   language?: 'fr' | 'en';
   templateKey?: string;
   content?: CareerDocumentContent;
+  brief?: CareerDocumentBrief;
 }
 
 /** CV vide, prérempli avec les informations connues du compte. */
@@ -204,6 +207,8 @@ export const AI_LIMITS = {
 } as const;
 
 export interface AiImproveInput {
+  /** Identifiant aléatoire de l'opération : un double clic ne débite qu'une fois. */
+  idempotencyKey: string;
   target: AiImproveTarget;
   /** Texte saisi (éventuellement pas encore enregistré). */
   text: string;
@@ -366,4 +371,227 @@ export function emptyLetter(
     closing: defaults.closing,
     enclosures: '',
   };
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Génération par l'IA, payée en crédits (décision du propriétaire du 13 novembre 2026)        */
+/* ------------------------------------------------------------------------------------------ */
+
+export const AI_GENERATION_ACTIONS = ['generate', 'regenerate_section', 'improve'] as const;
+export type AiGenerationAction = (typeof AI_GENERATION_ACTIONS)[number];
+
+export const AI_GENERATION_STATUSES = ['pending', 'succeeded', 'failed'] as const;
+export type AiGenerationStatus = (typeof AI_GENERATION_STATUSES)[number];
+
+/** Service facturé pour la génération complète de chaque type de document. */
+export const AI_GENERATE_SERVICE_BY_TYPE: Record<CareerDocumentType, CreditService> = {
+  cv: 'ai_generate_cv',
+  cover_letter: 'ai_generate_cover_letter',
+  application_letter: 'ai_generate_application_letter',
+  internship_request: 'ai_generate_internship_request',
+  recommendation_draft: 'ai_generate_recommendation',
+  resignation_letter: 'ai_generate_resignation',
+  follow_up_letter: 'ai_generate_follow_up',
+  thank_you_letter: 'ai_generate_thank_you',
+};
+export const AI_SECTION_SERVICE: CreditService = 'ai_regenerate_section';
+export const AI_IMPROVE_SERVICE: CreditService = 'ai_improve_text';
+
+/** Service facturé pour une action donnée : déterminé par le serveur, jamais par le navigateur. */
+export function aiServiceFor(type: CareerDocumentType, action: AiGenerationAction): CreditService {
+  if (action === 'generate') return AI_GENERATE_SERVICE_BY_TYPE[type];
+  return action === 'regenerate_section' ? AI_SECTION_SERVICE : AI_IMPROVE_SERVICE;
+}
+
+export const AI_TONES = ['formal', 'dynamic', 'sober'] as const;
+export type AiTone = (typeof AI_TONES)[number];
+export const AI_LENGTHS = ['short', 'standard', 'detailed'] as const;
+export type AiLength = (typeof AI_LENGTHS)[number];
+
+export interface AiGenerationOptions {
+  tone?: AiTone;
+  length?: AiLength;
+}
+
+/**
+ * Sections régénérables : « summary », « experience:<id> », « education:<id> », « project:<id> »
+ * pour un CV ; « subject », « body », « closing » pour une lettre.
+ */
+export const LETTER_SECTIONS = ['subject', 'body', 'closing'] as const;
+export type LetterSection = (typeof LETTER_SECTIONS)[number];
+export const CV_SECTION = /^(summary|(experience|education|project):[A-Za-z0-9_-]{1,40})$/;
+
+export interface AiGenerateInput {
+  idempotencyKey: string;
+  options?: AiGenerationOptions;
+}
+
+export interface AiSectionInput extends AiGenerateInput {
+  section: string;
+}
+
+/** Résultat d'une génération : contenu complet, section seule, ou texte amélioré. */
+export type AiGenerationResult =
+  | { kind: 'document'; content: CareerDocumentContent }
+  | { kind: 'section'; section: string; text: string }
+  | { kind: 'text'; text: string };
+
+export interface AiGenerationResponse {
+  id: string;
+  action: AiGenerationAction;
+  status: AiGenerationStatus;
+  section: string | null;
+  /** Crédits débités pour cette génération (remboursés si elle a échoué). */
+  credits: number;
+  refunded: boolean;
+  /** Code d'erreur traduisible si la génération a échoué. */
+  failureCode: string | null;
+  result: AiGenerationResult | null;
+  balance: number;
+  createdAt: string;
+}
+
+/** Tarifs de l'IA pour un document, déterminés par le serveur, avec le solde de l'utilisateur. */
+export interface AiPricesResponse {
+  generate: number | null;
+  section: number | null;
+  improve: number | null;
+  balance: number;
+}
+
+/* Informations de départ (« brief ») : faits fournis par l'utilisateur, jamais inventés. */
+
+export const BRIEF_LIMITS = { short: 160, long: 1_500, offer: 6_000 } as const;
+
+export interface CvBrief {
+  /** Poste visé (adapte le profil et l'ordre des compétences). */
+  targetRole: string;
+  /** Texte d'une offre d'emploi, facultatif. */
+  jobOffer: string;
+}
+
+/** Champs des informations de départ d'une lettre ; chaque type n'en utilise qu'une partie. */
+export const LETTER_BRIEF_FIELDS = [
+  'jobTitle',
+  'offerText',
+  'currentPosition',
+  'experience',
+  'skills',
+  'motivation',
+  'strengths',
+  'availability',
+  'school',
+  'studyField',
+  'studyLevel',
+  'internshipDomain',
+  'internshipDuration',
+  'internshipGoals',
+  'position',
+  'startDate',
+  'lastDay',
+  'notice',
+  'reason',
+  'candidateName',
+  'recommenderName',
+  'recommenderRole',
+  'relationship',
+  'qualities',
+  'purpose',
+  'initialSubject',
+  'initialDate',
+  'context',
+] as const;
+export type LetterBriefField = (typeof LETTER_BRIEF_FIELDS)[number];
+export type LetterBrief = Partial<Record<LetterBriefField, string>>;
+
+/** Champs longs (texte libre) ; les autres sont courts. */
+export const LETTER_BRIEF_LONG_FIELDS: readonly LetterBriefField[] = [
+  'experience',
+  'skills',
+  'motivation',
+  'strengths',
+  'internshipGoals',
+  'reason',
+  'relationship',
+  'qualities',
+  'context',
+];
+
+/** Champs utiles à chaque type de lettre (questionnaire et consignes de l'IA). */
+export const LETTER_BRIEF_BY_TYPE: Record<LetterType, readonly LetterBriefField[]> = {
+  cover_letter: [
+    'jobTitle',
+    'offerText',
+    'currentPosition',
+    'experience',
+    'skills',
+    'motivation',
+    'strengths',
+    'availability',
+  ],
+  application_letter: [
+    'jobTitle',
+    'currentPosition',
+    'experience',
+    'skills',
+    'motivation',
+    'availability',
+  ],
+  internship_request: [
+    'school',
+    'studyField',
+    'studyLevel',
+    'internshipDomain',
+    'internshipDuration',
+    'internshipGoals',
+    'skills',
+    'availability',
+  ],
+  recommendation_draft: [
+    'candidateName',
+    'recommenderName',
+    'recommenderRole',
+    'relationship',
+    'qualities',
+    'experience',
+    'purpose',
+  ],
+  resignation_letter: ['position', 'startDate', 'lastDay', 'notice', 'reason'],
+  follow_up_letter: ['jobTitle', 'initialSubject', 'initialDate', 'context'],
+  thank_you_letter: ['jobTitle', 'context', 'reason'],
+};
+
+export type CareerDocumentBrief = CvBrief | LetterBrief;
+
+/** Statistiques d'usage de l'IA pour l'administration : agrégats seulement, aucun texte. */
+export interface AiUsageResponse {
+  since: string;
+  generations: {
+    total: number;
+    succeeded: number;
+    failed: number;
+    pending: number;
+  };
+  credits: {
+    /** Crédits débités, remboursements compris. */
+    charged: number;
+    refunded: number;
+    net: number;
+    /** Valeur interne des crédits nets consommés (recette), en USD. */
+    revenueUsd: string;
+  };
+  openai: {
+    requests: number;
+    failedRequests: number;
+    inputTokens: number;
+    outputTokens: number;
+    /** Coût estimé (tarifs configurés) ; null si les tarifs ne sont pas configurés. */
+    estimatedCostUsd: string | null;
+  };
+  byDocumentType: {
+    documentType: CareerDocumentType;
+    generations: number;
+    netCredits: number;
+  }[];
+  byAction: { action: AiGenerationAction; generations: number; netCredits: number }[];
 }

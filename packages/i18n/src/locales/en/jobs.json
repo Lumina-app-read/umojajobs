@@ -561,7 +561,7 @@
   },
   "credits": {
     "title": "My credits",
-    "intro": "Credits unlock offers and, soon, export your documents.",
+    "intro": "Credits are used to unlock job offers, write your documents with AI and export them as PDF.",
     "balance": "Balance",
     "packsTitle": "Top up",
     "unavailable": "Credit top-ups open very soon.",
@@ -590,11 +590,16 @@
     "noHistory": "No movements yet",
     "movements": {
       "purchase": "Top-up",
-      "consume": "Unlock",
+      "consume": "Credits used",
       "grant": "Free credits",
       "refund": "Refund",
       "expire": "Expiry",
       "adjust": "Adjustment"
+    },
+    "movementReferences": {
+      "job_unlock": "Job offer unlock",
+      "career_document_pass": "PDF export",
+      "ai_generation": "AI generation"
     }
   }
 }

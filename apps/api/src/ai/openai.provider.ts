@@ -8,8 +8,6 @@ import {
   AiProviderError,
 } from './ai-provider';
 
-const TIMEOUT_MS = 30_000;
-
 interface ChatCompletionResponse {
   choices?: { message?: { content?: string | null }; finish_reason?: string }[];
   usage?: { prompt_tokens?: number; completion_tokens?: number };
@@ -25,12 +23,14 @@ export class OpenAiProvider implements AiProvider {
   private readonly logger = new Logger(OpenAiProvider.name);
   private readonly baseUrl: string;
   private readonly apiKey: string | undefined;
+  private readonly timeoutMs: number;
   readonly model: string;
 
   constructor(config: ConfigService<EnvironmentVariables, true>) {
     this.baseUrl = config.get('OPENAI_API_BASE_URL', { infer: true }).replace(/\/$/, '');
     this.apiKey = config.get('OPENAI_API_KEY', { infer: true }) || undefined;
     this.model = config.get('OPENAI_MODEL', { infer: true }) || '';
+    this.timeoutMs = config.get('OPENAI_TIMEOUT_MS', { infer: true });
   }
 
   get enabled(): boolean {
@@ -57,11 +57,12 @@ export class OpenAiProvider implements AiProvider {
           response_format: { type: 'json_object' },
           max_completion_tokens: request.maxOutputTokens,
         }),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch (error) {
-      this.logger.warn(`OpenAI injoignable : ${(error as Error).name}`);
-      throw new AiProviderError('network');
+      const name = (error as Error).name;
+      this.logger.warn(`OpenAI injoignable : ${name}`);
+      throw new AiProviderError(name === 'TimeoutError' ? 'timeout' : 'network');
     }
     if (!response.ok) {
       // Seul le statut est journalisé : le corps peut reprendre le texte de l'utilisateur.

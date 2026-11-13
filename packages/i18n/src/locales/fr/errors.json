@@ -75,5 +75,10 @@
   "CAREER_EXPORT_NOT_READY": "Le PDF n'est pas encore prêt.",
   "CAREER_EXPORT_FAILED": "La création du PDF a échoué. Réessayez : votre paiement reste valable et ne sera pas débité une seconde fois.",
   "CAREER_EXPORT_INCOMPLETE": "Ajoutez au moins votre nom complet avant d'exporter le document.",
-  "CAREER_EXPORT_PRICE_MISSING": "L'export PDF n'est pas encore disponible. Réessayez plus tard."
+  "CAREER_EXPORT_PRICE_MISSING": "L'export PDF n'est pas encore disponible. Réessayez plus tard.",
+  "AI_GENERATION_IN_PROGRESS": "Une génération est déjà en cours pour ce document. Patientez quelques secondes.",
+  "AI_GENERATION_FAILED": "La génération a échoué. Vos crédits ont été remboursés automatiquement.",
+  "AI_GENERATION_INCOMPLETE": "Complétez les informations demandées avant de lancer la génération.",
+  "AI_PRICE_MISSING": "Cette fonction n’est pas encore disponible. Réessayez plus tard.",
+  "AI_SECTION_INVALID": "Cette section ne peut pas être régénérée."
 }

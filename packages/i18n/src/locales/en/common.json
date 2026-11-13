@@ -328,7 +328,17 @@
         "doc_cover_letter": "Cover letter",
         "doc_application_letter": "Job application letter",
         "doc_other_letter": "Other letter (internship, resignation, follow-up…)",
-        "doc_pack": "CV and letter pack"
+        "doc_pack": "CV and letter pack",
+        "ai_generate_cv": "AI: CV generation",
+        "ai_generate_cover_letter": "AI: cover letter",
+        "ai_generate_application_letter": "AI: job application",
+        "ai_generate_internship_request": "AI: internship request",
+        "ai_generate_recommendation": "AI: recommendation letter",
+        "ai_generate_resignation": "AI: resignation letter",
+        "ai_generate_follow_up": "AI: follow-up letter",
+        "ai_generate_thank_you": "AI: thank-you letter",
+        "ai_regenerate_section": "AI: section regeneration",
+        "ai_improve_text": "AI: text improvement"
       },
       "grant": {
         "title": "Grant free credits",

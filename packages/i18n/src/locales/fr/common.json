@@ -328,7 +328,17 @@
         "doc_cover_letter": "Lettre de motivation",
         "doc_application_letter": "Demande d’emploi",
         "doc_other_letter": "Autre lettre (stage, démission, relance…)",
-        "doc_pack": "Pack CV et lettre"
+        "doc_pack": "Pack CV et lettre",
+        "ai_generate_cv": "IA : génération d’un CV",
+        "ai_generate_cover_letter": "IA : lettre de motivation",
+        "ai_generate_application_letter": "IA : demande d’emploi",
+        "ai_generate_internship_request": "IA : demande de stage",
+        "ai_generate_recommendation": "IA : lettre de recommandation",
+        "ai_generate_resignation": "IA : lettre de démission",
+        "ai_generate_follow_up": "IA : lettre de relance",
+        "ai_generate_thank_you": "IA : lettre de remerciement",
+        "ai_regenerate_section": "IA : régénération d’une section",
+        "ai_improve_text": "IA : amélioration d’un texte"
       },
       "grant": {
         "title": "Attribuer des crédits gratuits",

@@ -13,6 +13,8 @@ export const LEDGER_ACCOUNTS = {
   customerCredits: { code: 'customer_credits', type: 'liability' },
   revenueUnlocks: { code: 'revenue_unlocks', type: 'revenue' },
   revenueDocuments: { code: 'revenue_documents', type: 'revenue' },
+  /** Générations par l'IA (Career Studio), distinctes des exports PDF. */
+  revenueAiGenerations: { code: 'revenue_ai_generations', type: 'revenue' },
   /** Crédits offerts : charge commerciale de la plateforme (à valider par l'expert-comptable). */
   promotionalCredits: { code: 'promotional_credits', type: 'expense' },
 } as const satisfies Record<string, { code: string; type: LedgerAccountType }>;

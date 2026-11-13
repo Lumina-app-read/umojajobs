@@ -104,7 +104,8 @@ export default async function globalSetup(): Promise<void> {
     OPENAI_API_BASE_URL: 'http://127.0.0.1:4598/v1',
     OPENAI_API_KEY: 'test_openai_key',
     OPENAI_MODEL: 'test-model',
-    STUDIO_AI_DAILY_LIMIT: '4',
+    STUDIO_AI_DAILY_LIMIT: '20',
+    OPENAI_TIMEOUT_MS: '1500',
     // Le cycle de vie des offres est testé directement, sans minuterie.
     SCHEDULED_TASKS_ENABLED: 'false',
     S3_ENDPOINT: `http://${storage.container.getHost()}:${storage.container.getMappedPort(3900)}`,

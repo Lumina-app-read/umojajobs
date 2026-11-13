@@ -50,6 +50,23 @@ const DOCUMENT_SERVICES: readonly CreditService[] = [
   'doc_pack',
 ];
 
+/** Compte de produits crédité par la consommation d'un service (débité par son remboursement). */
+function revenueAccount(service: CreditService) {
+  if (service.startsWith('ai_')) return LEDGER_ACCOUNTS.revenueAiGenerations;
+  return DOCUMENT_SERVICES.includes(service)
+    ? LEDGER_ACCOUNTS.revenueDocuments
+    : LEDGER_ACCOUNTS.revenueUnlocks;
+}
+
+export interface RefundRequest {
+  /** Mouvement de consommation à rembourser. */
+  movementId: string;
+  service: CreditService;
+  referenceType: string;
+  referenceId: string;
+  reason: string;
+}
+
 const isUniqueViolation = (error: unknown) =>
   error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
 
@@ -267,15 +284,76 @@ export class CreditsService {
       referenceId: request.referenceId,
       lines: [
         { account: LEDGER_ACCOUNTS.customerCredits, debit: valueUsd },
-        {
-          account: DOCUMENT_SERVICES.includes(request.service)
-            ? LEDGER_ACCOUNTS.revenueDocuments
-            : LEDGER_ACCOUNTS.revenueUnlocks,
-          credit: valueUsd,
-        },
+        { account: revenueAccount(request.service), credit: valueUsd },
       ],
     });
     return { movementId: movement.id, balance, allocations, valueUsd, commissionableValueUsd };
+  }
+
+  /**
+   * Remboursement intégral d'une consommation (génération IA échouée), dans la transaction de
+   * l'appelant : les crédits retournent dans les lots d'origine, à leur valeur figée, et
+   * l'écriture comptable inverse celle de la consommation. Une consommation n'est remboursée
+   * qu'une fois (clé d'idempotence unique en base) ; renvoie le mouvement de remboursement.
+   */
+  async refund(tx: Tx, request: RefundRequest): Promise<{ movementId: string; balance: number }> {
+    const consumed = await tx.creditMovement.findUnique({
+      where: { id: request.movementId },
+      select: {
+        type: true,
+        quantity: true,
+        account: { select: { userId: true } },
+        allocations: { select: { lotId: true, credits: true, valueUsd: true } },
+      },
+    });
+    if (!consumed || consumed.type !== 'consume' || consumed.quantity >= 0) {
+      throw new Error(`Mouvement ${request.movementId} : pas une consommation remboursable`);
+    }
+    const account = await this.lockAccount(tx, consumed.account.userId);
+    const credits = -consumed.quantity;
+    const balance = account.balance + credits;
+    const key = `refund:${request.movementId}`;
+    const movement = await tx.creditMovement.create({
+      data: {
+        accountId: account.id,
+        type: 'refund',
+        quantity: credits,
+        balanceAfter: balance,
+        idempotencyKey: key,
+        referenceType: request.referenceType,
+        referenceId: request.referenceId,
+        reason: request.reason,
+      },
+      select: { id: true },
+    });
+    for (const allocation of consumed.allocations) {
+      await tx.creditLot.update({
+        where: { id: allocation.lotId },
+        data: { creditsRemaining: { increment: allocation.credits } },
+      });
+      await tx.creditLotAllocation.create({
+        data: {
+          movementId: movement.id,
+          lotId: allocation.lotId,
+          credits: allocation.credits,
+          valueUsd: allocation.valueUsd,
+        },
+      });
+    }
+    await tx.creditAccount.update({ where: { id: account.id }, data: { balance } });
+    const valueUsd = sumUsd(consumed.allocations.map((allocation) => allocation.valueUsd));
+    await this.ledger.post(tx, {
+      type: 'credit_refund',
+      idempotencyKey: key,
+      referenceType: request.referenceType,
+      referenceId: request.referenceId,
+      reason: request.reason,
+      lines: [
+        { account: revenueAccount(request.service), debit: valueUsd },
+        { account: LEDGER_ACCOUNTS.customerCredits, credit: valueUsd },
+      ],
+    });
+    return { movementId: movement.id, balance };
   }
 
   /** Crée le compte au besoin, puis verrouille sa ligne jusqu'à la fin de la transaction. */

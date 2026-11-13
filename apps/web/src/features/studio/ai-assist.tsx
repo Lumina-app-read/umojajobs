@@ -2,22 +2,27 @@
 
 import {
   AI_LIMITS,
+  type AiGenerationResponse,
   type AiImproveInput,
   type AiImproveTarget,
-  type AiSuggestionResponse,
+  ERROR_CODES,
 } from '@opportinities/shared';
-import { Check, ShieldCheck, Sparkles, WandSparkles, X } from 'lucide-react';
+import { Check, Coins, ShieldCheck, Sparkles, WandSparkles, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { ButtonLink } from '@/components/ui/button-link';
 import { FieldError, FieldHint } from '@/components/ui/form-field';
 import { toast } from '@/components/ui/toast';
 import { api } from '@/lib/api/client';
+import { ApiError } from '@/lib/api/errors';
 import { useFormErrors } from '@/lib/use-form-errors';
+import { useStudioAi } from './ai-context';
 
 /**
- * Reformulation d'un texte par l'IA. La suggestion s'affiche à côté du texte d'origine et n'est
- * appliquée que si l'utilisateur la choisit. Rien n'est envoyé sans clic explicite.
+ * Amélioration d'un texte existant par l'IA (mode B), payée en crédits : le prix figure sur le
+ * bouton, le montant est fixé par le serveur. La suggestion s'affiche à côté du texte d'origine
+ * et n'est appliquée que si l'utilisateur la choisit. Un échec est remboursé automatiquement.
  */
 export function AiAssist({
   documentId,
@@ -34,31 +39,52 @@ export function AiAssist({
 }) {
   const t = useTranslations('studio.editor.ai');
   const { fromApiError } = useFormErrors();
+  const { prices, setBalance } = useStudioAi();
   const [pending, setPending] = useState(false);
-  const [result, setResult] = useState<AiSuggestionResponse | null>(null);
+  const [suggestion, setSuggestion] = useState<{ text: string; charged: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [insufficient, setInsufficient] = useState(false);
+  /** Une clé par opération : un double clic ou une relance réseau ne débite qu'une fois. */
+  const key = useRef<string | null>(null);
   const tooShort = text.trim().length < AI_LIMITS.textMin;
+  const price = prices?.improve ?? null;
 
   async function request() {
+    key.current ??= crypto.randomUUID();
     setPending(true);
     setError(null);
-    setResult(null);
+    setInsufficient(false);
+    setSuggestion(null);
     try {
-      const input: AiImproveInput = { target, text: text.trim() };
+      const input: AiImproveInput = { idempotencyKey: key.current, target, text: text.trim() };
       if (context?.title || context?.organization) {
         input.context = {
           title: context.title?.trim().slice(0, AI_LIMITS.contextMax) || undefined,
           organization: context.organization?.trim().slice(0, AI_LIMITS.contextMax) || undefined,
         };
       }
-      setResult(
-        await api.post<AiSuggestionResponse>(
-          `/me/career-documents/${documentId}/ai/improve`,
-          input,
-        ),
+      const result = await api.post<AiGenerationResponse>(
+        `/me/career-documents/${documentId}/ai/improve`,
+        input,
       );
+      key.current = null;
+      setBalance(result.balance);
+      if (result.status === 'succeeded' && result.result?.kind === 'text') {
+        setSuggestion({
+          text: result.result.text,
+          charged: t('charged', { count: result.credits, balance: result.balance }),
+        });
+      } else {
+        setError(t('refunded'));
+      }
     } catch (caught) {
-      setError(fromApiError(caught).message);
+      // Après une erreur, la tentative suivante reçoit une nouvelle clé (aucun double débit).
+      key.current = null;
+      if (caught instanceof ApiError && caught.code === ERROR_CODES.INSUFFICIENT_CREDITS) {
+        setInsufficient(true);
+      } else {
+        setError(fromApiError(caught).message);
+      }
     } finally {
       setPending(false);
     }
@@ -74,16 +100,31 @@ export function AiAssist({
           icon={WandSparkles}
           loading={pending}
           loadingLabel={t('improving')}
-          disabled={tooShort}
+          disabled={tooShort || price === null}
           onClick={request}
         >
           {t('improve')}
+          {price !== null && (
+            <span className="ml-1.5 font-normal text-fg-subtle">
+              · {t('price', { count: price })}
+            </span>
+          )}
         </Button>
-        {tooShort && !result && <FieldHint>{t('tooShort', { min: AI_LIMITS.textMin })}</FieldHint>}
+        {tooShort && !suggestion && (
+          <FieldHint>{t('tooShort', { min: AI_LIMITS.textMin })}</FieldHint>
+        )}
       </div>
+      {insufficient && (
+        <div className="flex flex-wrap items-center gap-2 text-xs text-warning">
+          <span>{t('insufficient', { balance: prices?.balance ?? 0 })}</span>
+          <ButtonLink href="/dashboard/credits" size="sm" variant="ghost" icon={Coins}>
+            {t('topUp')}
+          </ButtonLink>
+        </div>
+      )}
       {error && <FieldError>{error}</FieldError>}
 
-      {result && (
+      {suggestion && (
         <div
           role="region"
           aria-label={t('title')}
@@ -93,7 +134,7 @@ export function AiAssist({
             <Sparkles className="size-4" aria-hidden="true" />
             {t('title')}
           </p>
-          <p className="mt-2 text-sm leading-6 whitespace-pre-line text-fg">{result.suggestion}</p>
+          <p className="mt-2 text-sm leading-6 whitespace-pre-line text-fg">{suggestion.text}</p>
           <p className="mt-2 flex items-start gap-1.5 text-xs text-fg-muted">
             <ShieldCheck className="mt-px size-3.5 shrink-0" aria-hidden="true" />
             {t('review')}
@@ -104,8 +145,8 @@ export function AiAssist({
               size="sm"
               icon={Check}
               onClick={() => {
-                onApply(result.suggestion);
-                setResult(null);
+                onApply(suggestion.text);
+                setSuggestion(null);
                 toast.success(t('applied'));
               }}
             >
@@ -116,17 +157,15 @@ export function AiAssist({
               size="sm"
               variant="ghost"
               icon={X}
-              onClick={() => setResult(null)}
+              onClick={() => setSuggestion(null)}
             >
               {t('dismiss')}
             </Button>
-            <span className="text-xs text-fg-subtle sm:ml-auto">
-              {t('remaining', { count: result.remaining })}
-            </span>
+            <span className="text-xs text-fg-subtle sm:ml-auto">{suggestion.charged}</span>
           </div>
         </div>
       )}
-      {!result && !error && !tooShort && <FieldHint>{t('privacy')}</FieldHint>}
+      {!suggestion && !error && !insufficient && !tooShort && <FieldHint>{t('privacy')}</FieldHint>}
     </div>
   );
 }

@@ -63,6 +63,17 @@ const INITIAL_COSTS: { service: CreditService; credits: number }[] = [
   { service: 'doc_application_letter', credits: 10 },
   // Décision du 13 novembre 2026 : tarif distinct pour les autres lettres, initialisé à 1 USD.
   { service: 'doc_other_letter', credits: 10 },
+  // Décision du 13 novembre 2026 : génération par l'IA payée en crédits.
+  { service: 'ai_generate_cv', credits: 5 },
+  { service: 'ai_generate_cover_letter', credits: 3 },
+  { service: 'ai_generate_application_letter', credits: 3 },
+  { service: 'ai_generate_internship_request', credits: 2 },
+  { service: 'ai_generate_recommendation', credits: 2 },
+  { service: 'ai_generate_resignation', credits: 1 },
+  { service: 'ai_generate_follow_up', credits: 1 },
+  { service: 'ai_generate_thank_you', credits: 1 },
+  { service: 'ai_regenerate_section', credits: 1 },
+  { service: 'ai_improve_text', credits: 1 },
   { service: 'doc_pack', credits: 25 },
 ];
 const COST_REASON = 'Valeur initiale : arbitrage A3 validé le 9 novembre 2026.';

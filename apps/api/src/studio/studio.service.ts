@@ -11,6 +11,7 @@ import {
   type CareerDocumentResponse,
   type CareerDocumentSummary,
   type CareerDocumentUpdateInput,
+  type CareerDocumentBrief,
   type CareerDocumentContent,
   emptyCv,
   emptyLetter,
@@ -23,6 +24,7 @@ import { getTranslator } from '@opportinities/i18n';
 import { type AuthContext } from '../auth/auth-context';
 import { type CareerDocument, type Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { normalizeBrief } from './brief-content';
 import { normalizeCv } from './cv-content';
 import { normalizeLetter } from './letter-content';
 
@@ -39,6 +41,7 @@ const toSummary = (row: CareerDocument): CareerDocumentSummary => ({
 const toResponse = (row: CareerDocument): CareerDocumentResponse => ({
   ...toSummary(row),
   content: row.content as unknown as CareerDocumentContent,
+  brief: row.brief as unknown as CareerDocumentBrief,
   createdAt: row.createdAt.toISOString(),
 });
 
@@ -142,6 +145,16 @@ export class StudioService {
         });
       }
       data.content = content as unknown as Prisma.InputJsonValue;
+    }
+    if (input.brief !== undefined) {
+      const { brief, issues } = normalizeBrief(existing.type, input.brief);
+      if (issues.length > 0) {
+        throw new BadRequestException({
+          code: ERROR_CODES.VALIDATION_FAILED,
+          details: issues.map((issue) => ({ field: `brief.${issue.field}`, rules: [issue.rule] })),
+        });
+      }
+      data.brief = brief as unknown as Prisma.InputJsonValue;
     }
     // Mise à jour conditionnelle : seule la version lue peut être remplacée.
     const result = await this.prisma.careerDocument.updateMany({

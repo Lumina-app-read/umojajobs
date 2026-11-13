@@ -216,6 +216,7 @@ model User {
   careerDocumentPasses  CareerDocumentPass[]    @relation("CareerDocumentPassUser")
   careerDocumentExports CareerDocumentExport[]  @relation("CareerDocumentExportUser")
   aiRequests            AiRequest[]             @relation("AiRequestUser")
+  aiGenerations         AiGeneration[]          @relation("AiGenerationUser")
 
   @@index([countryId])
   @@map("users")
@@ -669,6 +670,19 @@ enum CreditService {
   /// Autres lettres : demande de stage, recommandation, démission, relance, remerciement.
   doc_other_letter
   doc_pack
+  /// Génération complète d'un document par l'IA (décision du 13 novembre 2026).
+  ai_generate_cv
+  ai_generate_cover_letter
+  ai_generate_application_letter
+  ai_generate_internship_request
+  ai_generate_recommendation
+  ai_generate_resignation
+  ai_generate_follow_up
+  ai_generate_thank_you
+  /// Régénération d'une section par l'IA.
+  ai_regenerate_section
+  /// Amélioration d'un texte existant par l'IA.
+  ai_improve_text
 
   @@map("credit_service")
 }
@@ -713,6 +727,8 @@ enum LedgerTransactionType {
   withdrawal_reserve
   withdrawal_release
   withdrawal_payout
+  /// Remboursement d'une consommation de crédits (génération IA échouée).
+  credit_refund
 
   @@map("ledger_transaction_type")
 }
@@ -806,6 +822,8 @@ model CreditMovement {
 
   jobUnlock          JobUnlock?
   careerDocumentPass CareerDocumentPass?
+  aiGenerationCharge AiGeneration?         @relation("AiGenerationCharge")
+  aiGenerationRefund AiGeneration?         @relation("AiGenerationRefund")
   account            CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
   actor              User?                 @relation("CreditMovementActor", fields: [actorId], references: [id], onDelete: Restrict)
   allocations        CreditLotAllocation[]
@@ -1215,6 +1233,8 @@ model CareerDocument {
   language    Locale
   templateKey String             @map("template_key") @db.VarChar(40)
   content     Json
+  /// Informations factuelles fournies pour la génération par l'IA (jamais inventées).
+  brief       Json               @default("{}")
   /// Version optimiste : une modification concurrente est refusée.
   version     Int                @default(1)
   createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -1222,9 +1242,10 @@ model CareerDocument {
   /// Suppression par l'utilisateur : la ligne est conservée (exports déjà payés).
   deletedAt   DateTime?          @map("deleted_at") @db.Timestamptz(3)
 
-  user    User                   @relation("CareerDocumentOwner", fields: [userId], references: [id], onDelete: Restrict)
-  passes  CareerDocumentPass[]
-  exports CareerDocumentExport[]
+  user          User                   @relation("CareerDocumentOwner", fields: [userId], references: [id], onDelete: Restrict)
+  passes        CareerDocumentPass[]
+  aiGenerations AiGeneration[]
+  exports       CareerDocumentExport[]
 
   @@index([userId, deletedAt, updatedAt(sort: Desc)])
   @@map("career_documents")
@@ -1240,19 +1261,24 @@ enum AiRequestStatus {
 
 /// Journal des appels à l'IA : quota, coûts et incidents. Aucun texte n'y est conservé.
 model AiRequest {
-  id           String          @id @default(uuid(7)) @db.Uuid
-  userId       String          @map("user_id") @db.Uuid
-  documentId   String?         @map("document_id") @db.Uuid
-  feature      String          @db.VarChar(40)
-  model        String          @db.VarChar(80)
-  status       AiRequestStatus
-  inputTokens  Int?            @map("input_tokens")
-  outputTokens Int?            @map("output_tokens")
-  latencyMs    Int             @map("latency_ms")
-  errorCode    String?         @map("error_code") @db.VarChar(60)
-  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  id               String              @id @default(uuid(7)) @db.Uuid
+  userId           String              @map("user_id") @db.Uuid
+  documentId       String?             @map("document_id") @db.Uuid
+  feature          String              @db.VarChar(40)
+  model            String              @db.VarChar(80)
+  status           AiRequestStatus
+  inputTokens      Int?                @map("input_tokens")
+  outputTokens     Int?                @map("output_tokens")
+  latencyMs        Int                 @map("latency_ms")
+  errorCode        String?             @map("error_code") @db.VarChar(60)
+  generationId     String?             @map("generation_id") @db.Uuid
+  documentType     CareerDocumentType? @map("document_type")
+  /// Coût estimé de l'appel en USD (tarifs OpenAI configurés), null si non configuré.
+  estimatedCostUsd Decimal?            @map("estimated_cost_usd") @db.Decimal(20, 8)
+  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
 
-  user User @relation("AiRequestUser", fields: [userId], references: [id], onDelete: Restrict)
+  generation AiGeneration? @relation(fields: [generationId], references: [id], onDelete: Restrict)
+  user       User          @relation("AiRequestUser", fields: [userId], references: [id], onDelete: Restrict)
 
   @@index([userId, createdAt(sort: Desc)])
   @@map("ai_requests")
@@ -1317,4 +1343,55 @@ model CareerDocumentExport {
   @@unique([userId, idempotencyKey])
   @@index([documentId, createdAt(sort: Desc)])
   @@map("career_document_exports")
+}
+
+enum AiGenerationAction {
+  generate
+  regenerate_section
+  improve
+
+  @@map("ai_generation_action")
+}
+
+enum AiGenerationStatus {
+  pending
+  succeeded
+  failed
+
+  @@map("ai_generation_status")
+}
+
+/// Génération par l'IA payée en crédits. Le débit et la création de la ligne sont atomiques ;
+/// un échec définitif rembourse les crédits dans la même transaction que le passage en échec.
+/// Une seule génération en cours par document (index unique partiel, voir la migration).
+model AiGeneration {
+  id               String             @id @default(uuid(7)) @db.Uuid
+  userId           String             @map("user_id") @db.Uuid
+  documentId       String             @map("document_id") @db.Uuid
+  documentType     CareerDocumentType @map("document_type")
+  action           AiGenerationAction
+  section          String?            @db.VarChar(60)
+  /// Clé fournie par le navigateur : rejouer la même demande ne débite jamais deux fois.
+  idempotencyKey   String             @map("idempotency_key") @db.VarChar(100)
+  service          CreditService
+  credits          Int
+  chargeMovementId String             @unique @map("charge_movement_id") @db.Uuid
+  refundMovementId String?            @unique @map("refund_movement_id") @db.Uuid
+  status           AiGenerationStatus @default(pending)
+  /// Résultat rendu à l'utilisateur (son propre document), absent des statistiques d'administration.
+  result           Json?
+  failureCode      String?            @map("failure_code") @db.VarChar(60)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  completedAt      DateTime?          @map("completed_at") @db.Timestamptz(3)
+
+  user           User            @relation("AiGenerationUser", fields: [userId], references: [id], onDelete: Restrict)
+  document       CareerDocument  @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  chargeMovement CreditMovement  @relation("AiGenerationCharge", fields: [chargeMovementId], references: [id], onDelete: Restrict)
+  refundMovement CreditMovement? @relation("AiGenerationRefund", fields: [refundMovementId], references: [id], onDelete: Restrict)
+  requests       AiRequest[]
+
+  @@unique([userId, idempotencyKey])
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@map("ai_generations")
 }
