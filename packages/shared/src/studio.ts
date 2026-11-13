@@ -18,7 +18,7 @@ export type CareerDocumentType = (typeof CAREER_DOCUMENT_TYPES)[number];
 /** Types déjà disponibles dans le Studio (les autres arrivent avec les étapes suivantes). */
 export const AVAILABLE_DOCUMENT_TYPES: readonly CareerDocumentType[] = ['cv'];
 
-/** Modèles de CV (§11.2). Les deux premiers sont disponibles dès l'étape 4a. */
+/** Modèles de CV (§11.2). */
 export const CV_TEMPLATES = [
   'classic',
   'modern',
@@ -28,7 +28,7 @@ export const CV_TEMPLATES = [
   'executive',
 ] as const;
 export type CvTemplate = (typeof CV_TEMPLATES)[number];
-export const AVAILABLE_CV_TEMPLATES: readonly CvTemplate[] = ['classic', 'modern'];
+export const AVAILABLE_CV_TEMPLATES: readonly CvTemplate[] = CV_TEMPLATES;
 
 export const LANGUAGE_LEVELS = ['native', 'fluent', 'advanced', 'intermediate', 'basic'] as const;
 export type LanguageLevel = (typeof LANGUAGE_LEVELS)[number];

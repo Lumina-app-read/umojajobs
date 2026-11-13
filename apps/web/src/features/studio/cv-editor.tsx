@@ -5,31 +5,52 @@ import {
   type CareerDocumentResponse,
   type CountryResponse,
   type CvContent,
+  type CvTemplate,
   ERROR_CODES,
   STUDIO_LIMITS,
 } from '@opportinities/shared';
 import {
+  AlignJustify,
   ArrowLeft,
+  ChevronDown,
   CircleAlert,
   CloudCheck,
+  Crown,
   FileDown,
+  Globe,
+  GraduationCap,
+  LayoutTemplate,
   LoaderCircle,
+  type LucideIcon,
+  PanelLeft,
   PencilLine,
+  Rocket,
   RotateCw,
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { countryName } from '@/components/forms/country-select';
 import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Button, buttonClasses } from '@/components/ui/button';
 import { ButtonLink } from '@/components/ui/button-link';
 import { SegmentedControl } from '@/components/ui/navigation';
+import { SelectMenu } from '@/components/ui/select-menu';
 import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
 import { cn } from '@/lib/cn';
 import { type CvLabels } from './cv-format';
 import { CvForm, validateCv } from './cv-form';
 import { CvPreview } from './cv-preview';
+
+/** Icône de chaque modèle dans le sélecteur. */
+const TEMPLATE_ICONS: Record<CvTemplate, LucideIcon> = {
+  classic: AlignJustify,
+  modern: PanelLeft,
+  international: Globe,
+  academic: GraduationCap,
+  graduate: Rocket,
+  executive: Crown,
+};
 
 type SaveState = 'saved' | 'dirty' | 'saving' | 'invalid' | 'conflict' | 'error';
 
@@ -200,14 +221,25 @@ export function CvEditor({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <SaveIndicator state={state} />
-          <SegmentedControl
+          <SelectMenu
             label={t('template')}
             value={draft.templateKey}
-            onChange={(templateKey) => !blocked && update({ templateKey })}
+            disabled={blocked}
+            onChange={(templateKey) => update({ templateKey })}
             options={AVAILABLE_CV_TEMPLATES.map((key) => ({
               value: key as string,
               label: t(`templates.${key}`),
+              icon: TEMPLATE_ICONS[key],
             }))}
+            triggerClassName={buttonClasses('secondary', 'md')}
+            trigger={
+              <>
+                <LayoutTemplate className="size-4" aria-hidden="true" />
+                <span className="text-fg-muted">{t('template')} :</span>
+                <span>{t(`templates.${draft.templateKey as CvTemplate}`)}</span>
+                <ChevronDown className="size-4 text-fg-subtle" aria-hidden="true" />
+              </>
+            }
           />
           <Button variant="secondary" icon={FileDown} disabled title={t('exportSoon')}>
             {t('exportSoon')}

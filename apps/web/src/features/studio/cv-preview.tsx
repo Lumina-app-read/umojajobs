@@ -1,16 +1,27 @@
 'use client';
 
-import { type CvContent } from '@opportinities/shared';
+import { type CvContent, type CvTemplate } from '@opportinities/shared';
 import { useEffect, useRef, useState } from 'react';
 import { type CvLabels } from './cv-format';
+import { AcademicTemplate } from './templates/academic';
 import { ClassicTemplate } from './templates/classic';
+import { ExecutiveTemplate } from './templates/executive';
+import { GraduateTemplate } from './templates/graduate';
+import { InternationalTemplate } from './templates/international';
 import { ModernTemplate } from './templates/modern';
 
 /** Format A4 à 96 ppp : la page est dessinée à taille réelle puis réduite à la largeur disponible. */
 const PAGE_WIDTH = 794;
 const PAGE_HEIGHT = 1123;
 
-const TEMPLATES = { classic: ClassicTemplate, modern: ModernTemplate } as const;
+const TEMPLATES = {
+  classic: ClassicTemplate,
+  modern: ModernTemplate,
+  international: InternationalTemplate,
+  academic: AcademicTemplate,
+  graduate: GraduateTemplate,
+  executive: ExecutiveTemplate,
+} as const satisfies Record<CvTemplate, unknown>;
 
 /** Aperçu fidèle du CV : même rendu que le futur PDF, à l'échelle du conteneur. */
 export function CvPreview({
