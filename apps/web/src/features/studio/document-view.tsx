@@ -1,7 +1,9 @@
 import {
   type CareerDocumentContent,
   type CareerDocumentType,
+  CV_PHOTO_TEMPLATES,
   type CvContent,
+  type CvTemplate,
   isLetterType,
   type LetterContent,
 } from '@opportinities/shared';
@@ -34,6 +36,7 @@ export function StudioDocument({
   labels,
   language,
   countryName,
+  photoUrl,
 }: {
   type: CareerDocumentType;
   templateKey: string;
@@ -41,6 +44,8 @@ export function StudioDocument({
   labels: StudioLabels;
   language: 'fr' | 'en';
   countryName: string;
+  /** Photo du CV, si l'utilisateur en a ajouté une. */
+  photoUrl?: string | null;
 }) {
   if (isLetterType(type)) {
     return (
@@ -59,6 +64,8 @@ export function StudioDocument({
       content={content as CvContent}
       labels={labels.cv}
       countryName={countryName}
+      // Photo affichée seulement par les modèles qui la prévoient (décision du 13 novembre 2026).
+      photoUrl={CV_PHOTO_TEMPLATES.includes(templateKey as CvTemplate) ? photoUrl : null}
     />
   );
 }

@@ -77,7 +77,8 @@
       "languages": "Languages",
       "certifications": "Certifications",
       "projects": "Projects",
-      "references": "References"
+      "references": "References",
+      "interests": "Interests"
     },
     "fields": {
       "fullName": "Full name",
@@ -106,7 +107,8 @@
       "url": "Link",
       "referenceName": "Name",
       "referenceRole": "Position",
-      "contact": "Contact"
+      "contact": "Contact",
+      "interest": "Interest"
     },
     "placeholders": {
       "fullName": "E.g. Awa Diallo",
@@ -131,12 +133,14 @@
       "url": "E.g. https://example.com/project",
       "referenceName": "E.g. Moussa Ndiaye",
       "referenceRole": "E.g. Finance director",
-      "contact": "E.g. moussa.ndiaye@example.com"
+      "contact": "E.g. moussa.ndiaye@example.com",
+      "interest": "E.g. Community volunteering, then Enter"
     },
     "hints": {
       "month": "Month and year, for example 2024-03.",
       "skills": "Press Enter or a comma to add.",
-      "references": "Optional. Ask people for their consent before listing them."
+      "references": "Optional. Ask people for their consent before listing them.",
+      "interests": "Optional. Press Enter or a comma to add."
     },
     "levels": {
       "native": "Native",
@@ -203,7 +207,8 @@
       "07": "Jul",
       "08": "Aug",
       "09": "Sep"
-    }
+    },
+    "interests": "Interests"
   },
   "export": {
     "open": "Export to PDF",
@@ -540,5 +545,55 @@
         "placeholder": "E.g. Accountant"
       }
     }
+  },
+  "photo": {
+    "label": "Photo",
+    "optional": "(optional)",
+    "hint": "Shown in the Modern, Recent graduate and Executive templates. Never sent to the AI.",
+    "add": "Add a photo",
+    "replace": "Change",
+    "remove": "Remove",
+    "alt": "CV photo",
+    "uploading": "Uploading…",
+    "removed": "Photo removed",
+    "saved": "Photo saved"
+  },
+  "cvWizard": {
+    "tabs": {
+      "info": "Information",
+      "document": "CV"
+    },
+    "steps": {
+      "identity": "You",
+      "target": "Target position",
+      "experiences": "Experience",
+      "education": "Education",
+      "skills": "Skills and languages",
+      "extras": "Projects and interests",
+      "generate": "Generation"
+    },
+    "stepHints": {
+      "identity": "Your details appear at the top of the CV.",
+      "target": "The AI tailors the profile and the order of skills to the target position.",
+      "experiences": "For each position, notes are enough: the AI writes the descriptions.",
+      "education": "Degrees and training, as obtained.",
+      "skills": "Only the skills you really master.",
+      "extras": "Everything on this step is optional.",
+      "generate": "The AI writes the profile and descriptions from your notes, without inventing anything."
+    },
+    "targetRole": {
+      "label": "Target position",
+      "placeholder": "E.g. Senior accountant"
+    },
+    "jobOffer": {
+      "label": "Job advert",
+      "placeholder": "Paste the advert here: the CV will match its requirements."
+    },
+    "generate": "Generate my CV",
+    "regenerateAll": "Regenerate my CV",
+    "generated": "CV written by the AI",
+    "redo": "Restore the generated CV",
+    "missingFacts": "Add at least one experience, education entry or skill.",
+    "missingName": "Enter your full name."
   }
 }

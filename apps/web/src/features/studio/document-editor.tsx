@@ -5,6 +5,7 @@ import {
   type CareerDocumentContent,
   type CareerDocumentResponse,
   type CountryResponse,
+  type CvBrief,
   type CvContent,
   type CvTemplate,
   ERROR_CODES,
@@ -54,6 +55,8 @@ import { documentCountry, StudioDocument, type StudioLabels } from './document-v
 import { ExportDialog } from './export-dialog';
 import { type LetterIssue, LetterForm, validateLetter } from './letters/letter-form';
 import { LetterWizard } from './letters/letter-wizard';
+import { CvWizard } from './cv-wizard';
+import { PhotoField, photoUrl } from './photo-field';
 
 /** Icône de chaque modèle dans le sélecteur. */
 const TEMPLATE_ICONS: Record<CvTemplate, LucideIcon> = {
@@ -121,6 +124,7 @@ export function DocumentEditor({
   const t = useTranslations('studio.editor');
   const tErrors = useTranslations('errors');
   const tWizard = useTranslations('studio.wizard');
+  const tCv = useTranslations('studio.cvWizard');
   const locale = useLocale();
   const [draft, setDraft] = useState<Draft>({
     title: document.title,
@@ -129,10 +133,16 @@ export function DocumentEditor({
     brief: document.brief,
   });
   const letterDocument = isLetterType(document.type);
-  /** Lettre : questionnaire tant qu'aucun texte n'est rédigé, puis le texte lui-même. */
-  const [panel, setPanel] = useState<'info' | 'letter'>(
-    letterDocument && !(document.content as LetterContent).body.trim() ? 'info' : 'letter',
-  );
+  /** Questionnaire tant qu'aucun texte n'est rédigé, puis le document lui-même. */
+  const [panel, setPanel] = useState<'info' | 'document'>(() => {
+    if (letterDocument)
+      return (document.content as LetterContent).body.trim() ? 'document' : 'info';
+    const cv = document.content as CvContent;
+    const started =
+      cv.personal.summary.trim() || cv.experiences.length > 0 || cv.education.length > 0;
+    return started ? 'document' : 'info';
+  });
+  const [photoVersion, setPhotoVersion] = useState<string | null>(document.photo?.version ?? null);
   /** Contenu avant la dernière génération complète (annulation). */
   const [beforeGeneration, setBeforeGeneration] = useState<CareerDocumentContent | null>(null);
   /** Lettre générée mise de côté par « Annuler la génération » : elle reste récupérable. */
@@ -222,6 +232,15 @@ export function DocumentEditor({
     return () => window.removeEventListener('beforeunload', warn);
   }, [revision, savedRevision]);
 
+  const generatedLabel = letterDocument ? tWizard('generated') : tCv('generated');
+  const applyGenerated = (content: CareerDocumentContent) => {
+    setBeforeGeneration(draft.content);
+    setAfterGeneration(null);
+    update({ content });
+    setPanel('document');
+    toast.success(generatedLabel, tWizard('generatedBody'));
+  };
+
   const countryIso2 = documentCountry(document.type, draft.content);
   const country = countries.find((entry) => entry.iso2 === countryIso2);
   const preview = (
@@ -233,6 +252,7 @@ export function DocumentEditor({
         labels={labels[document.language]}
         language={document.language}
         countryName={country ? countryName(country, document.language) : ''}
+        photoUrl={photoVersion ? photoUrl(document.id, photoVersion) : null}
       />
     </A4Preview>
   );
@@ -319,18 +339,21 @@ export function DocumentEditor({
             className={cn('min-w-0', view === 'preview' && 'hidden lg:block')}
             lang={locale}
           >
-            {isLetterType(document.type) ? (
-              <div className="grid gap-4">
-                <SegmentedControl
-                  label={t('titleLabel')}
-                  value={panel}
-                  onChange={setPanel}
-                  options={[
-                    { value: 'info', label: tWizard('tabs.info') },
-                    { value: 'letter', label: tWizard('tabs.letter') },
-                  ]}
-                />
-                {panel === 'info' ? (
+            <div className="grid gap-4">
+              <SegmentedControl
+                label={t('titleLabel')}
+                value={panel}
+                onChange={setPanel}
+                options={[
+                  { value: 'info', label: tWizard('tabs.info') },
+                  {
+                    value: 'document',
+                    label: letterDocument ? tWizard('tabs.letter') : tCv('tabs.document'),
+                  },
+                ]}
+              />
+              {panel === 'info' ? (
+                isLetterType(document.type) ? (
                   <LetterWizard
                     documentId={document.id}
                     type={document.type}
@@ -340,56 +363,66 @@ export function DocumentEditor({
                     issues={issues as Record<string, LetterIssue>}
                     onContent={(content) => update({ content })}
                     onBrief={(brief) => update({ brief })}
-                    onGenerated={(content) => {
-                      setBeforeGeneration(draft.content);
-                      update({ content });
-                      setPanel('letter');
-                      toast.success(tWizard('generated'), tWizard('generatedBody'));
-                    }}
+                    onGenerated={applyGenerated}
                   />
                 ) : (
-                  <>
-                    {beforeGeneration && (
-                      <Alert tone="info">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <span>
-                            <strong>{tWizard('generated')}.</strong> {tWizard('generatedBody')}
-                          </span>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            icon={Undo2}
-                            onClick={() => {
-                              setAfterGeneration(draft.content);
-                              update({ content: beforeGeneration });
-                              setBeforeGeneration(null);
-                              toast.success(tWizard('undone'));
-                            }}
-                          >
-                            {tWizard('undo')}
-                          </Button>
-                        </div>
-                      </Alert>
-                    )}
-                    {afterGeneration && (
-                      <Alert tone="info">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <span>{tWizard('undone')}.</span>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            icon={Redo2}
-                            onClick={() => {
-                              setBeforeGeneration(draft.content);
-                              update({ content: afterGeneration });
-                              setAfterGeneration(null);
-                            }}
-                          >
-                            {tWizard('redo')}
-                          </Button>
-                        </div>
-                      </Alert>
-                    )}
+                  <CvWizard
+                    documentId={document.id}
+                    content={draft.content as CvContent}
+                    brief={draft.brief as CvBrief}
+                    countries={countries}
+                    issues={issues as Record<string, CvIssue>}
+                    photoVersion={photoVersion}
+                    onPhoto={setPhotoVersion}
+                    onContent={(content) => update({ content })}
+                    onBrief={(brief) => update({ brief })}
+                    onGenerated={applyGenerated}
+                  />
+                )
+              ) : (
+                <>
+                  {beforeGeneration && (
+                    <Alert tone="info">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <span>
+                          <strong>{generatedLabel}.</strong> {tWizard('generatedBody')}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          icon={Undo2}
+                          onClick={() => {
+                            setAfterGeneration(draft.content);
+                            update({ content: beforeGeneration });
+                            setBeforeGeneration(null);
+                            toast.success(tWizard('undone'));
+                          }}
+                        >
+                          {tWizard('undo')}
+                        </Button>
+                      </div>
+                    </Alert>
+                  )}
+                  {afterGeneration && (
+                    <Alert tone="info">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <span>{tWizard('undone')}.</span>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          icon={Redo2}
+                          onClick={() => {
+                            setBeforeGeneration(draft.content);
+                            update({ content: afterGeneration });
+                            setAfterGeneration(null);
+                          }}
+                        >
+                          {letterDocument ? tWizard('redo') : tCv('redo')}
+                        </Button>
+                      </div>
+                    </Alert>
+                  )}
+                  {isLetterType(document.type) ? (
                     <LetterForm
                       documentId={document.id}
                       type={document.type}
@@ -397,23 +430,31 @@ export function DocumentEditor({
                       issues={issues as Record<string, LetterIssue>}
                       onChange={(content) => update({ content })}
                     />
-                    <div>
-                      <Button variant="ghost" icon={ClipboardList} onClick={() => setPanel('info')}>
-                        {tWizard('restart')}
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <CvForm
-                documentId={document.id}
-                content={draft.content as CvContent}
-                countries={countries}
-                issues={issues as Record<string, CvIssue>}
-                onChange={(content) => update({ content })}
-              />
-            )}
+                  ) : (
+                    <CvForm
+                      documentId={document.id}
+                      content={draft.content as CvContent}
+                      countries={countries}
+                      issues={issues as Record<string, CvIssue>}
+                      onChange={(content) => update({ content })}
+                      regenerate
+                      photo={
+                        <PhotoField
+                          documentId={document.id}
+                          version={photoVersion}
+                          onChange={setPhotoVersion}
+                        />
+                      }
+                    />
+                  )}
+                  <div>
+                    <Button variant="ghost" icon={ClipboardList} onClick={() => setPanel('info')}>
+                      {tWizard('restart')}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
           </fieldset>
           <div
             className={cn(

@@ -14,6 +14,7 @@ import {
 import { StudioExportsService } from './studio-exports.service';
 import { StudioService } from './studio.service';
 import { StudioUsageService } from './studio-usage.service';
+import { StudioPhotoService } from './studio-photo.service';
 
 /** Career Studio (phase 4) : documents, assistant IA et exports PDF payés en crédits. */
 @Module({
@@ -29,6 +30,7 @@ import { StudioUsageService } from './studio-usage.service';
     StudioGenerationService,
     StudioSchedulerService,
     StudioUsageService,
+    StudioPhotoService,
     StudioExportsService,
     RenderTokenService,
     { provide: PDF_RENDERER, useClass: ChromiumPdfRenderer },

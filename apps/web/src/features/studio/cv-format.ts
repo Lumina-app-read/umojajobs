@@ -10,6 +10,7 @@ export interface CvLabels {
   certifications: string;
   projects: string;
   references: string;
+  interests: string;
   present: string;
   contact: string;
   levels: Record<LanguageLevel, string>;
@@ -21,6 +22,8 @@ export interface CvTemplateProps {
   content: CvContent;
   labels: CvLabels;
   countryName: string;
+  /** Photo (aperçu : adresse privée ; impression : data URI) ; null sans photo ou modèle sans photo. */
+  photoUrl?: string | null;
 }
 
 /** « 2024-03 » devient « mars 2024 » ; une valeur incomplète est affichée telle quelle. */

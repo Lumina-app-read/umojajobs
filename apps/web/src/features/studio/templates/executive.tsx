@@ -28,7 +28,7 @@ function SideBlock({ title, children }: { title: string; children: ReactNode }) 
  * Modèle « Cadre et dirigeant » : bandeau d'en-tête sombre, profil mis en exergue, parcours au
  * premier plan, colonne étroite pour les éléments complémentaires.
  */
-export function ExecutiveTemplate({ content, labels, countryName }: CvTemplateProps) {
+export function ExecutiveTemplate({ content, labels, countryName, photoUrl }: CvTemplateProps) {
   const { personal } = content;
   const contacts = [
     personal.email,
@@ -40,19 +40,32 @@ export function ExecutiveTemplate({ content, labels, countryName }: CvTemplatePr
     content.skills.length > 0 ||
     content.languages.length > 0 ||
     content.certifications.length > 0 ||
+    (content.interests ?? []).length > 0 ||
     content.references.length > 0;
 
   return (
     <article className="text-[12px] leading-[1.55] text-[#1e293b]">
       <header className="bg-[#0b1f3a] px-[52px] pt-[42px] pb-[30px] text-white">
-        <h1 className="text-[30px] leading-tight font-bold tracking-[-0.01em]">
-          {personal.fullName}
-        </h1>
-        {personal.headline && (
-          <p className="mt-1.5 text-[13px] font-semibold tracking-[0.16em] text-[#93c5fd] uppercase">
-            {personal.headline}
-          </p>
-        )}
+        <div className="flex items-center gap-6">
+          {photoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element -- image privée ou data URI, imprimée telle quelle
+            <img
+              src={photoUrl}
+              alt=""
+              className="size-[96px] shrink-0 rounded-[10px] object-cover ring-2 ring-white/20"
+            />
+          )}
+          <div className="min-w-0">
+            <h1 className="text-[30px] leading-tight font-bold tracking-[-0.01em]">
+              {personal.fullName}
+            </h1>
+            {personal.headline && (
+              <p className="mt-1.5 text-[13px] font-semibold tracking-[0.16em] text-[#93c5fd] uppercase">
+                {personal.headline}
+              </p>
+            )}
+          </div>
+        </div>
         {contacts.length > 0 && (
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-white/15 pt-3 text-[11px] text-[#cbd5e1]">
             {contacts.map((value, index) => (
@@ -174,6 +187,15 @@ export function ExecutiveTemplate({ content, labels, countryName }: CvTemplatePr
                     </p>
                     {item.contact && <p className="text-[11px] text-[#475569]">{item.contact}</p>}
                   </div>
+                ))}
+              </SideBlock>
+            </When>
+            <When show={(content.interests ?? []).length > 0}>
+              <SideBlock title={labels.interests}>
+                {(content.interests ?? []).map((interest) => (
+                  <p key={interest} className="text-[#334155]">
+                    {interest}
+                  </p>
                 ))}
               </SideBlock>
             </When>

@@ -138,6 +138,12 @@ export function ClassicTemplate({ content, labels, countryName }: CvTemplateProp
         </Section>
       </When>
 
+      <When show={(content.interests ?? []).length > 0}>
+        <Section title={labels.interests}>
+          <p className="text-[#334155]">{(content.interests ?? []).join(' · ')}</p>
+        </Section>
+      </When>
+
       <When show={content.references.length > 0}>
         <Section title={labels.references}>
           <div className="grid grid-cols-2 gap-3">

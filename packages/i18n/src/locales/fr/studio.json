@@ -77,7 +77,8 @@
       "languages": "Langues",
       "certifications": "Certifications",
       "projects": "Projets",
-      "references": "Références"
+      "references": "Références",
+      "interests": "Centres d’intérêt"
     },
     "fields": {
       "fullName": "Nom complet",
@@ -106,7 +107,8 @@
       "url": "Lien",
       "referenceName": "Nom",
       "referenceRole": "Fonction",
-      "contact": "Contact"
+      "contact": "Contact",
+      "interest": "Centre d’intérêt"
     },
     "placeholders": {
       "fullName": "Ex. : Awa Diallo",
@@ -131,12 +133,14 @@
       "url": "Ex. : https://exemple.com/projet",
       "referenceName": "Ex. : Moussa Ndiaye",
       "referenceRole": "Ex. : Directeur financier",
-      "contact": "Ex. : moussa.ndiaye@example.com"
+      "contact": "Ex. : moussa.ndiaye@example.com",
+      "interest": "Ex. : Bénévolat associatif, puis Entrée"
     },
     "hints": {
       "month": "Mois et année, par exemple 2024-03.",
       "skills": "Appuyez sur Entrée ou une virgule pour ajouter.",
-      "references": "Facultatif. Demandez l'accord des personnes avant de les citer."
+      "references": "Facultatif. Demandez l'accord des personnes avant de les citer.",
+      "interests": "Facultatif. Appuyez sur Entrée ou une virgule pour ajouter."
     },
     "levels": {
       "native": "Langue maternelle",
@@ -203,7 +207,8 @@
       "07": "juil.",
       "08": "août",
       "09": "sept."
-    }
+    },
+    "interests": "Centres d’intérêt"
   },
   "export": {
     "open": "Exporter en PDF",
@@ -540,5 +545,55 @@
         "placeholder": "Ex. : Comptable"
       }
     }
+  },
+  "photo": {
+    "label": "Photo",
+    "optional": "(facultative)",
+    "hint": "Visible dans les modèles Moderne, Jeune diplômé et Cadre. Jamais envoyée à l’IA.",
+    "add": "Ajouter une photo",
+    "replace": "Changer",
+    "remove": "Retirer",
+    "alt": "Photo du CV",
+    "uploading": "Envoi…",
+    "removed": "Photo retirée",
+    "saved": "Photo enregistrée"
+  },
+  "cvWizard": {
+    "tabs": {
+      "info": "Informations",
+      "document": "CV"
+    },
+    "steps": {
+      "identity": "Vous",
+      "target": "Le poste visé",
+      "experiences": "Expériences",
+      "education": "Formation",
+      "skills": "Compétences et langues",
+      "extras": "Projets et centres d’intérêt",
+      "generate": "Génération"
+    },
+    "stepHints": {
+      "identity": "Vos coordonnées figurent en tête du CV.",
+      "target": "L’IA adapte le profil et l’ordre des compétences au poste visé.",
+      "experiences": "Pour chaque poste, des notes suffisent : l’IA rédige les descriptions.",
+      "education": "Diplômes et formations, tels qu’obtenus.",
+      "skills": "Uniquement les compétences que vous maîtrisez réellement.",
+      "extras": "Tout est facultatif sur cette étape.",
+      "generate": "L’IA rédige le profil et les descriptions à partir de vos notes, sans rien inventer."
+    },
+    "targetRole": {
+      "label": "Poste visé",
+      "placeholder": "Ex. : Comptable confirmée"
+    },
+    "jobOffer": {
+      "label": "Texte de l’offre",
+      "placeholder": "Collez ici l’annonce : le CV sera adapté à ses exigences."
+    },
+    "generate": "Générer mon CV",
+    "regenerateAll": "Régénérer mon CV",
+    "generated": "CV rédigé par l’IA",
+    "redo": "Rétablir le CV généré",
+    "missingFacts": "Ajoutez au moins une expérience, une formation ou une compétence.",
+    "missingName": "Indiquez votre nom complet."
   }
 }

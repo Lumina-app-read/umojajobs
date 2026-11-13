@@ -10,6 +10,7 @@ import {
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
 import request from 'supertest';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { REDIS_CLIENT } from '../src/redis/redis.module';
 import { PDF_RENDERER, type PdfRenderer } from '../src/studio/pdf-renderer';
@@ -217,5 +218,62 @@ describe('Career Studio : export PDF payé en crédits (intégration)', () => {
     });
     const incomplete = await owner.api.post(exportPath(empty.id), { idempotencyKey: randomUUID() });
     expect((incomplete.body as { code: string }).code).toBe('CAREER_EXPORT_INCOMPLETE');
+  });
+
+  it('recadre la photo du CV, la réserve au propriétaire et la fige dans l’export', async () => {
+    const owner = await member();
+    const other = await member();
+    const doc = await cv(owner.api);
+    const photoPath = `/api/v1/me/career-documents/${doc.id}/photo`;
+    const canvas = createCanvas(900, 600);
+    canvas.getContext('2d').fillRect(0, 0, 900, 600);
+    const png = await canvas.encode('png');
+
+    const uploaded = await owner.api.upload(photoPath, {
+      buffer: png,
+      filename: 'portrait.png',
+      contentType: 'image/png',
+    });
+    expect(uploaded.status).toBe(200);
+    const { version } = uploaded.body as { version: string };
+
+    // Image ré-encodée : JPEG carré de 480 pixels, sans les métadonnées d'origine.
+    const served = await owner.api.get(photoPath);
+    expect(served.headers['content-type']).toBe('image/jpeg');
+    const image = await loadImage(served.body as Buffer);
+    expect([image.width, image.height]).toEqual([480, 480]);
+    expect(
+      ((await owner.api.get(`/api/v1/me/career-documents/${doc.id}`)).body as { photo: unknown })
+        .photo,
+    ).toEqual({ version });
+    expect((await other.api.get(photoPath)).status).toBe(404);
+
+    // Image piégée (dimensions démesurées) et autre contenu : refusés avant décodage.
+    const bomb = Buffer.from(await createCanvas(2, 2).encode('png'));
+    bomb.writeUInt32BE(100_000, 16);
+    bomb.writeUInt32BE(100_000, 20);
+    const refused = await owner.api.upload(photoPath, {
+      buffer: bomb,
+      filename: 'x.png',
+      contentType: 'image/png',
+    });
+    expect((refused.body as { code: string }).code).toBe('CAREER_PHOTO_INVALID');
+    const pdf = await owner.api.upload(photoPath, {
+      buffer: Buffer.from('%PDF-1.7 pas une image du tout'),
+      filename: 'x.png',
+      contentType: 'image/png',
+    });
+    expect(pdf.status).toBe(400);
+
+    // L'export emporte la photo ; la supprimer ensuite ne change pas le PDF déjà produit.
+    await givePaidCredits(prisma, owner.userId, 15);
+    await owner.api.post(exportPath(doc.id), { idempotencyKey: randomUUID() });
+    expect(renderer.calls.at(-1)?.data.photo?.startsWith('data:image/jpeg;base64,')).toBe(true);
+    expect((await owner.api.delete(photoPath)).status).toBe(204);
+    expect((await owner.api.get(photoPath)).status).toBe(404);
+    const exported = await prisma.careerDocumentExport.findFirstOrThrow({
+      where: { documentId: doc.id },
+    });
+    expect(exported.photoStorageKey).not.toBeNull();
   });
 });

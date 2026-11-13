@@ -86,6 +86,9 @@ export function normalizeCv(input: unknown): { content: CvContent; issues: Conte
     skills: list(root.skills, 'skills', STUDIO_LIMITS.skillsMax, (item, path) =>
       text(item, path, STUDIO_LIMITS.skillMax),
     ).filter(Boolean),
+    interests: list(root.interests, 'interests', STUDIO_LIMITS.interestsMax, (item, path) =>
+      text(item, path, STUDIO_LIMITS.interestMax),
+    ).filter(Boolean),
     languages: list(root.languages, 'languages', STUDIO_LIMITS.itemsMax, (item, path) => {
       const entry = asObject(item);
       const level = (LANGUAGE_LEVELS as readonly unknown[]).includes(entry.level)

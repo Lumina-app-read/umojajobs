@@ -60,6 +60,7 @@ body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }`}</style>
           type={data.type}
           language={data.language}
           templateKey={data.templateKey}
+          photoUrl={data.photo}
           content={data.content}
           labels={labels}
           countryName={country ? (data.language === 'fr' ? country.nameFr : country.nameEn) : ''}

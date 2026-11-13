@@ -166,6 +166,7 @@ export class StudioExportsService {
             documentVersion: current.version,
             title: current.title,
             content: current.content as Prisma.InputJsonValue,
+            photoStorageKey: current.photoStorageKey,
           },
         });
       });
@@ -218,6 +219,9 @@ export class StudioExportsService {
       title: row.title,
       type: row.document.type,
       content: row.content as unknown as CareerDocumentContent,
+      photo: row.photoStorageKey
+        ? `data:image/jpeg;base64,${(await this.storage.read(row.photoStorageKey)).toString('base64')}`
+        : null,
     };
   }
 

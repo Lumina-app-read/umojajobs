@@ -153,6 +153,12 @@ export function InternationalTemplate({ content, labels, countryName }: CvTempla
           </Row>
         </When>
 
+        <When show={(content.interests ?? []).length > 0}>
+          <Row title={labels.interests}>
+            <p className="text-[#334155]">{(content.interests ?? []).join(' · ')}</p>
+          </Row>
+        </When>
+
         <When show={content.references.length > 0}>
           <Row title={labels.references}>
             <div className="grid grid-cols-2 gap-3">

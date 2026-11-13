@@ -50,7 +50,7 @@ function initials(fullName: string): string {
  * Modèle « Jeune diplômé » : formation et projets avant l'expérience, compétences mises en avant.
  * Pensé pour un premier emploi, un stage ou une alternance.
  */
-export function GraduateTemplate({ content, labels, countryName }: CvTemplateProps) {
+export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvTemplateProps) {
   const { personal } = content;
   const contact = joinParts([
     personal.email,
@@ -63,13 +63,22 @@ export function GraduateTemplate({ content, labels, countryName }: CvTemplatePro
   return (
     <article className="px-[52px] py-[46px] text-[12px] leading-[1.5] text-[#1e293b]">
       <header className="flex items-center gap-5 rounded-[10px] bg-[#eff6ff] px-6 py-5">
-        {letters && (
-          <span
-            className="grid size-[60px] shrink-0 place-items-center rounded-full bg-[#2563eb] text-[20px] font-bold text-white"
-            aria-hidden="true"
-          >
-            {letters}
-          </span>
+        {photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- image privée ou data URI, imprimée telle quelle
+          <img
+            src={photoUrl}
+            alt=""
+            className="size-[72px] shrink-0 rounded-full object-cover ring-2 ring-white"
+          />
+        ) : (
+          letters && (
+            <span
+              className="grid size-[60px] shrink-0 place-items-center rounded-full bg-[#2563eb] text-[20px] font-bold text-white"
+              aria-hidden="true"
+            >
+              {letters}
+            </span>
+          )
         )}
         <div className="min-w-0">
           <h1 className="text-[24px] leading-tight font-bold text-[#0f172a]">
@@ -168,6 +177,12 @@ export function GraduateTemplate({ content, labels, countryName }: CvTemplatePro
             </Section>
           </When>
         </div>
+      </When>
+
+      <When show={(content.interests ?? []).length > 0}>
+        <Section title={labels.interests}>
+          <p className="text-[#334155]">{(content.interests ?? []).join(' · ')}</p>
+        </Section>
       </When>
 
       <When show={content.references.length > 0}>

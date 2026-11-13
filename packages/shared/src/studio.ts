@@ -51,6 +51,8 @@ export const STUDIO_LIMITS = {
   itemsMax: 20,
   skillsMax: 40,
   skillMax: 60,
+  interestsMax: 15,
+  interestMax: 60,
   documentsMax: 50,
 } as const;
 
@@ -129,6 +131,8 @@ export interface CvContent {
   certifications: CvCertification[];
   projects: CvProject[];
   references: CvReference[];
+  /** Centres d'intérêt, facultatifs. */
+  interests: string[];
 }
 
 export interface CareerDocumentSummary {
@@ -147,6 +151,8 @@ export interface CareerDocumentResponse<
   content: C;
   /** Informations factuelles fournies pour la génération par l'IA. */
   brief: CareerDocumentBrief;
+  /** Photo du CV (stockage privé) ; `version` change à chaque remplacement. */
+  photo: { version: string } | null;
   createdAt: string;
 }
 
@@ -187,6 +193,7 @@ export function emptyCv(personal: Partial<CvPersonal> = {}): CvContent {
     certifications: [],
     projects: [],
     references: [],
+    interests: [],
   };
 }
 
@@ -279,6 +286,8 @@ export interface CareerExportDownloadResponse {
 /** Données d'impression d'un export (route interne, protégée par un jeton signé). */
 export interface CareerExportRenderData {
   type: CareerDocumentType;
+  /** Photo du CV en data URI (instantané de l'export), ou null. */
+  photo: string | null;
   templateKey: string;
   language: 'fr' | 'en';
   title: string;
@@ -606,3 +615,14 @@ export const LETTER_REQUIRED_FIELDS: Record<LetterType, readonly LetterBriefFiel
   follow_up_letter: ['initialSubject'],
   thank_you_letter: ['context'],
 };
+
+/* Photo du CV (décision du 13 novembre 2026) : facultative, stockée en privé, jamais envoyée à
+ * l'IA, affichée uniquement dans les modèles Moderne, Jeune diplômé et Cadre. */
+export const CV_PHOTO_TEMPLATES: readonly CvTemplate[] = ['modern', 'graduate', 'executive'];
+export const PHOTO_LIMITS = {
+  /** Taille maximale du fichier envoyé. */
+  maxBytes: 5 * 1024 * 1024,
+  /** Côté de l'image carrée enregistrée (pixels). */
+  size: 480,
+  types: ['image/jpeg', 'image/png', 'image/webp'],
+} as const;

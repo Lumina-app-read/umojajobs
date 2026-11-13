@@ -53,7 +53,7 @@ function TimelineEntry({
 }
 
 /** Modèle « Moderne » : colonne latérale bleu foncé (contact, compétences, langues) et parcours. */
-export function ModernTemplate({ content, labels, countryName }: CvTemplateProps) {
+export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTemplateProps) {
   const { personal } = content;
   const place = formatPlace(personal.city, countryName);
   const contacts = [personal.email, personal.phone, personal.address, place].filter(Boolean);
@@ -61,6 +61,14 @@ export function ModernTemplate({ content, labels, countryName }: CvTemplateProps
   return (
     <article className="flex min-h-[1123px] text-[12px] leading-[1.5] text-[#1e293b]">
       <aside className="w-[250px] shrink-0 bg-[#0f2a4a] px-7 py-12 text-[#e2e8f0]">
+        {photoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element -- image privée ou data URI, imprimée telle quelle
+          <img
+            src={photoUrl}
+            alt=""
+            className="mb-6 size-[120px] rounded-full object-cover ring-4 ring-white/15"
+          />
+        )}
         <h1 className="text-[24px] leading-tight font-bold tracking-[-0.01em] text-white">
           {personal.fullName}
         </h1>
@@ -113,6 +121,16 @@ export function ModernTemplate({ content, labels, countryName }: CvTemplateProps
                   {joinParts([item.issuer, item.date ? formatMonth(item.date, labels) : ''])}
                 </p>
               </div>
+            ))}
+          </SideSection>
+        </When>
+
+        <When show={(content.interests ?? []).length > 0}>
+          <SideSection title={labels.interests}>
+            {(content.interests ?? []).map((interest) => (
+              <p key={interest} className="text-[11px] text-[#e2e8f0]">
+                {interest}
+              </p>
             ))}
           </SideSection>
         </When>

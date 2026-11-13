@@ -38,9 +38,17 @@ const toSummary = (row: CareerDocument): CareerDocumentSummary => ({
   updatedAt: row.updatedAt.toISOString(),
 });
 
+/** Identifiant de la photo (nom du fichier) : change à chaque remplacement, pour le cache. */
+export const photoVersion = (key: string) =>
+  key.slice(key.lastIndexOf('/') + 1, key.lastIndexOf('.'));
+
 const toResponse = (row: CareerDocument): CareerDocumentResponse => ({
   ...toSummary(row),
-  content: row.content as unknown as CareerDocumentContent,
+  // CV antérieurs aux centres d'intérêt : liste vide plutôt qu'absente.
+  content: (row.type === 'cv'
+    ? { interests: [], ...(row.content as object) }
+    : row.content) as unknown as CareerDocumentContent,
+  photo: row.photoStorageKey ? { version: photoVersion(row.photoStorageKey) } : null,
   brief: row.brief as unknown as CareerDocumentBrief,
   createdAt: row.createdAt.toISOString(),
 });

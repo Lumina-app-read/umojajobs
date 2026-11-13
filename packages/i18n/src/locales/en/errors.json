@@ -80,5 +80,7 @@
   "AI_GENERATION_FAILED": "The generation failed. Your credits have been refunded automatically.",
   "AI_GENERATION_INCOMPLETE": "Fill in the requested information before starting the generation.",
   "AI_PRICE_MISSING": "This feature is not available yet. Please try again later.",
-  "AI_SECTION_INVALID": "This section cannot be regenerated."
+  "AI_SECTION_INVALID": "This section cannot be regenerated.",
+  "CAREER_PHOTO_INVALID": "Choose a JPEG, PNG or WebP image under 5 MB.",
+  "CAREER_PHOTO_NOT_FOUND": "No photo for this document."
 }

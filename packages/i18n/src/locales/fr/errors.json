@@ -80,5 +80,7 @@
   "AI_GENERATION_FAILED": "La génération a échoué. Vos crédits ont été remboursés automatiquement.",
   "AI_GENERATION_INCOMPLETE": "Complétez les informations demandées avant de lancer la génération.",
   "AI_PRICE_MISSING": "Cette fonction n’est pas encore disponible. Réessayez plus tard.",
-  "AI_SECTION_INVALID": "Cette section ne peut pas être régénérée."
+  "AI_SECTION_INVALID": "Cette section ne peut pas être régénérée.",
+  "CAREER_PHOTO_INVALID": "Choisissez une image JPEG, PNG ou WebP de moins de 5 Mo.",
+  "CAREER_PHOTO_NOT_FOUND": "Aucune photo pour ce document."
 }

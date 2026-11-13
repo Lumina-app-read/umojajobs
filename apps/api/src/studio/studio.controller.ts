@@ -7,10 +7,22 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Header,
   Post,
   Query,
+  StreamableFile,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiProperty, ApiPropertyOptional, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOkResponse,
+  ApiProperty,
+  ApiPropertyOptional,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
   AI_IMPROVE_TARGETS,
@@ -42,6 +54,7 @@ import {
   type AiTone,
   type AiUsageResponse,
   PERMISSIONS,
+  PHOTO_LIMITS,
   type CareerDocumentBrief,
   type CareerDocumentContent,
 } from '@opportinities/shared';
@@ -62,6 +75,7 @@ import {
 import { type AuthContext } from '../auth/auth-context';
 import { CurrentAuth, Public, RequirePermissions } from '../security/decorators';
 import { StudioGenerationService } from './studio-generation.service';
+import { StudioPhotoService, type UploadedImage } from './studio-photo.service';
 import { StudioUsageService } from './studio-usage.service';
 import { StudioExportsService } from './studio-exports.service';
 import { StudioService } from './studio.service';
@@ -238,6 +252,7 @@ export class StudioController {
   constructor(
     private readonly studio: StudioService,
     private readonly generation: StudioGenerationService,
+    private readonly photos: StudioPhotoService,
     private readonly exports: StudioExportsService,
   ) {}
 
@@ -332,6 +347,42 @@ export class StudioController {
     @Param() params: GenerationKeyParamDto,
   ): Promise<AiGenerationResponse> {
     return this.generation.status(auth.user.id, params.id, params.key);
+  }
+
+  /** Photo du CV (facultative) : image recadrée, ré-encodée et stockée en privé. */
+  @Post(':id/photo')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 20, ttl: 60 * 60_000 } })
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: PHOTO_LIMITS.maxBytes, files: 1, fields: 0 } }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: { type: 'object', properties: { file: { type: 'string', format: 'binary' } } },
+  })
+  uploadPhoto(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+    @UploadedFile() file: UploadedImage | undefined,
+  ): Promise<{ version: string }> {
+    return this.photos.upload(auth.user.id, params.id, file);
+  }
+
+  /** Image de la photo pour l'aperçu, réservée au propriétaire (jamais publique). */
+  @Get(':id/photo')
+  @Header('Content-Type', 'image/jpeg')
+  @Header('Cache-Control', 'private, max-age=86400')
+  async photo(
+    @CurrentAuth() auth: AuthContext,
+    @Param() params: IdParamDto,
+  ): Promise<StreamableFile> {
+    return new StreamableFile(await this.photos.read(auth.user.id, params.id));
+  }
+
+  @Delete(':id/photo')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removePhoto(@CurrentAuth() auth: AuthContext, @Param() params: IdParamDto): Promise<void> {
+    return this.photos.remove(auth.user.id, params.id);
   }
 
   @Get(':id/exports')
