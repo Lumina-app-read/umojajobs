@@ -1263,21 +1263,25 @@ enum AiRequestStatus {
 
 /// Journal des appels à l'IA : quota, coûts et incidents. Aucun texte n'y est conservé.
 model AiRequest {
-  id               String              @id @default(uuid(7)) @db.Uuid
-  userId           String              @map("user_id") @db.Uuid
-  documentId       String?             @map("document_id") @db.Uuid
-  feature          String              @db.VarChar(40)
-  model            String              @db.VarChar(80)
-  status           AiRequestStatus
-  inputTokens      Int?                @map("input_tokens")
-  outputTokens     Int?                @map("output_tokens")
-  latencyMs        Int                 @map("latency_ms")
-  errorCode        String?             @map("error_code") @db.VarChar(60)
-  generationId     String?             @map("generation_id") @db.Uuid
-  documentType     CareerDocumentType? @map("document_type")
+  id                 String              @id @default(uuid(7)) @db.Uuid
+  userId             String              @map("user_id") @db.Uuid
+  documentId         String?             @map("document_id") @db.Uuid
+  feature            String              @db.VarChar(40)
+  model              String              @db.VarChar(80)
+  status             AiRequestStatus
+  inputTokens        Int?                @map("input_tokens")
+  outputTokens       Int?                @map("output_tokens")
+  latencyMs          Int                 @map("latency_ms")
+  errorCode          String?             @map("error_code") @db.VarChar(60)
+  generationId       String?             @map("generation_id") @db.Uuid
+  /// Traçabilité chez OpenAI : identifiant de requête (x-request-id), de réponse et modèle renvoyé.
+  providerRequestId  String?             @map("provider_request_id") @db.VarChar(100)
+  providerResponseId String?             @map("provider_response_id") @db.VarChar(100)
+  responseModel      String?             @map("response_model") @db.VarChar(80)
+  documentType       CareerDocumentType? @map("document_type")
   /// Coût estimé de l'appel en USD (tarifs OpenAI configurés), null si non configuré.
-  estimatedCostUsd Decimal?            @map("estimated_cost_usd") @db.Decimal(20, 8)
-  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  estimatedCostUsd   Decimal?            @map("estimated_cost_usd") @db.Decimal(20, 8)
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
 
   generation AiGeneration? @relation(fields: [generationId], references: [id], onDelete: Restrict)
   user       User          @relation("AiRequestUser", fields: [userId], references: [id], onDelete: Restrict)

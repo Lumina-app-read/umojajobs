@@ -12,6 +12,18 @@ export interface AiCompletionResult {
   text: string;
   inputTokens: number | null;
   outputTokens: number | null;
+  /** Traçabilité chez le fournisseur (rapprochement avec son tableau de bord et son support). */
+  trace: AiProviderTrace;
+}
+
+/** Identifiants renvoyés par le fournisseur ; jamais de contenu. */
+export interface AiProviderTrace {
+  /** Identifiant de la requête HTTP (en-tête x-request-id chez OpenAI). */
+  requestId: string | null;
+  /** Identifiant de la réponse (chatcmpl-… chez OpenAI). */
+  responseId: string | null;
+  /** Modèle qui a réellement répondu (peut préciser la version du modèle configuré). */
+  model: string | null;
 }
 
 /**
@@ -29,7 +41,11 @@ export const AI_PROVIDER = Symbol('AI_PROVIDER');
 
 /** Échec du fournisseur (réseau, quota, réponse illisible). Le message ne contient aucune donnée. */
 export class AiProviderError extends Error {
-  constructor(readonly reason: string) {
+  constructor(
+    readonly reason: string,
+    /** Identifiant de la requête chez le fournisseur, s'il a répondu. */
+    readonly requestId: string | null = null,
+  ) {
     super(reason);
     this.name = 'AiProviderError';
   }

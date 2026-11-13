@@ -28,7 +28,12 @@ import {
   isLetterType,
   LETTER_SECTIONS,
 } from '@opportinities/shared';
-import { AI_PROVIDER, type AiProvider, AiProviderError } from '../ai/ai-provider';
+import {
+  AI_PROVIDER,
+  type AiProvider,
+  AiProviderError,
+  type AiProviderTrace,
+} from '../ai/ai-provider';
 import { uuidv7 } from '../common/uuid-v7';
 import { type EnvironmentVariables } from '../config/env.validation';
 import { CreditsService } from '../finance/credits.service';
@@ -301,6 +306,7 @@ export class StudioGenerationService {
     let raw: string;
     let inputTokens: number | null = null;
     let outputTokens: number | null = null;
+    let trace: AiProviderTrace;
     try {
       const result = await this.provider.complete({
         system: prompt.system,
@@ -310,8 +316,14 @@ export class StudioGenerationService {
       raw = result.text;
       inputTokens = result.inputTokens;
       outputTokens = result.outputTokens;
+      trace = result.trace;
     } catch (error) {
-      await this.log(generation, started, 'failed', null, null, (error as AiProviderError).reason);
+      const failure = error as AiProviderError;
+      await this.log(generation, started, 'failed', null, null, failure.reason, {
+        requestId: failure.requestId,
+        responseId: null,
+        model: null,
+      });
       throw error;
     }
     const outcome = this.interpret(document, request, prompt, raw);
@@ -322,6 +334,7 @@ export class StudioGenerationService {
       inputTokens,
       outputTokens,
       'result' in outcome ? null : outcome.rejection,
+      trace,
     );
     return outcome;
   }
@@ -473,6 +486,7 @@ export class StudioGenerationService {
     inputTokens: number | null,
     outputTokens: number | null,
     errorCode: string | null,
+    trace: AiProviderTrace,
   ): Promise<void> {
     await this.prisma.aiRequest.create({
       data: {
@@ -488,6 +502,9 @@ export class StudioGenerationService {
         estimatedCostUsd: this.estimate(inputTokens, outputTokens),
         latencyMs: Date.now() - started,
         errorCode: errorCode?.slice(0, 60) ?? null,
+        providerRequestId: trace.requestId,
+        providerResponseId: trace.responseId,
+        responseModel: trace.model,
       },
     });
   }

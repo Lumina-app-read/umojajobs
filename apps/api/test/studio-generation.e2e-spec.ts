@@ -41,6 +41,8 @@ class FakeOpenAi {
       req.on('end', () => {
         const body = JSON.parse(Buffer.concat(chunks).toString()) as ChatBody;
         this.calls.push(body);
+        // Identifiant de requête renvoyé par OpenAI, y compris en cas d'erreur.
+        res.setHeader('x-request-id', `req_test_${this.calls.length}`);
         const system = body.messages[0]?.content ?? '';
         const user = body.messages[1]?.content ?? '';
         const reply = (content: string) => {
@@ -48,6 +50,8 @@ class FakeOpenAi {
           res.setHeader('Content-Type', 'application/json');
           res.end(
             JSON.stringify({
+              id: `chatcmpl-test-${this.calls.length}`,
+              model: 'test-model-2026-11-01',
               choices: [{ message: { content } }],
               usage: { prompt_tokens: 900, completion_tokens: 350 },
             }),
@@ -235,6 +239,10 @@ describe('Career Studio : génération IA payée en crédits (intégration)', ()
     expect(logs[0]).toMatchObject({
       documentType: 'cover_letter',
       model: 'test-model',
+      // Traçabilité : identifiants et modèle réellement renvoyés par le fournisseur.
+      providerRequestId: expect.stringContaining('req_test_') as unknown,
+      providerResponseId: expect.stringContaining('chatcmpl-test-') as unknown,
+      responseModel: 'test-model-2026-11-01',
       inputTokens: 900,
       outputTokens: 350,
     });
@@ -289,6 +297,13 @@ describe('Career Studio : génération IA payée en crédits (intégration)', ()
       balance: 5,
     });
     expect(fake.calls.length - before).toBe(attempts);
+    // Identifiant de requête conservé dès que le fournisseur a répondu (aucun en cas de délai dépassé).
+    const lastLog = await prisma.aiRequest.findFirst({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (marker === 'LENT') expect(lastLog?.providerRequestId).toBeNull();
+    else expect(lastLog?.providerRequestId).toContain('req_test_');
 
     const row = await prisma.aiGeneration.findFirstOrThrow({ where: { userId } });
     const movements = await prisma.creditMovement.findMany({

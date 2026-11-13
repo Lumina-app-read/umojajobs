@@ -9,6 +9,8 @@ import {
 } from './ai-provider';
 
 interface ChatCompletionResponse {
+  id?: string;
+  model?: string;
   choices?: { message?: { content?: string | null }; finish_reason?: string }[];
   usage?: { prompt_tokens?: number; completion_tokens?: number };
 }
@@ -64,20 +66,29 @@ export class OpenAiProvider implements AiProvider {
       this.logger.warn(`OpenAI injoignable : ${name}`);
       throw new AiProviderError(name === 'TimeoutError' ? 'timeout' : 'network');
     }
+    // Identifiant de la requête chez OpenAI : à communiquer à leur support pour tout litige.
+    const requestId = response.headers.get('x-request-id')?.slice(0, 100) ?? null;
     if (!response.ok) {
-      // Seul le statut est journalisé : le corps peut reprendre le texte de l'utilisateur.
-      this.logger.warn(`OpenAI : HTTP ${response.status}`);
-      throw new AiProviderError(`http_${response.status}`);
+      // Seuls le statut et l'identifiant sont journalisés : le corps peut reprendre le texte saisi.
+      this.logger.warn(
+        `OpenAI : HTTP ${response.status} (requête ${requestId ?? 'sans identifiant'})`,
+      );
+      throw new AiProviderError(`http_${response.status}`, requestId);
     }
     const body = (await response.json().catch(() => null)) as ChatCompletionResponse | null;
     const text = body?.choices?.[0]?.message?.content;
     if (typeof text !== 'string' || text.length === 0) {
-      throw new AiProviderError('empty_response');
+      throw new AiProviderError('empty_response', requestId);
     }
     return {
       text,
       inputTokens: body?.usage?.prompt_tokens ?? null,
       outputTokens: body?.usage?.completion_tokens ?? null,
+      trace: {
+        requestId,
+        responseId: typeof body?.id === 'string' ? body.id.slice(0, 100) : null,
+        model: typeof body?.model === 'string' ? body.model.slice(0, 80) : null,
+      },
     };
   }
 }
