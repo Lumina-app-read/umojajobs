@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { type AiUsageResponse } from '@opportinities/shared';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { type EnvironmentVariables } from '../config/env.validation';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -13,7 +15,17 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  */
 @Injectable()
 export class StudioUsageService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly priceInput: Prisma.Decimal | null;
+  private readonly priceOutput: Prisma.Decimal | null;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    config: ConfigService<EnvironmentVariables, true>,
+  ) {
+    const price = (value: string | undefined) => (value ? new Prisma.Decimal(value) : null);
+    this.priceInput = price(config.get('OPENAI_PRICE_INPUT_USD_PER_MTOK', { infer: true }));
+    this.priceOutput = price(config.get('OPENAI_PRICE_OUTPUT_USD_PER_MTOK', { infer: true }));
+  }
 
   async summary(days: number): Promise<AiUsageResponse> {
     const since = new Date(Date.now() - days * DAY_MS);
@@ -52,7 +64,7 @@ export class StudioUsageService {
         this.prisma.aiRequest.aggregate({
           where: { ...where, generationId: { not: null } },
           _count: { _all: true },
-          _sum: { inputTokens: true, outputTokens: true, estimatedCostUsd: true },
+          _sum: { inputTokens: true, outputTokens: true },
         }),
         this.prisma.aiRequest.count({
           where: { ...where, generationId: { not: null }, status: { not: 'succeeded' } },
@@ -76,7 +88,14 @@ export class StudioUsageService {
     const refundedAction = new Map(
       refundedByAction.map((row) => [row.action, row._sum.credits ?? 0]),
     );
-    const hasCost = requests._sum.estimatedCostUsd !== null;
+    // Coût estimé aux tarifs OpenAI configurés, calculé sur les tokens journalisés : il couvre aussi
+    // les appels faits avant la saisie des tarifs.
+    const inputTokens = requests._sum.inputTokens ?? 0;
+    const outputTokens = requests._sum.outputTokens ?? 0;
+    const cost =
+      this.priceInput && this.priceOutput
+        ? this.priceInput.mul(inputTokens).add(this.priceOutput.mul(outputTokens)).div(1_000_000)
+        : null;
 
     return {
       since: since.toISOString(),
@@ -95,11 +114,9 @@ export class StudioUsageService {
       openai: {
         requests: requests._count._all,
         failedRequests: failed,
-        inputTokens: requests._sum.inputTokens ?? 0,
-        outputTokens: requests._sum.outputTokens ?? 0,
-        estimatedCostUsd: hasCost
-          ? (requests._sum.estimatedCostUsd as Prisma.Decimal).toFixed(6)
-          : null,
+        inputTokens,
+        outputTokens,
+        estimatedCostUsd: cost ? cost.toFixed(6) : null,
       },
       byDocumentType: byType
         .map((row) => ({
