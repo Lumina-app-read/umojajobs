@@ -656,6 +656,8 @@ enum FinancialSettingKey {
   withdrawal_dual_approval_usd
   /// Career Studio : jours pendant lesquels un export payé permet de ré-exporter gratuitement.
   studio_reexport_window_days
+  /// Frais du prestataire de paiement (Chariow), inclus dans le prix des packs (0,15 = 15 %).
+  payment_fee_rate
 
   @@map("financial_setting_key")
 }

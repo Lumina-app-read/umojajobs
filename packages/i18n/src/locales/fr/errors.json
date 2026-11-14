@@ -61,7 +61,7 @@
   "PAYMENTS_UNAVAILABLE": "La recharge de crédits est momentanément indisponible.",
   "PAYMENT_PROVIDER_ERROR": "Le service de paiement n'a pas répondu. Réessayez dans quelques instants.",
   "CREDIT_PACK_NOT_FOUND": "Ce pack de crédits n'est pas disponible.",
-  "CREDIT_PACK_INVALID": "Pack invalide : le prix doit correspondre au nombre de crédits multiplié par la valeur d'un crédit.",
+  "CREDIT_PACK_INVALID": "Pack invalide : le prix ne peut pas être inférieur au nombre de crédits multiplié par la valeur d’un crédit.",
   "CREDIT_ORDER_NOT_FOUND": "Cette commande est introuvable.",
   "PHONE_REQUIRED": "Indiquez un numéro de téléphone pour le paiement.",
   "CAREER_DOCUMENT_NOT_FOUND": "Ce document est introuvable.",

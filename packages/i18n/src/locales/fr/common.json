@@ -315,7 +315,8 @@
         "commission_hold_days_new_contributor": "Délai de retenue (nouveau contributeur)",
         "new_contributor_period_days": "Ancienneté d’un nouveau contributeur",
         "withdrawal_dual_approval_usd": "Double validation des retraits à partir de",
-        "studio_reexport_window_days": "Ré-exports gratuits après un export payé (Career Studio)"
+        "studio_reexport_window_days": "Ré-exports gratuits après un export payé (Career Studio)",
+        "payment_fee_rate": "Frais de paiement inclus dans le prix des packs"
       },
       "placeholders": {
         "usd": "Ex. : 0.10",
@@ -356,12 +357,12 @@
       },
       "packs": {
         "title": "Packs de crédits",
-        "intro": "Chaque pack correspond à un produit License chez Chariow. Prix = crédits × valeur d’un crédit.",
+        "intro": "Chaque pack correspond à un produit License chez Chariow, au même prix. Les frais de paiement peuvent être inclus dans le prix.",
         "empty": "Aucun pack pour le moment.",
         "add": "Ajouter un pack",
         "edit": "Modifier",
         "editTitle": "Modifier : {name}",
-        "rule": "Le prix doit valoir exactement le nombre de crédits multiplié par la valeur d’un crédit (pas de bonus).",
+        "rule": "Le prix ne peut pas être inférieur à la valeur des crédits. Il peut inclure les frais de paiement : les crédits reçus ne changent pas.",
         "sku": "Code",
         "skuPlaceholder": "Ex. : pack_100",
         "name": "Nom affiché",
@@ -381,7 +382,11 @@
         "noProduct": "Non relié",
         "save": "Enregistrer",
         "cancel": "Annuler",
-        "saved": "Pack enregistré"
+        "saved": "Pack enregistré",
+        "value": "Valeur des crédits : {value}",
+        "suggested": "Prix conseillé, frais de {rate} inclus : {price}",
+        "useSuggested": "Utiliser ce prix",
+        "net": "Net estimé après frais : {net}"
       }
     },
     "aiUsage": {

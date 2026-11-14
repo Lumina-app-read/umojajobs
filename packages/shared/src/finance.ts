@@ -16,6 +16,7 @@ export const FINANCIAL_SETTING_KEYS = [
   'new_contributor_period_days',
   'withdrawal_dual_approval_usd',
   'studio_reexport_window_days',
+  'payment_fee_rate',
 ] as const;
 export type FinancialSettingKey = (typeof FINANCIAL_SETTING_KEYS)[number];
 
@@ -29,6 +30,7 @@ export const FINANCIAL_SETTING_UNITS: Record<FinancialSettingKey, 'usd' | 'rate'
   new_contributor_period_days: 'days',
   withdrawal_dual_approval_usd: 'usd',
   studio_reexport_window_days: 'days',
+  payment_fee_rate: 'rate',
 };
 
 /** Services payables en crédits. */
@@ -369,4 +371,14 @@ export interface CreditOrderResponse {
   priceUsd: string;
   createdAt: string;
   paidAt: string | null;
+}
+
+/**
+ * Prix conseillé d'un pack pour encaisser, après les frais du prestataire de paiement, la valeur
+ * des crédits vendus : valeur / (1 - taux), arrondie au cent supérieur. Exemple : 1 USD de crédits
+ * avec 15 % de frais donne 1,18 USD.
+ */
+export function packPriceWithFees(creditsValueUsd: number, feeRate: number): number {
+  if (!(feeRate >= 0 && feeRate < 1)) return creditsValueUsd;
+  return Math.ceil((creditsValueUsd / (1 - feeRate)) * 100 - 1e-9) / 100;
 }

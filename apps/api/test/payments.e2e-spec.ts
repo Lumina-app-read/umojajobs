@@ -266,6 +266,65 @@ describe('Recharges de crédits Chariow (intégration)', () => {
     ).toBe(100);
   });
 
+  it('accepte un pack dont le prix inclut les frais de paiement, sans changer les crédits reçus', async () => {
+    // 10 crédits valent 1 USD ; avec 15 % de frais, le prix conseillé est 1,18 USD.
+    const created = await admin.api.post('/api/v1/admin/credit-packs', {
+      sku: `pack_${randomBytes(3).toString('hex')}`,
+      name: 'Pack 10 crédits',
+      credits: 10,
+      priceUsd: '1.18',
+      // Un produit Chariow par pack : second produit, au prix de 1,18 USD.
+      chariowProductId: `${productId}_frais`,
+      isActive: true,
+      sortOrder: 2,
+    });
+    expect(created.status).toBe(201);
+    const feePackId = (created.body as AdminCreditPackResponse[]).find(
+      (pack) => pack.priceUsd === '1.18',
+    )?.id as string;
+
+    const buyer = await member();
+    const order = (
+      await buyer.api.post('/api/v1/me/credit-orders', {
+        packId: feePackId,
+        phone: '+221 77 123 45 67',
+      })
+    ).body as CreditCheckoutResponse;
+    const saleId = await saleOf(order.reference);
+    const sale = sales.get(saleId) as FakeSale;
+    sale.amount = { value: 1.18, currency: 'USD' };
+    sale.status = 'completed';
+    await redis.flushdb();
+    const paid = (await buyer.api.get(`/api/v1/me/credit-orders/${order.reference}`))
+      .body as CreditOrderResponse;
+    expect(paid.status).toBe('paid');
+
+    // Les 10 crédits gardent leur valeur interne (base des commissions inchangée).
+    const lot = await prisma.creditLot.findFirstOrThrow({
+      where: { account: { userId: buyer.userId } },
+    });
+    expect(lot.creditsTotal).toBe(10);
+    expect(lot.creditUnitValueUsd.toFixed(2)).toBe('0.10');
+    // Le supplément de 0,18 USD est comptabilisé en frais de paiement refacturés.
+    const orderRow = await prisma.creditOrder.findUniqueOrThrow({
+      where: { reference: order.reference },
+    });
+    const posting = await prisma.ledgerTransaction.findFirstOrThrow({
+      where: { type: 'credit_purchase', referenceId: orderRow.id },
+      include: { entries: { include: { account: true } } },
+    });
+    const byCode = Object.fromEntries(
+      posting.entries.map((entry) => [
+        entry.account.code,
+        entry.credit.add(entry.debit).toFixed(2),
+      ]),
+    );
+    expect(byCode).toMatchObject({
+      customer_credits: '1.00',
+      payment_fees_recovered: '0.18',
+    });
+  });
+
   it('place en anomalie une vente dont le montant ne correspond pas, sans crédit', async () => {
     const buyer = await member();
     const order = await buy(buyer);

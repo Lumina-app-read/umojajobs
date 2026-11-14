@@ -33,6 +33,13 @@ export default async function AdminFinancePage() {
     getAdminCreditPacks(),
   ]);
 
+  const settingValue = (key: FinancialSettingKey) => {
+    const value = settings?.find((setting) => setting.key === key)?.value;
+    return value === undefined || value === null ? null : Number(value);
+  };
+  const unitValueUsd = settingValue('credit_unit_value_usd');
+  const feeRate = settingValue('payment_fee_rate');
+
   /** Affichage d'une valeur selon son unité (la valeur exacte reste celle de l'API). */
   const display = (key: FinancialSettingKey, value: string): string => {
     const unit = FINANCIAL_SETTING_UNITS[key];
@@ -167,7 +174,7 @@ export default async function AdminFinancePage() {
       <Section icon={PackageOpen} title={t('packs.title')} intro={t('packs.intro')}>
         {canManage && (
           <div>
-            <PackEditor />
+            <PackEditor unitValueUsd={unitValueUsd} feeRate={feeRate} />
           </div>
         )}
         {packs === null || packs.length === 0 ? (
@@ -207,7 +214,7 @@ export default async function AdminFinancePage() {
                   </Td>
                   {canManage && (
                     <Td className="text-right">
-                      <PackEditor pack={pack} />
+                      <PackEditor pack={pack} unitValueUsd={unitValueUsd} feeRate={feeRate} />
                     </Td>
                   )}
                 </Tr>

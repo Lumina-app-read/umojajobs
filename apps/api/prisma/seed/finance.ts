@@ -53,6 +53,11 @@ const INITIAL_SETTINGS: { key: FinancialSettingKey; value: string; reason: strin
     value: '7',
     reason: 'Décision du 13 novembre 2026 : un export payé ouvre 7 jours de ré-exports gratuits.',
   },
+  {
+    key: 'payment_fee_rate',
+    value: '0.15',
+    reason: 'Décision du 14 novembre 2026 : frais Chariow (15 %) inclus dans le prix des packs.',
+  },
 ];
 
 const INITIAL_COSTS: { service: CreditService; credits: number }[] = [

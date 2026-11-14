@@ -15,6 +15,8 @@ export const LEDGER_ACCOUNTS = {
   revenueDocuments: { code: 'revenue_documents', type: 'revenue' },
   /** Générations par l'IA (Career Studio), distinctes des exports PDF. */
   revenueAiGenerations: { code: 'revenue_ai_generations', type: 'revenue' },
+  /** Frais de paiement inclus dans le prix des packs : compensent les frais du prestataire. */
+  paymentFeesRecovered: { code: 'payment_fees_recovered', type: 'revenue' },
   /** Crédits offerts : charge commerciale de la plateforme (à valider par l'expert-comptable). */
   promotionalCredits: { code: 'promotional_credits', type: 'expense' },
 } as const satisfies Record<string, { code: string; type: LedgerAccountType }>;

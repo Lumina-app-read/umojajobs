@@ -1,7 +1,8 @@
 'use client';
 
-import { type AdminCreditPackResponse } from '@opportinities/shared';
+import { type AdminCreditPackResponse, packPriceWithFees } from '@opportinities/shared';
 import {
+  Check,
   Coins,
   DollarSign,
   Hash,
@@ -12,7 +13,7 @@ import {
   Tag,
   X,
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -27,8 +28,19 @@ import { useFormErrors } from '@/lib/use-form-errors';
  * Création ou modification d'un pack de crédits. Le prix doit valoir crédits × valeur d'un
  * crédit (contrôlé par l'API) ; sans identifiant de produit Chariow, le pack n'est pas en vente.
  */
-export function PackEditor({ pack }: { pack?: AdminCreditPackResponse }) {
+export function PackEditor({
+  pack,
+  unitValueUsd,
+  feeRate,
+}: {
+  pack?: AdminCreditPackResponse;
+  /** Valeur interne d'un crédit (paramètre financier). */
+  unitValueUsd: number | null;
+  /** Frais du prestataire de paiement inclus dans le prix (paramètre financier). */
+  feeRate: number | null;
+}) {
   const t = useTranslations('common.admin.finance.packs');
+  const format = useFormatter();
   const router = useRouter();
   const { fromApiError } = useFormErrors();
   const [open, setOpen] = useState(false);
@@ -41,6 +53,19 @@ export function PackEditor({ pack }: { pack?: AdminCreditPackResponse }) {
   const [order, setOrder] = useState(pack ? String(pack.sortOrder) : '0');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Aide au prix : valeur des crédits, prix conseillé frais inclus, net estimé pour le prix saisi.
+  const creditsNumber = Number(credits);
+  const creditsValue =
+    unitValueUsd !== null && creditsNumber > 0
+      ? Math.round(unitValueUsd * creditsNumber * 100) / 100
+      : null;
+  const suggested =
+    creditsValue !== null && feeRate !== null ? packPriceWithFees(creditsValue, feeRate) : null;
+  const typed = Number(price.replace(',', '.'));
+  const net = feeRate !== null && typed > 0 ? typed * (1 - feeRate) : null;
+  const usd = (value: number) =>
+    format.number(value, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -127,6 +152,31 @@ export function PackEditor({ pack }: { pack?: AdminCreditPackResponse }) {
               required
             />
           </div>
+          {creditsValue !== null && (
+            <div className="grid gap-1 rounded-lg border border-line bg-surface-2/50 p-3 text-[13px]">
+              <p>{t('value', { value: usd(creditsValue) })}</p>
+              {suggested !== null && feeRate !== null && (
+                <p className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-fg">
+                    {t('suggested', {
+                      rate: format.number(feeRate, { style: 'percent' }),
+                      price: usd(suggested),
+                    })}
+                  </span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    icon={Check}
+                    onClick={() => setPrice(suggested.toFixed(2))}
+                  >
+                    {t('useSuggested')}
+                  </Button>
+                </p>
+              )}
+              {net !== null && <p>{t('net', { net: usd(net) })}</p>}
+            </div>
+          )}
           <FormField
             label={t('productId')}
             name="chariowProductId"

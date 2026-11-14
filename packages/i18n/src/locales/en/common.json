@@ -315,7 +315,8 @@
         "commission_hold_days_new_contributor": "Holding period (new contributor)",
         "new_contributor_period_days": "New contributor period",
         "withdrawal_dual_approval_usd": "Dual approval of withdrawals from",
-        "studio_reexport_window_days": "Free re-exports after a paid export (Career Studio)"
+        "studio_reexport_window_days": "Free re-exports after a paid export (Career Studio)",
+        "payment_fee_rate": "Payment fees included in pack prices"
       },
       "placeholders": {
         "usd": "E.g. 0.10",
@@ -356,12 +357,12 @@
       },
       "packs": {
         "title": "Credit packs",
-        "intro": "Each pack matches a License product on Chariow. Price = credits × value of one credit.",
+        "intro": "Each pack matches a License product on Chariow, at the same price. Payment fees can be included in the price.",
         "empty": "No packs yet.",
         "add": "Add a pack",
         "edit": "Edit",
         "editTitle": "Edit: {name}",
-        "rule": "The price must equal the number of credits times the value of one credit (no bonus).",
+        "rule": "The price cannot be lower than the value of the credits. It may include payment fees: the credits received do not change.",
         "sku": "Code",
         "skuPlaceholder": "E.g. pack_100",
         "name": "Display name",
@@ -381,7 +382,11 @@
         "noProduct": "Not linked",
         "save": "Save",
         "cancel": "Cancel",
-        "saved": "Pack saved"
+        "saved": "Pack saved",
+        "value": "Credits value: {value}",
+        "suggested": "Suggested price, {rate} fees included: {price}",
+        "useSuggested": "Use this price",
+        "net": "Estimated net after fees: {net}"
       }
     },
     "aiUsage": {

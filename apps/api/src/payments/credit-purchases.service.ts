@@ -122,8 +122,9 @@ export class CreditPurchasesService {
   }
 
   /**
-   * Création ou modification d'un pack. Le prix doit valoir exactement crédits × valeur d'un
-   * crédit (pas de bonus au lancement, arbitrage A2) : la dette envers l'acheteur égale l'encaissement.
+   * Création ou modification d'un pack. Le prix ne peut pas être inférieur à crédits × valeur d'un
+   * crédit (pas de bonus, arbitrage A2). Il peut être supérieur : les frais du prestataire de
+   * paiement sont inclus dans le prix (décision du 14 novembre 2026), sans changer les crédits reçus.
    */
   async savePack(
     auth: AuthContext,
@@ -133,7 +134,7 @@ export class CreditPurchasesService {
   ): Promise<AdminCreditPackResponse[]> {
     const unitValue = await this.settings.require('credit_unit_value_usd');
     const price = new Prisma.Decimal(input.priceUsd);
-    if (!unitValue.mul(input.credits).eq(price)) {
+    if (price.lt(unitValue.mul(input.credits))) {
       throw new BadRequestException({ code: ERROR_CODES.CREDIT_PACK_INVALID });
     }
     const data = {
@@ -190,8 +191,8 @@ export class CreditPurchasesService {
     }
 
     const unitValue = await this.settings.require('credit_unit_value_usd');
-    // La valeur d'un crédit a pu changer depuis la création du pack : il doit être remis à jour.
-    if (!unitValue.mul(pack.credits).eq(pack.priceUsd)) {
+    // La valeur d'un crédit a pu augmenter depuis la création du pack : il doit être remis à jour.
+    if (pack.priceUsd.lt(unitValue.mul(pack.credits))) {
       throw new ServiceUnavailableException({ code: ERROR_CODES.CREDIT_PACK_INVALID });
     }
     const reference = `CR-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomBytes(4).toString('hex').toUpperCase()}`;
@@ -445,7 +446,9 @@ export class CreditPurchasesService {
       data: { movementId: movement.id, lotId: lot.id, credits: order.credits, valueUsd: value },
     });
     await tx.creditAccount.update({ where: { id: account.id }, data: { balance } });
-    // Recharge confirmée : créance sur Chariow, dette envers l'utilisateur (valeur des crédits).
+    // Recharge confirmée : créance sur Chariow, dette envers l'utilisateur (valeur des crédits) et,
+    // si le prix inclut les frais de paiement, produit « frais refacturés » qui les compense.
+    const recoveredFees = order.priceUsd.sub(value);
     await this.ledger.post(tx, {
       type: 'credit_purchase',
       idempotencyKey: `purchase:${saleId}`,
@@ -454,6 +457,9 @@ export class CreditPurchasesService {
       lines: [
         { account: CHARIOW_RECEIVABLE, debit: order.priceUsd },
         { account: LEDGER_ACCOUNTS.customerCredits, credit: value },
+        ...(recoveredFees.gt(0)
+          ? [{ account: LEDGER_ACCOUNTS.paymentFeesRecovered, credit: recoveredFees }]
+          : []),
       ],
     });
   }

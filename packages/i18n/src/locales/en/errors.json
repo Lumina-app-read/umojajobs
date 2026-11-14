@@ -61,7 +61,7 @@
   "PAYMENTS_UNAVAILABLE": "Credit top-ups are temporarily unavailable.",
   "PAYMENT_PROVIDER_ERROR": "The payment service did not respond. Try again in a moment.",
   "CREDIT_PACK_NOT_FOUND": "This credit pack is not available.",
-  "CREDIT_PACK_INVALID": "Invalid pack: the price must equal the number of credits times the value of one credit.",
+  "CREDIT_PACK_INVALID": "Invalid pack: the price cannot be lower than the number of credits multiplied by the value of one credit.",
   "CREDIT_ORDER_NOT_FOUND": "This order cannot be found.",
   "PHONE_REQUIRED": "Enter a phone number for the payment.",
   "CAREER_DOCUMENT_NOT_FOUND": "This document cannot be found.",
