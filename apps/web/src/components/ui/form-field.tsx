@@ -5,12 +5,12 @@ import { type InputHTMLAttributes, type ReactNode, useId, useState } from 'react
 import { cn } from '@/lib/cn';
 
 /**
- * Cadre commun des champs (40 px) : utilisé par les champs texte, mot de passe et combobox.
+ * Cadre commun des champs (44 px sur mobile, 40 px au-delà) : utilisé par les champs texte, mot de passe et combobox.
  * Texte en 16 px sur mobile (évite le zoom automatique d'iOS), 14 px à partir de 640 px.
  */
 export function controlFrameClasses(invalid: boolean, disabled = false): string {
   return cn(
-    'relative flex h-10 w-full items-center rounded-md border bg-surface shadow-xs',
+    'relative flex h-11 w-full sm:h-10 items-center rounded-md border bg-surface shadow-xs',
     'transition-[border-color,box-shadow] duration-[120ms]',
     'focus-within:border-primary focus-within:ring-[3px] focus-within:ring-ring',
     invalid
@@ -37,7 +37,7 @@ export function FieldLabel({
   optional?: string;
 }) {
   return (
-    <label htmlFor={htmlFor} className="block text-[13px] font-semibold text-fg">
+    <label htmlFor={htmlFor} className="block text-sm sm:text-[13px] font-semibold text-fg">
       {children}
       {optional && <span className="ml-1 font-normal text-fg-subtle">{optional}</span>}
     </label>
@@ -46,7 +46,7 @@ export function FieldLabel({
 
 export function FieldHint({ id, children }: { id?: string; children: ReactNode }) {
   return (
-    <p id={id} className="text-xs text-fg-subtle">
+    <p id={id} className="text-[13px] text-fg-subtle sm:text-xs">
       {children}
     </p>
   );
@@ -54,7 +54,7 @@ export function FieldHint({ id, children }: { id?: string; children: ReactNode }
 
 export function FieldError({ id, children }: { id?: string; children: ReactNode }) {
   return (
-    <p id={id} className="flex items-center gap-1.5 text-xs font-medium text-danger">
+    <p id={id} className="flex items-center gap-1.5 text-[13px] font-medium text-danger sm:text-xs">
       <CircleAlert className="size-3.5" aria-hidden="true" />
       {children}
     </p>
@@ -105,7 +105,7 @@ export function FormField({
         {label}
       </FieldLabel>
       <div className={controlFrameClasses(Boolean(error), disabled)}>
-        <Icon className="ml-3 size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
+        <Icon className="ml-3 size-[18px] shrink-0 text-fg-subtle sm:size-4" aria-hidden="true" />
         <input
           id={id}
           name={name}
@@ -147,7 +147,7 @@ export function PasswordField({ showLabel, hideLabel, ...props }: PasswordFieldP
           aria-label={visible ? hideLabel : showLabel}
           aria-pressed={visible}
         >
-          <ToggleIcon className="size-4" aria-hidden="true" />
+          <ToggleIcon className="size-[18px] sm:size-4" aria-hidden="true" />
         </button>
       }
     />
@@ -167,7 +167,7 @@ export function Checkbox({ label, error, className, ...props }: CheckboxProps) {
     <div className={cn('grid min-w-0 gap-1.5', className)}>
       <label
         htmlFor={id}
-        className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-5 text-fg-muted"
+        className="flex cursor-pointer items-start gap-2.5 text-sm sm:text-[13px] leading-5 text-fg-muted"
       >
         <input
           id={id}

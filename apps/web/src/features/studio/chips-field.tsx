@@ -67,7 +67,7 @@ export function ChipsField({
           {values.map((value) => (
             <li
               key={value}
-              className="inline-flex items-center gap-1 rounded-full border border-line bg-surface-2 py-1 pr-1 pl-3 text-[13px] text-fg"
+              className="inline-flex items-center gap-1 rounded-full border border-line bg-surface-2 py-1 pr-1 pl-3 text-sm sm:text-[13px] text-fg"
             >
               {value}
               <button

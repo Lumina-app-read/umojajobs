@@ -85,7 +85,9 @@ export function DecisionPanel({
     <section className="grid gap-4 rounded-xl border border-line bg-surface p-5 shadow-xs">
       <div>
         <h2 className="text-base font-semibold text-fg">{t('decision')}</h2>
-        <p className="mt-1 text-[13px] leading-relaxed text-fg-muted">{t('decisionHint')}</p>
+        <p className="mt-1 text-sm sm:text-[13px] leading-relaxed text-fg-muted">
+          {t('decisionHint')}
+        </p>
       </div>
       {error && <Alert tone="error">{error}</Alert>}
       {isOwnOffer ? (

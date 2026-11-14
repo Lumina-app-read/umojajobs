@@ -77,7 +77,7 @@ export function CountrySelect({
 
   return (
     <Field className="grid min-w-0 gap-1.5">
-      <Label className="block text-[13px] font-semibold text-fg">{label}</Label>
+      <Label className="block text-sm sm:text-[13px] font-semibold text-fg">{label}</Label>
       <Combobox
         value={selected}
         onChange={(country: CountryResponse | null) => onChange(country?.iso2 ?? '')}
@@ -86,7 +86,7 @@ export function CountrySelect({
         by="iso2"
       >
         <div className={controlFrameClasses(Boolean(error))}>
-          <MapPin className="ml-3 size-4 text-fg-subtle" aria-hidden="true" />
+          <MapPin className="ml-3 size-[18px] text-fg-subtle sm:size-4" aria-hidden="true" />
           <ComboboxInput
             className={cn(controlInputClasses, 'pl-2 pr-1')}
             displayValue={(country: CountryResponse | null) =>
@@ -111,7 +111,7 @@ export function CountrySelect({
           )}
         >
           {filtered.length === 0 ? (
-            <div className="px-2 py-2 text-[13px] text-fg-muted">{t('noResult')}</div>
+            <div className="px-2 py-2 text-sm sm:text-[13px] text-fg-muted">{t('noResult')}</div>
           ) : (
             filtered.map((country) => (
               <ComboboxOption key={country.iso2} value={country} className={menuItemClasses}>

@@ -137,7 +137,9 @@ export function DesignShowcase() {
                 className="h-14 border-b border-line"
                 style={{ background: `var(--${swatch.token})` }}
               />
-              <p className="px-3 py-2 font-mono text-[11px] text-fg-muted">{swatch.label}</p>
+              <p className="px-3 py-2 font-mono text-xs sm:text-[11px] text-fg-muted">
+                {swatch.label}
+              </p>
             </div>
           ))}
         </div>

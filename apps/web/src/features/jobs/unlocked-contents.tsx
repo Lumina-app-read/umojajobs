@@ -101,11 +101,11 @@ export function UnlockedContents({ contents }: { contents: UnlockedContentsRespo
       </dl>
       {contents.contributorTips && (
         <div className="rounded-lg border border-warning/30 bg-warning-soft/60 p-3.5">
-          <p className="flex items-center gap-2 text-[13px] font-semibold text-fg">
+          <p className="flex items-center gap-2 text-sm sm:text-[13px] font-semibold text-fg">
             <Lightbulb className="size-4 text-warning" aria-hidden="true" />
             {t('tipsTitle', { name: contents.publishedBy })}
           </p>
-          <p className="mt-1.5 text-[13px] leading-relaxed whitespace-pre-line text-fg-muted">
+          <p className="mt-1.5 text-sm sm:text-[13px] leading-relaxed whitespace-pre-line text-fg-muted">
             {contents.contributorTips}
           </p>
         </div>

@@ -253,7 +253,7 @@ function Section({
           <Icon className="size-4 text-brand" aria-hidden="true" />
           {title}
         </h2>
-        {intro && <p className="mt-1 text-[13px] text-fg-muted">{intro}</p>}
+        {intro && <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">{intro}</p>}
       </div>
       {children}
     </section>

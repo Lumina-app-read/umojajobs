@@ -5,7 +5,7 @@ import { Description, joinParts, When } from './shared';
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-5 break-inside-avoid-page">
-      <h2 className="flex items-center gap-3 text-[12px] font-semibold tracking-[0.18em] text-[#0f2a4a] uppercase">
+      <h2 className="flex items-center gap-3 text-[13px] sm:text-[12px] font-semibold tracking-[0.18em] text-[#0f2a4a] uppercase">
         {title}
         <span className="h-px flex-1 bg-[#94a3b8]" aria-hidden="true" />
       </h2>
@@ -28,7 +28,7 @@ function Dated({
 }) {
   return (
     <div className="grid grid-cols-[112px_minmax(0,1fr)] gap-4 break-inside-avoid">
-      <p className="text-[11px] text-[#475569] tabular-nums">{period}</p>
+      <p className="text-xs sm:text-[11px] text-[#475569] tabular-nums">{period}</p>
       <div>
         <p className="font-semibold text-[#0f172a]">{title}</p>
         {subtitle && <p className="text-[#334155] italic">{subtitle}</p>}
@@ -52,15 +52,15 @@ export function AcademicTemplate({ content, labels, countryName }: CvTemplatePro
   ]);
 
   return (
-    <article className="px-[60px] py-[54px] text-[12px] leading-[1.55] text-[#1e293b]">
+    <article className="px-[60px] py-[54px] text-[13px] sm:text-[12px] leading-[1.55] text-[#1e293b]">
       <header className="border-b-[3px] border-double border-[#0f2a4a] pb-4 text-center">
         <h1 className="text-[25px] leading-tight font-semibold tracking-[0.04em] text-[#0f2a4a] uppercase">
           {personal.fullName}
         </h1>
         {personal.headline && (
-          <p className="mt-1 text-[13px] text-[#334155] italic">{personal.headline}</p>
+          <p className="mt-1 text-sm sm:text-[13px] text-[#334155] italic">{personal.headline}</p>
         )}
-        {contact && <p className="mt-2 text-[11px] text-[#475569]">{contact}</p>}
+        {contact && <p className="mt-2 text-xs sm:text-[11px] text-[#475569]">{contact}</p>}
       </header>
 
       <When show={Boolean(personal.summary)}>
@@ -102,7 +102,7 @@ export function AcademicTemplate({ content, labels, countryName }: CvTemplatePro
           {content.projects.map((item) => (
             <div key={item.id} className="break-inside-avoid">
               <p className="font-semibold text-[#0f172a]">{item.name}</p>
-              {item.url && <p className="text-[11px] text-[#1d4ed8]">{item.url}</p>}
+              {item.url && <p className="text-xs sm:text-[11px] text-[#1d4ed8]">{item.url}</p>}
               <Description text={item.description} className="text-[#334155]" />
             </div>
           ))}

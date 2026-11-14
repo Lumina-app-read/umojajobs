@@ -112,7 +112,7 @@ export function GenerateDialog({
           <div className="grid justify-items-center gap-3 py-6 text-center" role="status">
             <Spinner className="size-7 text-brand" />
             <p className="font-semibold text-fg">{checking ? t('checking') : t('working')}</p>
-            <p className="max-w-sm text-[13px]">{t('workingHint')}</p>
+            <p className="max-w-sm text-sm sm:text-[13px]">{t('workingHint')}</p>
           </div>
         ) : (
           <div className="grid gap-4">
@@ -130,7 +130,7 @@ export function GenerateDialog({
                 </p>
               </div>
             )}
-            {overwrite && <p className="text-[13px]">{t('overwrite')}</p>}
+            {overwrite && <p className="text-sm sm:text-[13px]">{t('overwrite')}</p>}
             {insufficient && (
               <Alert tone="warning">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -141,7 +141,7 @@ export function GenerateDialog({
                 </div>
               </Alert>
             )}
-            {!saved && <p className="text-[13px] text-warning">{t('waitSave')}</p>}
+            {!saved && <p className="text-sm sm:text-[13px] text-warning">{t('waitSave')}</p>}
             {error && <Alert tone="error">{error}</Alert>}
           </div>
         )}

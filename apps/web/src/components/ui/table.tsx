@@ -9,7 +9,7 @@ export function Table({ className, children, ...props }: HTMLAttributes<HTMLTabl
   return (
     <div className="overflow-x-auto rounded-xl border border-line bg-surface shadow-xs">
       <table
-        className={cn('w-full min-w-[520px] border-collapse text-[13px]', className)}
+        className={cn('w-full min-w-[520px] border-collapse text-sm sm:text-[13px]', className)}
         {...props}
       >
         {children}

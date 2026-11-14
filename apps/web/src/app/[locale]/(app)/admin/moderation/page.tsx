@@ -62,7 +62,7 @@ export default async function ModerationQueuePage({
                 href={{ pathname: '/admin/moderation', query: { status: value } }}
                 aria-current={value === status ? 'page' : undefined}
                 className={cn(
-                  'inline-flex h-9 items-center rounded-full border px-3.5 text-[13px] font-medium whitespace-nowrap transition-colors',
+                  'inline-flex h-9 items-center rounded-full border px-3.5 text-sm sm:text-[13px] font-medium whitespace-nowrap transition-colors',
                   value === status
                     ? 'border-primary bg-primary-soft text-brand'
                     : 'border-line bg-surface text-fg-muted hover:border-line-strong hover:text-fg',
@@ -95,7 +95,7 @@ export default async function ModerationQueuePage({
                 <p className="truncate text-[15px] font-semibold text-fg">
                   {offer.title ?? t('publications.untitled')}
                 </p>
-                <p className="mt-1 text-[13px] text-fg-muted">
+                <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">
                   {[
                     offer.companyName,
                     offer.countryIso2 && countryName(offer.countryIso2, locale),

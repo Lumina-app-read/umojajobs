@@ -98,7 +98,7 @@ function SaveIndicator({ state }: { state: SaveState }) {
     <p
       role="status"
       aria-live="polite"
-      className={cn('flex items-center gap-1.5 text-[13px] font-medium', view.tone)}
+      className={cn('flex items-center gap-1.5 text-sm sm:text-[13px] font-medium', view.tone)}
     >
       <Icon className={cn('size-4', state === 'saving' && 'animate-spin')} aria-hidden="true" />
       <span className="truncate">{view.text}</span>

@@ -39,7 +39,7 @@ export function CandidateRulesList({ compact = false }: { compact?: boolean }) {
       {RULES.map(({ key, icon: Icon }) => (
         <li
           key={key}
-          className="flex items-start gap-2.5 text-[13px] leading-relaxed text-fg-muted"
+          className="flex items-start gap-2.5 text-sm sm:text-[13px] leading-relaxed text-fg-muted"
         >
           <Icon className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden="true" />
           <span>{t(`items.${key}`)}</span>
@@ -84,7 +84,7 @@ export function CandidateRulesGate() {
         <PartyPopper className="mt-0.5 size-5 shrink-0 text-success" aria-hidden="true" />
         <div>
           <p className="text-sm font-semibold text-fg">{t('congratsTitle')}</p>
-          <p className="mt-0.5 text-[13px] text-fg-muted">{t('congratsBody')}</p>
+          <p className="mt-0.5 text-sm sm:text-[13px] text-fg-muted">{t('congratsBody')}</p>
         </div>
       </div>
       <div>

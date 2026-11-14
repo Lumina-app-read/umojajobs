@@ -32,7 +32,7 @@ export function Alert({
     <div
       role={tone === 'error' ? 'alert' : 'status'}
       className={cn(
-        'flex gap-3 rounded-lg border px-3.5 py-3 text-[13px] leading-5 text-fg',
+        'flex gap-3 rounded-lg border px-3.5 py-3 text-sm sm:text-[13px] leading-5 text-fg',
         TONES[tone].box,
         className,
       )}

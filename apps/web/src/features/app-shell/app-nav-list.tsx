@@ -42,7 +42,7 @@ export function AppNavList({
       {groups.map((group) => (
         <div key={group.key}>
           {group.label && (
-            <p className="mb-1 px-3 text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
+            <p className="mb-1 px-3 text-xs sm:text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
               {group.label}
             </p>
           )}

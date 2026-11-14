@@ -71,7 +71,7 @@ export function PhotoField({
 
   return (
     <div className="grid gap-2">
-      <p className="text-[13px] font-semibold text-fg">
+      <p className="text-sm sm:text-[13px] font-semibold text-fg">
         {t('label')} <span className="font-normal text-fg-subtle">{t('optional')}</span>
       </p>
       <div className="flex flex-wrap items-center gap-4">

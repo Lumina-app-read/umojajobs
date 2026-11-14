@@ -60,7 +60,7 @@ export function ContributorRules() {
           </span>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-fg">{t(`${key as RuleKey}.title`)}</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-fg-muted">
+            <p className="mt-1 text-sm sm:text-[13px] leading-relaxed text-fg-muted">
               {t(`${key as RuleKey}.body`)}
             </p>
           </div>

@@ -52,7 +52,7 @@ export function TimingIndicator({
 
   return (
     <span
-      className={cn('inline-flex items-center gap-2 text-[13px] font-medium', className)}
+      className={cn('inline-flex items-center gap-2 text-sm sm:text-[13px] font-medium', className)}
       title={timing.state === 'expired' ? t('endedOn', { date: end }) : t('endsOn', { date: end })}
     >
       <span className="relative flex size-2.5" aria-hidden="true">

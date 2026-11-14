@@ -123,7 +123,7 @@ export function AiAssist({
           aria-label={t('title')}
           className="animate-fade-up rounded-lg border border-primary/30 bg-primary-soft/40 p-3.5"
         >
-          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-brand">
+          <p className="flex items-center gap-1.5 text-sm sm:text-[13px] font-semibold text-brand">
             <Sparkles className="size-4" aria-hidden="true" />
             {t('title')}
           </p>

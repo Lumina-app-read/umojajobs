@@ -27,7 +27,7 @@ export function SegmentedLinks({
             href={option.href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'grid h-8 place-items-center rounded-md px-3 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-[120ms]',
+              'grid h-8 place-items-center rounded-md px-3 text-sm sm:text-[13px] font-medium transition-[background-color,color,box-shadow] duration-[120ms]',
               active ? 'bg-surface text-fg shadow-xs' : 'text-fg-muted hover:text-fg',
             )}
           >

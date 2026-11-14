@@ -112,7 +112,7 @@ export function CvWizard({
       <div key={step.key} className="grid animate-fade-up gap-4">
         {step.key !== 'identity' && step.key !== 'target' && step.key !== 'generate' ? (
           <>
-            <p className="text-[13px] text-fg-muted">{t(`stepHints.${step.key}`)}</p>
+            <p className="text-sm sm:text-[13px] text-fg-muted">{t(`stepHints.${step.key}`)}</p>
             <CvForm
               documentId={documentId}
               content={content}
@@ -124,7 +124,7 @@ export function CvWizard({
           </>
         ) : step.key === 'identity' ? (
           <>
-            <p className="text-[13px] text-fg-muted">{t('stepHints.identity')}</p>
+            <p className="text-sm sm:text-[13px] text-fg-muted">{t('stepHints.identity')}</p>
             <CvForm
               documentId={documentId}
               content={content}
@@ -172,7 +172,9 @@ export function CvWizard({
               <div className="grid gap-5">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="grid gap-1.5">
-                    <p className="text-[13px] font-semibold text-fg">{tWizard('tone')}</p>
+                    <p className="text-sm sm:text-[13px] font-semibold text-fg">
+                      {tWizard('tone')}
+                    </p>
                     <SegmentedControl
                       label={tWizard('tone')}
                       value={options.tone}
@@ -184,7 +186,9 @@ export function CvWizard({
                     />
                   </div>
                   <div className="grid gap-1.5">
-                    <p className="text-[13px] font-semibold text-fg">{tWizard('length')}</p>
+                    <p className="text-sm sm:text-[13px] font-semibold text-fg">
+                      {tWizard('length')}
+                    </p>
                     <SegmentedControl
                       label={tWizard('length')}
                       value={options.length}
@@ -199,7 +203,7 @@ export function CvWizard({
                 {missing.length > 0 ? (
                   missing.map((message) => <FieldError key={message}>{message}</FieldError>)
                 ) : (
-                  <p className="text-[13px] text-fg-muted">{tWizard('ready')}</p>
+                  <p className="text-sm sm:text-[13px] text-fg-muted">{tWizard('ready')}</p>
                 )}
                 <div>
                   <GenerateDialog

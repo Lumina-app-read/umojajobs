@@ -95,7 +95,10 @@ export async function HowItWorks() {
             >
               <div className="flex items-center justify-between">
                 <IconChip icon={icon} />
-                <span className="text-[13px] font-bold text-fg-subtle tabular-nums" aria-hidden>
+                <span
+                  className="text-sm sm:text-[13px] font-bold text-fg-subtle tabular-nums"
+                  aria-hidden
+                >
                   0{index + 1}
                 </span>
               </div>
@@ -172,7 +175,7 @@ export async function JobsSection() {
             {countries.map((country) => (
               <li
                 key={country.iso2}
-                className="flex min-h-11 items-center gap-2.5 rounded-lg border border-line bg-surface px-3 py-2 text-[13px] leading-tight font-medium text-fg"
+                className="flex min-h-11 items-center gap-2.5 rounded-lg border border-line bg-surface px-3 py-2 text-sm sm:text-[13px] leading-tight font-medium text-fg"
               >
                 <span className="text-lg leading-none" aria-hidden="true">
                   {flagEmoji(country.iso2)}
@@ -181,7 +184,7 @@ export async function JobsSection() {
               </li>
             ))}
           </ul>
-          <p className="mt-5 flex items-center gap-2 text-[13px] text-fg-muted">
+          <p className="mt-5 flex items-center gap-2 text-sm sm:text-[13px] text-fg-muted">
             <Globe2 className="size-4 text-brand" aria-hidden="true" />
             {t('allCountries', { count: AFRICAN_COUNTRY_COUNT - countries.length })}
           </p>
@@ -220,7 +223,7 @@ export async function StudioSection() {
               <FileText className="size-5" />
             </span>
             <span className="grid min-w-0 flex-1 gap-1.5">
-              <span className="text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
+              <span className="text-xs sm:text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
                 {tPreview('cvLabel')}
               </span>
               <span className="h-2 w-3/4 rounded-full bg-fg/15" />
@@ -294,7 +297,7 @@ export async function ShareSection() {
           ))}
         </ol>
         <div className="mt-10 flex flex-col items-center gap-6 text-center">
-          <p className="flex max-w-xl items-start gap-2 text-[13px] text-fg-muted">
+          <p className="flex max-w-xl items-start gap-2 text-sm sm:text-[13px] text-fg-muted">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
             {t('note')}
           </p>

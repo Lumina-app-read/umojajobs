@@ -45,7 +45,7 @@ function SettingsSection({
           <h2 id={id} className="text-base font-semibold text-fg">
             {title}
           </h2>
-          {hint && <p className="mt-1 text-[13px] text-fg-muted">{hint}</p>}
+          {hint && <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">{hint}</p>}
         </div>
         {aside}
       </div>
@@ -107,7 +107,7 @@ export default async function SettingsPage() {
         id="settings-security"
         title={t('app.settings.security')}
         aside={
-          <span className="flex items-center gap-2 text-[13px] font-medium text-fg-muted">
+          <span className="flex items-center gap-2 text-sm sm:text-[13px] font-medium text-fg-muted">
             {user.totpEnabled ? (
               <ShieldCheck className="size-4 text-success" aria-hidden="true" />
             ) : (
@@ -118,7 +118,9 @@ export default async function SettingsPage() {
         }
       >
         <h3 className="text-sm font-semibold text-fg">{t('app.settings.passwordTitle')}</h3>
-        <p className="mt-1 mb-4 text-[13px] text-fg-muted">{t('app.settings.passwordHint')}</p>
+        <p className="mt-1 mb-4 text-sm sm:text-[13px] text-fg-muted">
+          {t('app.settings.passwordHint')}
+        </p>
         <PasswordForm />
       </SettingsSection>
 

@@ -81,7 +81,7 @@ export function CitySelect({
   const disabled = !countryIso2;
   return (
     <Field className="grid min-w-0 gap-1.5" disabled={disabled}>
-      <Label className="block text-[13px] font-semibold text-fg">
+      <Label className="block text-sm sm:text-[13px] font-semibold text-fg">
         {label}
         {optionalLabel && <span className="ml-1 font-normal text-fg-subtle">{optionalLabel}</span>}
       </Label>
@@ -95,7 +95,10 @@ export function CitySelect({
         disabled={disabled}
       >
         <div className={controlFrameClasses(Boolean(error), disabled)}>
-          <Building2 className="ml-3 size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
+          <Building2
+            className="ml-3 size-[18px] shrink-0 text-fg-subtle sm:size-4"
+            aria-hidden="true"
+          />
           <ComboboxInput
             className={cn(controlInputClasses, 'pl-2 pr-1')}
             displayValue={(city: CityValue | null) => city?.name ?? ''}

@@ -15,7 +15,7 @@ function Column({
 }) {
   return (
     <div>
-      <h2 className="text-[13px] font-semibold text-fg">{title}</h2>
+      <h2 className="text-sm sm:text-[13px] font-semibold text-fg">{title}</h2>
       <ul className="mt-4 grid gap-3">
         {links.map(({ label, href }) => (
           <li key={label}>

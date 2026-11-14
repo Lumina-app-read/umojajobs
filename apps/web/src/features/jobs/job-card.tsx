@@ -49,7 +49,7 @@ export function JobCard({
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 text-[13px] text-fg-muted">
+      <div className="flex flex-wrap items-center gap-2 text-sm sm:text-[13px] text-fg-muted">
         {offer.status === 'active' && (
           <Badge tone="success" icon={BadgeCheck}>
             {t('public.verified')}
@@ -67,7 +67,7 @@ export function JobCard({
         </Badge>
       </div>
 
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-[13px]">
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-sm sm:text-[13px]">
         <span className="flex items-center gap-1.5 text-fg-muted">
           <CalendarClock className="size-4" aria-hidden="true" />
           {t('public.deadline', { date: deadline })}

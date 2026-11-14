@@ -43,7 +43,7 @@ function Details({ rows, empty }: { rows: [string, ReactNode][]; empty: string }
     <dl className="divide-y divide-line">
       {rows.map(([label, value]) => (
         <div key={label} className="grid gap-1 py-2.5 sm:grid-cols-[200px_1fr] sm:gap-4">
-          <dt className="text-[13px] text-fg-muted">{label}</dt>
+          <dt className="text-sm sm:text-[13px] text-fg-muted">{label}</dt>
           <dd className="text-sm text-fg break-words whitespace-pre-line">
             {value === null || value === undefined || value === '' ? (
               <span className="text-fg-subtle">{empty}</span>
@@ -252,7 +252,7 @@ export default async function ModerationOfferPage({ params }: { params: Promise<
                       })}
                     </p>
                     {change.reason && (
-                      <p className="mt-1 text-[13px] text-fg-muted">{change.reason}</p>
+                      <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">{change.reason}</p>
                     )}
                   </div>
                 </li>
@@ -279,7 +279,9 @@ export default async function ModerationOfferPage({ params }: { params: Promise<
           </Panel>
 
           <Panel title={t('moderation.duplicates')}>
-            <p className="-mt-2 mb-3 text-[13px] text-fg-muted">{t('moderation.duplicatesHint')}</p>
+            <p className="-mt-2 mb-3 text-sm sm:text-[13px] text-fg-muted">
+              {t('moderation.duplicatesHint')}
+            </p>
             {offer.duplicates.length === 0 ? (
               <p className="text-sm text-fg-muted">{t('moderation.noDuplicates')}</p>
             ) : (

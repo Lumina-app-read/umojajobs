@@ -153,7 +153,7 @@ export function PackEditor({
             />
           </div>
           {creditsValue !== null && (
-            <div className="grid gap-1 rounded-lg border border-line bg-surface-2/50 p-3 text-[13px]">
+            <div className="grid gap-1 rounded-lg border border-line bg-surface-2/50 p-3 text-sm sm:text-[13px]">
               <p>{t('value', { value: usd(creditsValue) })}</p>
               {suggested !== null && feeRate !== null && (
                 <p className="flex flex-wrap items-center gap-2">

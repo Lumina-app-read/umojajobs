@@ -170,7 +170,7 @@ function Section({
       }
     >
       <h2 className="text-base font-semibold text-fg">{title}</h2>
-      <p className="mt-1 text-[13px] leading-relaxed text-fg-muted">{hint}</p>
+      <p className="mt-1 text-sm sm:text-[13px] leading-relaxed text-fg-muted">{hint}</p>
       <div className="mt-5 grid gap-5">{children}</div>
     </section>
   );
@@ -562,7 +562,7 @@ export function JobOfferForm({
               {values.skills.map((skill) => (
                 <li
                   key={skill}
-                  className="inline-flex h-7 items-center gap-1 rounded-full bg-primary-soft pr-1 pl-3 text-[13px] font-medium text-brand"
+                  className="inline-flex h-7 items-center gap-1 rounded-full bg-primary-soft pr-1 pl-3 text-sm sm:text-[13px] font-medium text-brand"
                 >
                   {skill}
                   <button

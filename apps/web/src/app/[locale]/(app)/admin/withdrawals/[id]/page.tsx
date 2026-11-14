@@ -91,7 +91,9 @@ export default async function AdminWithdrawalPage({ params }: { params: Promise<
                     <Badge tone={WITHDRAWAL_TONE[event.toStatus]}>
                       {t(`status.${event.toStatus}`)}
                     </Badge>
-                    {event.note && <p className="mt-1 text-[13px] text-fg-muted">{event.note}</p>}
+                    {event.note && (
+                      <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">{event.note}</p>
+                    )}
                   </div>
                   <span className="text-xs whitespace-nowrap text-fg-subtle">
                     {when(event.createdAt)}

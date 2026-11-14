@@ -82,7 +82,7 @@ export default async function CreditsPage({
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-[13px] font-medium text-fg-muted">{pack.name}</p>
+                    <p className="text-sm sm:text-[13px] font-medium text-fg-muted">{pack.name}</p>
                     {best && <Badge tone="primary">{t('bestValue')}</Badge>}
                   </div>
                   <div>

@@ -284,7 +284,7 @@ export function RegisterForm({ countries }: { countries: CountryResponse[] }) {
                 aria-describedby="password-rules"
                 required
               />
-              <div id="password-rules" className="text-[13px]">
+              <div id="password-rules" className="text-sm sm:text-[13px]">
                 <p className="sr-only">{t('register.rulesTitle')}</p>
                 <ul className="grid gap-1">
                   <Rule met={lengthMet}>

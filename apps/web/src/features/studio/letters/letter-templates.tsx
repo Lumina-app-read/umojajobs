@@ -52,7 +52,7 @@ function LetterBody({
         </p>
       )}
       {enclosures.length > 0 && (
-        <div className="mt-10 text-[11.5px] text-[#475569]">
+        <div className="mt-10 text-[12.5px] sm:text-[11.5px] text-[#475569]">
           <p className="font-semibold">{labels.enclosures}</p>
           <ul className="mt-1 list-disc pl-5">
             {enclosures.map((item) => (
@@ -72,7 +72,7 @@ function LetterBody({
 export function ClassicLetter({ content, labels, language, countryName }: LetterTemplateProps) {
   const { sender, recipient } = content;
   return (
-    <article className="min-h-[1123px] px-[72px] py-[64px] text-[12.5px] leading-[1.65] text-[#1e293b]">
+    <article className="min-h-[1123px] px-[72px] py-[64px] text-[13.5px] sm:text-[12.5px] leading-[1.65] text-[#1e293b]">
       <Address
         className="leading-[1.5]"
         values={[
@@ -109,13 +109,13 @@ export function ModernLetter({ content, labels, language, countryName }: LetterT
     [sender.city, countryName].filter(Boolean).join(', '),
   ].filter(Boolean);
   return (
-    <article className="min-h-[1123px] text-[12.5px] leading-[1.65] text-[#1e293b]">
+    <article className="min-h-[1123px] text-[13.5px] sm:text-[12.5px] leading-[1.65] text-[#1e293b]">
       <header className="border-l-[6px] border-[#2563eb] bg-[#0f2a4a] px-[66px] py-8 text-white">
         <h1 className="text-[24px] leading-tight font-bold tracking-[-0.01em]">
           {sender.fullName}
         </h1>
         {contacts.length > 0 && (
-          <p className="mt-2 text-[11px] text-[#cbd5e1]">{contacts.join('  ·  ')}</p>
+          <p className="mt-2 text-xs sm:text-[11px] text-[#cbd5e1]">{contacts.join('  ·  ')}</p>
         )}
       </header>
       <div className="px-[72px] pt-10 pb-[64px]">

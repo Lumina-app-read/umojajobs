@@ -88,7 +88,7 @@ export default async function PublicationsPage() {
                       {t(`enums.status.${offer.status}`)}
                     </Badge>
                   </div>
-                  <p className="mt-1 text-[13px] text-fg-muted">{details.join(' · ')}</p>
+                  <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">{details.join(' · ')}</p>
                 </div>
                 {editable && (
                   <ButtonLink

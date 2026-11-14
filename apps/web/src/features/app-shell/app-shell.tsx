@@ -96,7 +96,7 @@ function Brand({ variant, onNavigate }: { variant: ShellVariant; onNavigate?: ()
     >
       <Logo size={28} />
       {admin && (
-        <span className="rounded-md bg-navy px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
+        <span className="rounded-md bg-navy px-1.5 py-0.5 text-[11px] sm:text-[10px] font-bold tracking-wide text-white uppercase">
           {t('admin.badge')}
         </span>
       )}
@@ -190,7 +190,7 @@ function AppTabBar() {
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors',
+                  'flex h-16 flex-col items-center justify-center gap-1 text-xs sm:text-[11px] font-medium transition-colors',
                   active ? 'text-brand' : 'text-fg-subtle hover:text-fg',
                 )}
               >

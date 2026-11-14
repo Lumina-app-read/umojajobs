@@ -15,18 +15,21 @@ const VARIANTS: Record<ButtonVariant, string> = {
   link: 'h-auto! px-0! text-brand underline-offset-4 hover:underline',
 };
 
-/** Hauteurs : 32 (filtres), 36 (défaut des tableaux de bord), 40 (formulaires), 48 (hero uniquement). */
+/**
+ * Hauteurs : 32 (filtres), 36 (défaut des tableaux de bord), 40 (formulaires), 48 (hero uniquement).
+ * Sous 640 px, chaque taille monte d'une marche (4 px) et le texte d'un cran : cibles tactiles.
+ */
 const SIZES: Record<ButtonSize, string> = {
-  sm: 'h-8 gap-1.5 px-2.5 text-[13px]',
-  md: 'h-9 gap-2 px-3.5 text-sm',
-  lg: 'h-10 gap-2 px-4 text-sm',
+  sm: 'h-9 gap-1.5 px-3 text-sm sm:h-8 sm:px-2.5 sm:text-[13px]',
+  md: 'h-10 gap-2 px-4 text-[15px] sm:h-9 sm:px-3.5 sm:text-sm',
+  lg: 'h-11 gap-2 px-4 text-[15px] sm:h-10 sm:text-sm',
   xl: 'h-12 gap-2 px-5 text-[15px]',
 };
 
 const ICON_SIZES: Record<ButtonSize, string> = {
-  sm: 'size-8',
-  md: 'size-9',
-  lg: 'size-10',
+  sm: 'size-9 sm:size-8',
+  md: 'size-10 sm:size-9',
+  lg: 'size-11 sm:size-10',
   xl: 'size-12',
 };
 

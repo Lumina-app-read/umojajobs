@@ -55,7 +55,9 @@ export function Dialog({
             <div className="min-w-0">
               <DialogTitle className="text-base font-semibold text-fg">{title}</DialogTitle>
               {description && (
-                <Description className="mt-1 text-[13px] text-fg-muted">{description}</Description>
+                <Description className="mt-1 text-sm sm:text-[13px] text-fg-muted">
+                  {description}
+                </Description>
               )}
             </div>
             <button

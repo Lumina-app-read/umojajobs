@@ -23,7 +23,7 @@ export function Section({
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="text-[15px] font-semibold text-fg">{title}</h2>
-          {hint && <p className="mt-0.5 text-[13px] text-fg-muted">{hint}</p>}
+          {hint && <p className="mt-0.5 text-sm sm:text-[13px] text-fg-muted">{hint}</p>}
         </div>
       </div>
       <div className="mt-4 grid gap-4">{children}</div>

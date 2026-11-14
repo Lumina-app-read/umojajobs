@@ -77,7 +77,7 @@ function ToastView({ item, closeLabel }: { item: ToastItem; closeLabel: string }
         <Icon className="size-4" aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1 pt-0.5">
-        <p className="text-[13px] font-semibold text-fg">{item.title}</p>
+        <p className="text-sm sm:text-[13px] font-semibold text-fg">{item.title}</p>
         {item.description && <p className="mt-0.5 text-xs text-fg-muted">{item.description}</p>}
       </div>
       <button

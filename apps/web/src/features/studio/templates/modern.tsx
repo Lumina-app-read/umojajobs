@@ -5,7 +5,9 @@ import { Description, joinParts, When } from './shared';
 function SideSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-7">
-      <h2 className="text-[10px] font-bold tracking-[0.16em] text-[#93c5fd] uppercase">{title}</h2>
+      <h2 className="text-[11px] sm:text-[10px] font-bold tracking-[0.16em] text-[#93c5fd] uppercase">
+        {title}
+      </h2>
       <div className="mt-2.5 grid gap-2">{children}</div>
     </section>
   );
@@ -14,7 +16,7 @@ function SideSection({ title, children }: { title: string; children: ReactNode }
 function MainSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-7 first:mt-0">
-      <h2 className="flex items-center gap-2 text-[12px] font-bold tracking-[0.12em] text-[#0f2a4a] uppercase">
+      <h2 className="flex items-center gap-2 text-[13px] sm:text-[12px] font-bold tracking-[0.12em] text-[#0f2a4a] uppercase">
         <span className="h-[3px] w-5 rounded-full bg-[#2563eb]" aria-hidden="true" />
         {title}
       </h2>
@@ -41,11 +43,11 @@ function TimelineEntry({
         aria-hidden="true"
       />
       {period && (
-        <p className="text-[10.5px] font-semibold tracking-wide text-[#2563eb] uppercase">
+        <p className="text-[11.5px] sm:text-[10.5px] font-semibold tracking-wide text-[#2563eb] uppercase">
           {period}
         </p>
       )}
-      <p className="text-[13px] font-semibold text-[#0f172a]">{title}</p>
+      <p className="text-sm sm:text-[13px] font-semibold text-[#0f172a]">{title}</p>
       {subtitle && <p className="text-[#475569]">{subtitle}</p>}
       <Description text={description} className="text-[#334155]" />
     </div>
@@ -59,7 +61,7 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
   const contacts = [personal.email, personal.phone, personal.address, place].filter(Boolean);
 
   return (
-    <article className="flex min-h-[1123px] text-[12px] leading-[1.5] text-[#1e293b]">
+    <article className="flex min-h-[1123px] text-[13px] sm:text-[12px] leading-[1.5] text-[#1e293b]">
       <aside className="w-[250px] shrink-0 bg-[#0f2a4a] px-7 py-12 text-[#e2e8f0]">
         {photoUrl && (
           // eslint-disable-next-line @next/next/no-img-element -- image privée ou data URI, imprimée telle quelle
@@ -73,13 +75,15 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
           {personal.fullName}
         </h1>
         {personal.headline && (
-          <p className="mt-2 text-[13px] font-medium text-[#bfdbfe]">{personal.headline}</p>
+          <p className="mt-2 text-sm sm:text-[13px] font-medium text-[#bfdbfe]">
+            {personal.headline}
+          </p>
         )}
 
         <When show={contacts.length > 0}>
           <SideSection title={labels.contact}>
             {contacts.map((value) => (
-              <p key={value} className="text-[11px] break-words text-[#e2e8f0]">
+              <p key={value} className="text-xs sm:text-[11px] break-words text-[#e2e8f0]">
                 {value}
               </p>
             ))}
@@ -92,7 +96,7 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
               {content.skills.map((skill) => (
                 <li
                   key={skill}
-                  className="rounded-[4px] bg-white/10 px-2 py-0.5 text-[10.5px] text-white"
+                  className="rounded-[4px] bg-white/10 px-2 py-0.5 text-[11.5px] sm:text-[10.5px] text-white"
                 >
                   {skill}
                 </li>
@@ -106,7 +110,9 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
             {content.languages.map((item) => (
               <div key={item.id} className="flex items-baseline justify-between gap-2">
                 <span className="text-white">{item.name}</span>
-                <span className="text-[10.5px] text-[#bfdbfe]">{labels.levels[item.level]}</span>
+                <span className="text-[11.5px] sm:text-[10.5px] text-[#bfdbfe]">
+                  {labels.levels[item.level]}
+                </span>
               </div>
             ))}
           </SideSection>
@@ -117,7 +123,7 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
             {content.certifications.map((item) => (
               <div key={item.id}>
                 <p className="text-white">{item.name}</p>
-                <p className="text-[10.5px] text-[#bfdbfe]">
+                <p className="text-[11.5px] sm:text-[10.5px] text-[#bfdbfe]">
                   {joinParts([item.issuer, item.date ? formatMonth(item.date, labels) : ''])}
                 </p>
               </div>
@@ -128,7 +134,7 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
         <When show={(content.interests ?? []).length > 0}>
           <SideSection title={labels.interests}>
             {(content.interests ?? []).map((interest) => (
-              <p key={interest} className="text-[11px] text-[#e2e8f0]">
+              <p key={interest} className="text-xs sm:text-[11px] text-[#e2e8f0]">
                 {interest}
               </p>
             ))}
@@ -175,8 +181,8 @@ export function ModernTemplate({ content, labels, countryName, photoUrl }: CvTem
           <MainSection title={labels.projects}>
             {content.projects.map((item) => (
               <div key={item.id} className="break-inside-avoid">
-                <p className="text-[13px] font-semibold text-[#0f172a]">{item.name}</p>
-                {item.url && <p className="text-[11px] text-[#2563eb]">{item.url}</p>}
+                <p className="text-sm sm:text-[13px] font-semibold text-[#0f172a]">{item.name}</p>
+                {item.url && <p className="text-xs sm:text-[11px] text-[#2563eb]">{item.url}</p>}
                 <Description text={item.description} className="text-[#334155]" />
               </div>
             ))}

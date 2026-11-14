@@ -365,7 +365,7 @@ export function LetterWizard({
             <div className="grid gap-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="grid gap-1.5">
-                  <p className="text-[13px] font-semibold text-fg">{t('tone')}</p>
+                  <p className="text-sm sm:text-[13px] font-semibold text-fg">{t('tone')}</p>
                   <SegmentedControl
                     label={t('tone')}
                     value={options.tone}
@@ -377,7 +377,7 @@ export function LetterWizard({
                   />
                 </div>
                 <div className="grid gap-1.5">
-                  <p className="text-[13px] font-semibold text-fg">{t('length')}</p>
+                  <p className="text-sm sm:text-[13px] font-semibold text-fg">{t('length')}</p>
                   <SegmentedControl
                     label={t('length')}
                     value={options.length}
@@ -394,7 +394,7 @@ export function LetterWizard({
                   {t('missing', { fields: allMissing.map(label).join(', ') })}
                 </FieldError>
               ) : (
-                <p className="text-[13px] text-fg-muted">{t('ready')}</p>
+                <p className="text-sm sm:text-[13px] text-fg-muted">{t('ready')}</p>
               )}
               <div>
                 <GenerateDialog

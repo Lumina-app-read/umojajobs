@@ -49,7 +49,7 @@ export default async function AdminWithdrawalsPage({
             key={value ?? 'open'}
             href={value ? `/admin/withdrawals?status=${value}` : '/admin/withdrawals'}
             className={cn(
-              'rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors',
+              'rounded-full border px-3 py-1.5 text-sm sm:text-[13px] font-medium transition-colors',
               value === status
                 ? 'border-primary bg-primary-soft text-brand'
                 : 'border-line text-fg-muted hover:bg-surface-2',
@@ -98,7 +98,7 @@ export default async function AdminWithdrawalsPage({
                 <Td className="text-right">
                   <Link
                     href={`/admin/withdrawals/${row.id}`}
-                    className="inline-flex items-center gap-1 text-[13px] font-medium text-brand hover:underline"
+                    className="inline-flex items-center gap-1 text-sm sm:text-[13px] font-medium text-brand hover:underline"
                   >
                     {t('admin.open_detail')}
                     <ChevronRight className="size-4" aria-hidden="true" />

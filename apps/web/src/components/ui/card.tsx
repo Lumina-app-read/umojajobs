@@ -47,7 +47,9 @@ export function CardHeader({
     >
       <div className="min-w-0">
         <h3 className="text-sm font-semibold text-fg">{title}</h3>
-        {description && <p className="mt-0.5 text-[13px] text-fg-muted">{description}</p>}
+        {description && (
+          <p className="mt-0.5 text-sm sm:text-[13px] text-fg-muted">{description}</p>
+        )}
       </div>
       {action}
     </div>
@@ -84,7 +86,9 @@ export function AuthCard({
         {subtitle && <p className="mt-1.5 text-sm text-fg-muted">{subtitle}</p>}
         <div className="mt-6">{children}</div>
       </Card>
-      {footer && <div className="mt-5 text-center text-[13px] text-fg-muted">{footer}</div>}
+      {footer && (
+        <div className="mt-5 text-center text-sm sm:text-[13px] text-fg-muted">{footer}</div>
+      )}
     </div>
   );
 }

@@ -151,7 +151,7 @@ export function ExportDialog({
               <CalendarCheck className="mt-0.5 size-4 shrink-0 text-success" aria-hidden="true" />
               <div>
                 <p className="font-semibold text-fg">{t('covered', { date: day(covered) })}</p>
-                <p className="mt-0.5 text-[13px]">{t('coveredBody')}</p>
+                <p className="mt-0.5 text-sm sm:text-[13px]">{t('coveredBody')}</p>
               </div>
             </div>
           )}
@@ -176,7 +176,9 @@ export function ExportDialog({
                   {t('credits', { count: info.balance })}
                 </span>
               </p>
-              <p className="text-[13px]">{t('window', { days: info.reexportWindowDays })}</p>
+              <p className="text-sm sm:text-[13px]">
+                {t('window', { days: info.reexportWindowDays })}
+              </p>
             </div>
           )}
 
@@ -190,19 +192,19 @@ export function ExportDialog({
               </div>
             </Alert>
           )}
-          {!saved && <p className="text-[13px] text-warning">{t('saving')}</p>}
+          {!saved && <p className="text-sm sm:text-[13px] text-warning">{t('saving')}</p>}
           {error && <Alert tone="error">{error}</Alert>}
 
           {info && info.exports.length > 0 && (
             <section aria-labelledby="export-history" className="grid gap-2">
-              <h3 id="export-history" className="text-[13px] font-semibold text-fg">
+              <h3 id="export-history" className="text-sm sm:text-[13px] font-semibold text-fg">
                 {t('history')}
               </h3>
               <ul className="grid divide-y divide-line rounded-lg border border-line">
                 {info.exports.map((entry) => (
                   <li key={entry.id} className="flex items-center gap-3 px-3 py-2">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] text-fg">
+                      <p className="truncate text-sm sm:text-[13px] text-fg">
                         {day(entry.createdAt)} · {tTemplates(entry.templateKey as CvTemplate)}
                       </p>
                       <div className="mt-1 flex gap-1.5">

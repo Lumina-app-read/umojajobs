@@ -185,7 +185,7 @@ export function StudioDocuments({ documents }: { documents: CareerDocumentSummar
                       <span className="text-sm font-semibold text-fg">{t(`types.${type}`)}</span>
                       {!available && <Badge tone="neutral">{t('soon')}</Badge>}
                     </span>
-                    <span className="mt-1 block text-[13px] text-fg-muted">
+                    <span className="mt-1 block text-sm sm:text-[13px] text-fg-muted">
                       {t(`typeHints.${type}`)}
                     </span>
                   </span>
@@ -235,7 +235,7 @@ export function StudioDocuments({ documents }: { documents: CareerDocumentSummar
                       <p className="truncate text-[15px] font-semibold text-fg">{document.title}</p>
                       <Badge tone="primary">{t(`types.${document.type}`)}</Badge>
                     </div>
-                    <p className="mt-1 text-[13px] text-fg-muted">
+                    <p className="mt-1 text-sm sm:text-[13px] text-fg-muted">
                       {[
                         t(`languages.${document.language}`),
                         t('updated', {

@@ -46,7 +46,10 @@ export function TextAreaField({
         {label}
       </FieldLabel>
       <div className={cn(controlFrameClasses(Boolean(error)), 'h-auto items-start')}>
-        <Icon className="mt-3 ml-3 size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
+        <Icon
+          className="mt-3 ml-3 size-[18px] shrink-0 text-fg-subtle sm:size-4"
+          aria-hidden="true"
+        />
         <textarea
           id={id}
           name={name}
@@ -100,7 +103,7 @@ export function FormSelect<T extends string>({
   const current = options.find((option) => option.value === value) ?? null;
   return (
     <Field className="grid min-w-0 gap-1.5">
-      <Label className="block text-[13px] font-semibold text-fg">
+      <Label className="block text-sm sm:text-[13px] font-semibold text-fg">
         {label}
         {optionalLabel && <span className="ml-1 font-normal text-fg-subtle">{optionalLabel}</span>}
       </Label>
@@ -110,7 +113,7 @@ export function FormSelect<T extends string>({
           aria-describedby={error ? errorId : undefined}
           aria-invalid={error ? true : undefined}
         >
-          <Icon className="ml-3 size-4 shrink-0 text-fg-subtle" aria-hidden="true" />
+          <Icon className="ml-3 size-[18px] shrink-0 text-fg-subtle sm:size-4" aria-hidden="true" />
           <span
             className={cn(
               'min-w-0 flex-1 truncate px-2 text-base sm:text-sm',

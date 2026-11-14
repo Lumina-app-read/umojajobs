@@ -40,7 +40,9 @@ export function EmptyState({
         <Icon className="size-5" aria-hidden="true" />
       </span>
       <p className="text-[15px] font-semibold text-fg">{title}</p>
-      {description && <p className="max-w-[38ch] text-[13px] text-fg-muted">{description}</p>}
+      {description && (
+        <p className="max-w-[38ch] text-sm sm:text-[13px] text-fg-muted">{description}</p>
+      )}
       {action && <div className="pt-1">{action}</div>}
     </div>
   );
@@ -69,7 +71,7 @@ export function StatCard({
         className,
       )}
     >
-      <p className="flex items-center gap-2 text-[13px] text-fg-muted">
+      <p className="flex items-center gap-2 text-sm sm:text-[13px] text-fg-muted">
         {Icon && <Icon className="size-4 text-fg-subtle" aria-hidden="true" />}
         {label}
       </p>
@@ -106,7 +108,11 @@ export function Avatar({
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join('');
-  const sizes = { sm: 'size-7 text-[11px]', md: 'size-8 text-xs', lg: 'size-10 text-sm' };
+  const sizes = {
+    sm: 'size-7 text-xs sm:text-[11px]',
+    md: 'size-8 text-xs',
+    lg: 'size-10 text-sm',
+  };
   return (
     <span
       aria-hidden="true"

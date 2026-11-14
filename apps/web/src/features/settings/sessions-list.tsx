@@ -60,7 +60,7 @@ export function SessionsList({ sessions }: { sessions: SessionResponse[] }) {
                   {device.label ?? t('unknownDevice')}
                   {session.current && <Badge tone="success">{t('currentSession')}</Badge>}
                 </p>
-                <p className="mt-0.5 truncate text-[13px] text-fg-muted">
+                <p className="mt-0.5 truncate text-sm sm:text-[13px] text-fg-muted">
                   {[
                     session.ip,
                     t('lastActive', {
@@ -89,7 +89,9 @@ export function SessionsList({ sessions }: { sessions: SessionResponse[] }) {
           );
         })}
       </ul>
-      {sessions.length <= 1 && <p className="text-[13px] text-fg-muted">{t('sessionsEmpty')}</p>}
+      {sessions.length <= 1 && (
+        <p className="text-sm sm:text-[13px] text-fg-muted">{t('sessionsEmpty')}</p>
+      )}
       <div>
         <Button variant="danger" icon={LogOut} onClick={() => setConfirmOpen(true)}>
           {t('logoutAll')}

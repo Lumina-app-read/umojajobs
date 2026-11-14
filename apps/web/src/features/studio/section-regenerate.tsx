@@ -66,7 +66,9 @@ export function SectionRegenerate({
       <div className="flex flex-wrap items-center gap-2">
         {confirming ? (
           <>
-            <span className="text-[13px] text-fg-muted">{t('confirm', { count: price ?? 0 })}</span>
+            <span className="text-sm sm:text-[13px] text-fg-muted">
+              {t('confirm', { count: price ?? 0 })}
+            </span>
             <Button type="button" size="sm" icon={Check} loading={pending} onClick={regenerate}>
               {t('yes')}
             </Button>

@@ -49,7 +49,7 @@ async function HeroVisual() {
         {/* Offre d'exemple */}
         <div className="rounded-xl border border-line bg-surface-raised p-4">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
+            <span className="text-xs sm:text-[11px] font-semibold tracking-wide text-fg-subtle uppercase">
               {t('preview.label')}
             </span>
             <Badge tone="success" icon={BadgeCheck}>
@@ -57,7 +57,7 @@ async function HeroVisual() {
             </Badge>
           </div>
           <p className="mt-2 text-[15px] font-bold text-fg">{t('preview.jobTitle')}</p>
-          <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-fg-muted">
+          <p className="mt-0.5 flex items-center gap-1.5 text-sm sm:text-[13px] text-fg-muted">
             <Briefcase className="size-3.5" />
             {t('preview.company')}
           </p>
@@ -86,7 +86,7 @@ async function HeroVisual() {
           </span>
           <span>
             <span className="block text-xs text-fg-subtle">{t('preview.cvLabel')}</span>
-            <span className="mt-0.5 flex items-center gap-1 text-[13px] font-semibold text-fg">
+            <span className="mt-0.5 flex items-center gap-1 text-sm sm:text-[13px] font-semibold text-fg">
               <Check className="size-3.5 shrink-0 text-success" />
               {t('preview.cvReady')}
             </span>
@@ -108,7 +108,7 @@ export async function Hero() {
       />
       <div className="relative mx-auto grid max-w-6xl items-center gap-16 px-4 pt-12 pb-20 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pt-16 lg:pb-24">
         <div className="stagger">
-          <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-fg-muted shadow-xs">
+          <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm sm:text-[13px] font-medium text-fg-muted shadow-xs">
             <Globe2 className="size-4 text-brand" aria-hidden="true" />
             {t('eyebrow')}
           </p>

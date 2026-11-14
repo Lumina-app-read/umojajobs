@@ -225,7 +225,7 @@ export async function JobDetailView({
             {facts.map(({ icon: Icon, value }) => (
               <li
                 key={value}
-                className="flex items-center gap-1.5 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-[13px] font-medium text-fg"
+                className="flex items-center gap-1.5 rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm sm:text-[13px] font-medium text-fg"
               >
                 <Icon className="size-4 text-fg-subtle" aria-hidden="true" />
                 {value}
@@ -248,7 +248,7 @@ export async function JobDetailView({
             <Badge tone="primary">
               {locale === 'fr' ? offer.category.nameFr : offer.category.nameEn}
             </Badge>
-            <span className="flex items-center gap-1.5 text-[13px] text-fg-subtle sm:ml-auto">
+            <span className="flex items-center gap-1.5 text-sm sm:text-[13px] text-fg-subtle sm:ml-auto">
               <Clock className="size-4" aria-hidden="true" />
               {t('public.published', {
                 date: format.dateTime(new Date(offer.publishedAt), { dateStyle: 'medium' }),
@@ -278,7 +278,7 @@ export async function JobDetailView({
                 {offer.skills.map((skill) => (
                   <li
                     key={skill}
-                    className="rounded-full bg-primary-soft px-3 py-1 text-[13px] font-medium text-brand"
+                    className="rounded-full bg-primary-soft px-3 py-1 text-sm sm:text-[13px] font-medium text-brand"
                   >
                     {skill}
                   </li>
@@ -324,7 +324,7 @@ export async function JobDetailView({
               <div className="mt-4 grid gap-4">
                 <UnlockedContents contents={unlocked} />
                 <details className="group rounded-lg border border-line bg-surface p-3.5">
-                  <summary className="cursor-pointer text-[13px] font-semibold text-fg">
+                  <summary className="cursor-pointer text-sm sm:text-[13px] font-semibold text-fg">
                     {t('candidateRules.reminder')}
                   </summary>
                   <div className="mt-3">
@@ -333,10 +333,10 @@ export async function JobDetailView({
                 </details>
               </div>
             ) : isUnlocked ? (
-              <p className="mt-3 text-[13px] text-fg-muted">{t('public.unavailable')}</p>
+              <p className="mt-3 text-sm sm:text-[13px] text-fg-muted">{t('public.unavailable')}</p>
             ) : (
               <>
-                <p className="mt-2 text-[13px] leading-relaxed text-fg-muted">
+                <p className="mt-2 text-sm sm:text-[13px] leading-relaxed text-fg-muted">
                   {t('public.detail.unlockIntro')}
                 </p>
                 <ul className="mt-4 grid gap-2">

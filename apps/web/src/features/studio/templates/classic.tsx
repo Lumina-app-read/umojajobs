@@ -5,7 +5,7 @@ import { Description, joinParts, When } from './shared';
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-6 break-inside-avoid-page">
-      <h2 className="border-b border-[#cbd5e1] pb-1 text-[11px] font-bold tracking-[0.14em] text-[#0f2a4a] uppercase">
+      <h2 className="border-b border-[#cbd5e1] pb-1 text-xs sm:text-[11px] font-bold tracking-[0.14em] text-[#0f2a4a] uppercase">
         {title}
       </h2>
       <div className="mt-2.5 grid gap-3">{children}</div>
@@ -28,7 +28,7 @@ function Entry({
     <div className="break-inside-avoid">
       <div className="flex items-baseline justify-between gap-4">
         <p className="font-semibold text-[#0f172a]">{title}</p>
-        {period && <p className="shrink-0 text-[11px] text-[#475569]">{period}</p>}
+        {period && <p className="shrink-0 text-xs sm:text-[11px] text-[#475569]">{period}</p>}
       </div>
       {subtitle && <p className="text-[#334155] italic">{subtitle}</p>}
       <Description text={description} className="text-[#334155]" />
@@ -47,7 +47,7 @@ export function ClassicTemplate({ content, labels, countryName }: CvTemplateProp
   ]);
 
   return (
-    <article className="px-[56px] py-[52px] text-[12px] leading-[1.5] text-[#1e293b]">
+    <article className="px-[56px] py-[52px] text-[13px] sm:text-[12px] leading-[1.5] text-[#1e293b]">
       <header className="text-center">
         <h1 className="text-[26px] leading-tight font-bold tracking-[-0.01em] text-[#0f2a4a]">
           {personal.fullName}
@@ -55,7 +55,7 @@ export function ClassicTemplate({ content, labels, countryName }: CvTemplateProp
         {personal.headline && (
           <p className="mt-1 text-[14px] font-medium text-[#1d4ed8]">{personal.headline}</p>
         )}
-        {contact && <p className="mt-2 text-[11px] text-[#475569]">{contact}</p>}
+        {contact && <p className="mt-2 text-xs sm:text-[11px] text-[#475569]">{contact}</p>}
       </header>
 
       <When show={Boolean(personal.summary)}>
@@ -117,7 +117,7 @@ export function ClassicTemplate({ content, labels, countryName }: CvTemplateProp
                 {item.issuer && <span className="text-[#475569]">, {item.issuer}</span>}
               </p>
               {item.date && (
-                <p className="shrink-0 text-[11px] text-[#475569]">
+                <p className="shrink-0 text-xs sm:text-[11px] text-[#475569]">
                   {formatMonth(item.date, labels)}
                 </p>
               )}
@@ -131,7 +131,7 @@ export function ClassicTemplate({ content, labels, countryName }: CvTemplateProp
           {content.projects.map((item) => (
             <div key={item.id} className="break-inside-avoid">
               <p className="font-semibold text-[#0f172a]">{item.name}</p>
-              {item.url && <p className="text-[11px] text-[#1d4ed8]">{item.url}</p>}
+              {item.url && <p className="text-xs sm:text-[11px] text-[#1d4ed8]">{item.url}</p>}
               <Description text={item.description} className="text-[#334155]" />
             </div>
           ))}
