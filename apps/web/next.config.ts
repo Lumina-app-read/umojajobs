@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   /**
+   * Développement uniquement : autorise l'ouverture du serveur de dev depuis un téléphone du réseau
+   * local (adresses privées), par exemple http://10.x.x.x:3000. Sans effet en production.
+   */
+  allowedDevOrigins: ['10.*.*.*', '172.*.*.*', '192.168.*.*'],
+  /**
    * Même origine pour l'interface et l'API : /api est relayé vers NestJS. Les cookies de session
    * restent limités à l'hôte et aucune configuration CORS n'est nécessaire.
    * En production, Nginx route /api directement vers l'API.
