@@ -14,7 +14,8 @@ import { cn } from '@/lib/cn';
 
 /**
  * Modale accessible (Headless UI) : piège du focus, fermeture à l'Échap, fond flouté.
- * Sur mobile, elle s'ouvre depuis le bas de l'écran.
+ * Sur mobile, elle s'ouvre depuis le bas de l'écran. Sa hauteur est limitée à l'écran : le contenu
+ * défile, l'en-tête et le pied restent visibles.
  */
 export function Dialog({
   open,
@@ -45,12 +46,12 @@ export function Dialog({
         <DialogPanel
           transition
           className={cn(
-            'w-full rounded-t-2xl border border-line bg-surface-raised shadow-lg sm:rounded-xl',
+            'flex max-h-[calc(100dvh-1rem)] w-full flex-col rounded-t-2xl border border-line bg-surface-raised shadow-lg sm:max-h-[calc(100dvh-2rem)] sm:rounded-xl',
             'transition duration-[320ms] ease-emphasized data-closed:translate-y-4 data-closed:opacity-0 sm:data-closed:translate-y-2 sm:data-closed:scale-[0.98]',
             widths[size],
           )}
         >
-          <div className="flex items-start justify-between gap-4 px-5 pt-5">
+          <div className="flex shrink-0 items-start justify-between gap-4 px-5 pt-5">
             <div className="min-w-0">
               <DialogTitle className="text-base font-semibold text-fg">{title}</DialogTitle>
               {description && (
@@ -66,9 +67,13 @@ export function Dialog({
               <X className="size-4" aria-hidden="true" />
             </button>
           </div>
-          {children && <div className="px-5 py-4 text-sm text-fg-muted">{children}</div>}
+          {children && (
+            <div className="min-h-0 overflow-y-auto overscroll-contain px-5 py-4 text-sm text-fg-muted">
+              {children}
+            </div>
+          )}
           {footer && (
-            <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-3.5 sm:flex-row sm:justify-end">
+            <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-line px-5 py-3.5 sm:flex-row sm:justify-end">
               {footer}
             </div>
           )}
