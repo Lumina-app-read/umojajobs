@@ -14,6 +14,7 @@ import { FormField } from '@/components/ui/form-field';
 import { toast } from '@/components/ui/toast';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
+import { randomUuid } from '@/lib/uuid';
 
 /**
  * Dotation de crédits gratuits : recherche du bénéficiaire par email, puis quantité et motif.
@@ -27,7 +28,7 @@ export function CreditGrantForm() {
   const [user, setUser] = useState<FinanceUserLookupResponse | null>(null);
   const [credits, setCredits] = useState('');
   const [reason, setReason] = useState('');
-  const [key, setKey] = useState(() => crypto.randomUUID());
+  const [key, setKey] = useState(() => randomUuid());
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -64,7 +65,7 @@ export function CreditGrantForm() {
       setUser({ ...user, balance: result.balance });
       setCredits('');
       setReason('');
-      setKey(crypto.randomUUID());
+      setKey(randomUuid());
     } catch (caught) {
       setError(fromApiError(caught).message);
     } finally {
@@ -76,7 +77,7 @@ export function CreditGrantForm() {
     setUser(null);
     setEmail('');
     setError(null);
-    setKey(crypto.randomUUID());
+    setKey(randomUuid());
   }
 
   return (

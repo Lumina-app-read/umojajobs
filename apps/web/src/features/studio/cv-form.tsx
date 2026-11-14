@@ -44,6 +44,7 @@ import { ChipsField } from './chips-field';
 import { Section } from './form-section';
 import { SectionRegenerate } from './section-regenerate';
 import { type CvIssue } from './cv-validation';
+import { randomUuid } from '@/lib/uuid';
 
 export { type CvIssue, validateCv } from './cv-validation';
 
@@ -51,10 +52,7 @@ type ListKey =
   'experiences' | 'education' | 'languages' | 'certifications' | 'projects' | 'references';
 type Item<K extends ListKey> = CvContent[K][number];
 
-const newId = (): string =>
-  typeof crypto !== 'undefined' && 'randomUUID' in crypto
-    ? crypto.randomUUID()
-    : `i${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+const newId = (): string => randomUuid();
 
 const FACTORIES: { [K in ListKey]: () => Item<K> } = {
   experiences: () => ({

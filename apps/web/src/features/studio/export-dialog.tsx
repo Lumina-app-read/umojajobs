@@ -19,6 +19,7 @@ import { Skeleton } from '@/components/ui/feedback';
 import { toast } from '@/components/ui/toast';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
+import { randomUuid } from '@/lib/uuid';
 
 const STATUS_TONE: Record<CareerExportSummary['status'], BadgeTone> = {
   ready: 'success',
@@ -78,7 +79,7 @@ export function ExportDialog({
   }
 
   async function exportPdf() {
-    attemptKey.current ??= crypto.randomUUID();
+    attemptKey.current ??= randomUuid();
     setPending(true);
     setError(null);
     try {

@@ -9,6 +9,7 @@ import {
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '@/lib/api/client';
 import { ApiError } from '@/lib/api/errors';
+import { randomUuid } from '@/lib/uuid';
 
 interface StudioAi {
   /** Tarifs fixés par le serveur pour ce document (null tant qu'ils ne sont pas chargés). */
@@ -94,7 +95,7 @@ export async function runAiOperation(
   body: Record<string, unknown>,
   onChecking?: () => void,
 ): Promise<AiGenerationResponse> {
-  const key = crypto.randomUUID();
+  const key = randomUuid();
   const base = `/me/career-documents/${documentId}/ai`;
   try {
     return await api.post<AiGenerationResponse>(`${base}/${path}`, {
