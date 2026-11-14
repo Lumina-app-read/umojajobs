@@ -575,7 +575,7 @@
     "secure": "Vos crédits sont ajoutés dès que le paiement est confirmé. Aucune donnée bancaire ne transite par Umoja Jobs.",
     "pay": "Payer {price}",
     "cancel": "Annuler",
-    "note": "Les crédits n’expirent pas. Les frais de paiement sont à la charge d’Umoja Jobs.",
+    "note": "Les crédits n’expirent pas. Prix tout compris : les frais de paiement sont inclus.",
     "verifyingTitle": "Paiement en cours de vérification",
     "verifyingBody": "Nous attendons la confirmation du paiement. Cela prend généralement moins d’une minute.",
     "paidTitle": "Paiement confirmé !",
@@ -600,6 +600,10 @@
       "job_unlock": "Déverrouillage d’une offre",
       "career_document_pass": "Export PDF",
       "ai_generation": "Génération IA"
-    }
+    },
+    "choose": "Choisir ce pack",
+    "creditsUnit": "crédits",
+    "perCredit": "{price} par crédit",
+    "bestValue": "Meilleur prix"
   }
 }

@@ -37,13 +37,13 @@ export async function SiteHeader() {
           <Logo variant="auto" size={30} />
         </Link>
 
-        <nav aria-label={t('main')} className="ml-6 max-lg:hidden">
-          <ul className="flex items-center gap-1">
+        <nav aria-label={t('main')} className="ml-4 max-xl:hidden">
+          <ul className="flex items-center gap-0.5">
             {PRIMARY_NAV.map(({ key, href }) => (
               <li key={key}>
                 <Link
                   href={href}
-                  className="rounded-md px-3 py-2 text-sm font-medium text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
+                  className="rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
                 >
                   {t(key)}
                 </Link>
@@ -52,7 +52,7 @@ export async function SiteHeader() {
           </ul>
         </nav>
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-1 whitespace-nowrap">
           <LanguageMenu className="max-lg:hidden" />
           <ThemeMenu />
           <span className="mx-1.5 h-5 w-px bg-line max-lg:hidden" aria-hidden="true" />

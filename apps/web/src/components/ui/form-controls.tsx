@@ -41,7 +41,7 @@ export function TextAreaField({
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   return (
-    <div className={cn('grid gap-1.5', className)}>
+    <div className={cn('grid min-w-0 gap-1.5', className)}>
       <FieldLabel htmlFor={id} optional={optionalLabel}>
         {label}
       </FieldLabel>
@@ -99,7 +99,7 @@ export function FormSelect<T extends string>({
   const errorId = useId();
   const current = options.find((option) => option.value === value) ?? null;
   return (
-    <Field className="grid gap-1.5">
+    <Field className="grid min-w-0 gap-1.5">
       <Label className="block text-[13px] font-semibold text-fg">
         {label}
         {optionalLabel && <span className="ml-1 font-normal text-fg-subtle">{optionalLabel}</span>}

@@ -39,14 +39,14 @@ export function MobileNav({ signedIn }: { signedIn: boolean }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={cn(buttonClasses('ghost', 'md'), 'size-9 px-0 lg:hidden')}
+        className={cn(buttonClasses('ghost', 'md'), 'size-9 px-0 xl:hidden')}
         aria-label={t('nav.openMenu')}
         aria-expanded={open}
       >
         <Menu className="size-5" aria-hidden="true" />
       </button>
 
-      <Dialog open={open} onClose={close} className="relative z-50 lg:hidden">
+      <Dialog open={open} onClose={close} className="relative z-50 xl:hidden">
         <DialogBackdrop
           transition
           className="fixed inset-0 bg-navy/40 backdrop-blur-[2px] transition duration-200 data-closed:opacity-0"

@@ -575,7 +575,7 @@
     "secure": "Your credits are added as soon as the payment is confirmed. No banking data goes through Umoja Jobs.",
     "pay": "Pay {price}",
     "cancel": "Cancel",
-    "note": "Credits do not expire. Payment fees are paid by Umoja Jobs.",
+    "note": "Credits do not expire. All-inclusive price: payment fees are included.",
     "verifyingTitle": "Payment being verified",
     "verifyingBody": "We are waiting for the payment confirmation. It usually takes less than a minute.",
     "paidTitle": "Payment confirmed!",
@@ -600,6 +600,10 @@
       "job_unlock": "Job offer unlock",
       "career_document_pass": "PDF export",
       "ai_generation": "AI generation"
-    }
+    },
+    "choose": "Choose this pack",
+    "creditsUnit": "credits",
+    "perCredit": "{price} per credit",
+    "bestValue": "Best value"
   }
 }

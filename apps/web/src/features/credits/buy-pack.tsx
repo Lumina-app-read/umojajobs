@@ -5,7 +5,7 @@ import {
   type CreditOrderResponse,
   type CreditPackResponse,
 } from '@opportinities/shared';
-import { CircleCheck, CreditCard, Loader, Phone, ShieldCheck, X } from 'lucide-react';
+import { CircleCheck, CreditCard, ShoppingBag, Loader, Phone, ShieldCheck, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useEffect, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
@@ -54,8 +54,8 @@ export function BuyPackButton({
 
   return (
     <>
-      <Button icon={CreditCard} fullWidth onClick={() => setOpen(true)}>
-        {t('buy')}
+      <Button variant="secondary" icon={ShoppingBag} fullWidth onClick={() => setOpen(true)}>
+        {t('choose')}
       </Button>
       <Dialog
         open={open}

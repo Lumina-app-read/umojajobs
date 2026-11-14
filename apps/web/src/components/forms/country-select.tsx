@@ -76,7 +76,7 @@ export function CountrySelect({
   const selected = sorted.find((country) => country.iso2 === value) ?? null;
 
   return (
-    <Field className="grid gap-1.5">
+    <Field className="grid min-w-0 gap-1.5">
       <Label className="block text-[13px] font-semibold text-fg">{label}</Label>
       <Combobox
         value={selected}

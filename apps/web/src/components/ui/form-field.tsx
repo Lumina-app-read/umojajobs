@@ -100,7 +100,7 @@ export function FormField({
   const errorId = error ? `${id}-error` : undefined;
 
   return (
-    <div className={cn('grid gap-1.5', className)}>
+    <div className={cn('grid min-w-0 gap-1.5', className)}>
       <FieldLabel htmlFor={id} optional={optionalLabel}>
         {label}
       </FieldLabel>
@@ -164,7 +164,7 @@ export function Checkbox({ label, error, className, ...props }: CheckboxProps) {
   const id = useId();
   const errorId = error ? `${id}-error` : undefined;
   return (
-    <div className={cn('grid gap-1.5', className)}>
+    <div className={cn('grid min-w-0 gap-1.5', className)}>
       <label
         htmlFor={id}
         className="flex cursor-pointer items-start gap-2.5 text-[13px] leading-5 text-fg-muted"

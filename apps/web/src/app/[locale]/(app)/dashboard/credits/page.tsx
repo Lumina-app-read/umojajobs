@@ -2,10 +2,12 @@ import { Coins, History, PackageOpen } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Alert } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/feedback';
 import { BuyPackButton, OrderStatus } from '@/features/credits/buy-pack';
 import { getCreditBalance, getCreditPacks } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
+import { cn } from '@/lib/cn';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('jobs.credits');
@@ -26,6 +28,8 @@ export default async function CreditsPage({
   const raw = (await searchParams).order;
   const reference = raw && /^CR-\d{8}-[0-9A-F]{8}$/.test(raw) ? raw : null;
   const [balance, packs] = await Promise.all([getCreditBalance(), getCreditPacks()]);
+  /** Prix par crédit le plus bas : signale le pack le plus avantageux. */
+  const bestPerCredit = Math.min(...packs.map((pack) => Number(pack.priceUsd) / pack.credits));
   const usd = (value: string) =>
     format.number(Number(value), { style: 'currency', currency: 'USD' });
 
@@ -65,27 +69,48 @@ export default async function CreditsPage({
         {packs.length === 0 ? (
           <Alert tone="info">{t('unavailable')}</Alert>
         ) : (
-          <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {packs.map((pack) => (
-              <div
-                key={pack.id}
-                className="lift grid gap-4 rounded-xl border border-line bg-surface p-5 shadow-xs"
-              >
-                <div>
-                  <p className="text-sm font-medium text-fg-muted">{pack.name}</p>
-                  <p className="mt-1 text-3xl font-bold tracking-[-0.02em] text-fg tabular-nums">
-                    {t('creditsCount', { count: pack.credits })}
-                  </p>
-                  <p className="mt-1 text-lg font-semibold text-brand">{usd(pack.priceUsd)}</p>
-                </div>
-                <BuyPackButton
-                  pack={pack}
-                  defaultPhone={me.phoneE164}
-                  priceLabel={usd(pack.priceUsd)}
-                />
-              </div>
-            ))}
-          </div>
+          <ul className="stagger grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {packs.map((pack) => {
+              const perCredit = Number(pack.priceUsd) / pack.credits;
+              const best = packs.length > 1 && perCredit === bestPerCredit;
+              return (
+                <li
+                  key={pack.id}
+                  className={cn(
+                    'lift flex flex-col gap-4 rounded-xl border bg-surface p-4 shadow-xs',
+                    best ? 'border-primary/40' : 'border-line',
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-[13px] font-medium text-fg-muted">{pack.name}</p>
+                    {best && <Badge tone="primary">{t('bestValue')}</Badge>}
+                  </div>
+                  <div>
+                    <p className="flex items-baseline gap-1.5 text-fg">
+                      <span className="text-2xl font-bold tracking-[-0.02em] tabular-nums">
+                        {format.number(pack.credits)}
+                      </span>
+                      <span className="text-sm text-fg-muted">{t('creditsUnit')}</span>
+                    </p>
+                    <p className="mt-1 text-sm text-fg">
+                      <span className="font-semibold tabular-nums">{usd(pack.priceUsd)}</span>
+                      <span className="text-fg-subtle">
+                        {' · '}
+                        {t('perCredit', { price: usd(String(perCredit)) })}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="mt-auto">
+                    <BuyPackButton
+                      pack={pack}
+                      defaultPhone={me.phoneE164}
+                      priceLabel={usd(pack.priceUsd)}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         )}
         <p className="text-xs text-fg-subtle">{t('note')}</p>
       </section>

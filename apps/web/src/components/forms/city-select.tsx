@@ -80,7 +80,7 @@ export function CitySelect({
 
   const disabled = !countryIso2;
   return (
-    <Field className="grid gap-1.5" disabled={disabled}>
+    <Field className="grid min-w-0 gap-1.5" disabled={disabled}>
       <Label className="block text-[13px] font-semibold text-fg">
         {label}
         {optionalLabel && <span className="ml-1 font-normal text-fg-subtle">{optionalLabel}</span>}

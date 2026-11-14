@@ -580,8 +580,9 @@ export function CvForm({
             itemFrame(
               'certifications',
               index,
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
+                  className="sm:col-span-2"
                   label={t('fields.certification')}
                   name={`certifications.${index}.name`}
                   icon={Award}
