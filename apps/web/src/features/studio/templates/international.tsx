@@ -6,7 +6,7 @@ import { Description, joinParts, When } from './shared';
 function Row({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="grid grid-cols-[150px_minmax(0,1fr)] gap-6 border-t border-[#e2e8f0] py-4 break-inside-avoid-page">
-      <h2 className="pt-px text-[11.5px] sm:text-[10.5px] font-bold tracking-[0.12em] text-[#1d4ed8] uppercase">
+      <h2 className="pt-px text-[10.5px] font-bold tracking-[0.12em] text-[#1d4ed8] uppercase">
         {title}
       </h2>
       <div className="grid gap-3">{children}</div>
@@ -32,7 +32,7 @@ function Item({
           {title}
           {subtitle && <span className="font-normal text-[#475569]">, {subtitle}</span>}
         </p>
-        {period && <p className="shrink-0 text-xs sm:text-[11px] text-[#64748b]">{period}</p>}
+        {period && <p className="shrink-0 text-[11px] text-[#64748b]">{period}</p>}
       </div>
       <Description text={description} className="text-[#334155]" />
     </div>
@@ -53,7 +53,7 @@ export function InternationalTemplate({ content, labels, countryName }: CvTempla
   ].filter(Boolean);
 
   return (
-    <article className="text-[13px] sm:text-[12px] leading-[1.5] text-[#1e293b]">
+    <article className="text-[12px] leading-[1.5] text-[#1e293b]">
       <div className="h-[6px] bg-[#1d4ed8]" aria-hidden="true" />
       <div className="px-[52px] pt-[40px] pb-[44px]">
         <header className="flex items-end justify-between gap-8 pb-5">
@@ -66,7 +66,7 @@ export function InternationalTemplate({ content, labels, countryName }: CvTempla
             )}
           </div>
           {contacts.length > 0 && (
-            <div className="shrink-0 text-right text-xs sm:text-[11px] leading-[1.6] text-[#475569]">
+            <div className="shrink-0 text-right text-[11px] leading-[1.6] text-[#475569]">
               {contacts.map((value) => (
                 <p key={value}>{value}</p>
               ))}
@@ -146,7 +146,7 @@ export function InternationalTemplate({ content, labels, countryName }: CvTempla
             {content.projects.map((item) => (
               <div key={item.id} className="break-inside-avoid">
                 <p className="font-semibold text-[#0f172a]">{item.name}</p>
-                {item.url && <p className="text-xs sm:text-[11px] text-[#1d4ed8]">{item.url}</p>}
+                {item.url && <p className="text-[11px] text-[#1d4ed8]">{item.url}</p>}
                 <Description text={item.description} className="text-[#334155]" />
               </div>
             ))}

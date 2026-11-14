@@ -5,7 +5,7 @@ import { Description, joinParts, When } from './shared';
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-6 break-inside-avoid-page">
-      <h2 className="inline-block rounded-[4px] bg-[#dbeafe] px-2 py-0.5 text-xs sm:text-[11px] font-bold tracking-[0.08em] text-[#1e40af] uppercase">
+      <h2 className="inline-block rounded-[4px] bg-[#dbeafe] px-2 py-0.5 text-[11px] font-bold tracking-[0.08em] text-[#1e40af] uppercase">
         {title}
       </h2>
       <div className="mt-3 grid gap-3">{children}</div>
@@ -27,10 +27,8 @@ function Entry({
   return (
     <div className="break-inside-avoid">
       <div className="flex items-baseline justify-between gap-4">
-        <p className="text-sm sm:text-[13px] font-semibold text-[#0f172a]">{title}</p>
-        {period && (
-          <p className="shrink-0 text-xs sm:text-[11px] font-medium text-[#2563eb]">{period}</p>
-        )}
+        <p className="text-[13px] font-semibold text-[#0f172a]">{title}</p>
+        {period && <p className="shrink-0 text-[11px] font-medium text-[#2563eb]">{period}</p>}
       </div>
       {subtitle && <p className="text-[#475569]">{subtitle}</p>}
       <Description text={description} className="text-[#334155]" />
@@ -63,7 +61,7 @@ export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvT
   const letters = initials(personal.fullName);
 
   return (
-    <article className="px-[52px] py-[46px] text-[13px] sm:text-[12px] leading-[1.5] text-[#1e293b]">
+    <article className="px-[52px] py-[46px] text-[12px] leading-[1.5] text-[#1e293b]">
       <header className="flex items-center gap-5 rounded-[10px] bg-[#eff6ff] px-6 py-5">
         {photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- image privée ou data URI, imprimée telle quelle
@@ -87,11 +85,9 @@ export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvT
             {personal.fullName}
           </h1>
           {personal.headline && (
-            <p className="mt-0.5 text-sm sm:text-[13px] font-medium text-[#1d4ed8]">
-              {personal.headline}
-            </p>
+            <p className="mt-0.5 text-[13px] font-medium text-[#1d4ed8]">{personal.headline}</p>
           )}
-          {contact && <p className="mt-1.5 text-xs sm:text-[11px] text-[#475569]">{contact}</p>}
+          {contact && <p className="mt-1.5 text-[11px] text-[#475569]">{contact}</p>}
         </div>
       </header>
 
@@ -121,7 +117,7 @@ export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvT
             {content.skills.map((skill) => (
               <li
                 key={skill}
-                className="rounded-full border border-[#bfdbfe] px-2.5 py-0.5 text-xs sm:text-[11px] text-[#1e3a8a]"
+                className="rounded-full border border-[#bfdbfe] px-2.5 py-0.5 text-[11px] text-[#1e3a8a]"
               >
                 {skill}
               </li>
@@ -134,8 +130,8 @@ export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvT
         <Section title={labels.projects}>
           {content.projects.map((item) => (
             <div key={item.id} className="break-inside-avoid">
-              <p className="text-sm sm:text-[13px] font-semibold text-[#0f172a]">{item.name}</p>
-              {item.url && <p className="text-xs sm:text-[11px] text-[#2563eb]">{item.url}</p>}
+              <p className="text-[13px] font-semibold text-[#0f172a]">{item.name}</p>
+              {item.url && <p className="text-[11px] text-[#2563eb]">{item.url}</p>}
               <Description text={item.description} className="text-[#334155]" />
             </div>
           ))}
@@ -163,9 +159,7 @@ export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvT
               {content.languages.map((item) => (
                 <div key={item.id} className="flex items-baseline justify-between gap-2">
                   <span className="font-medium text-[#0f172a]">{item.name}</span>
-                  <span className="text-xs sm:text-[11px] text-[#475569]">
-                    {labels.levels[item.level]}
-                  </span>
+                  <span className="text-[11px] text-[#475569]">{labels.levels[item.level]}</span>
                 </div>
               ))}
             </Section>
@@ -175,7 +169,7 @@ export function GraduateTemplate({ content, labels, countryName, photoUrl }: CvT
               {content.certifications.map((item) => (
                 <div key={item.id}>
                   <p className="font-medium text-[#0f172a]">{item.name}</p>
-                  <p className="text-xs sm:text-[11px] text-[#475569]">
+                  <p className="text-[11px] text-[#475569]">
                     {joinParts([item.issuer, item.date ? formatMonth(item.date, labels) : ''])}
                   </p>
                 </div>
