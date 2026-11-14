@@ -375,10 +375,10 @@ export interface CreditOrderResponse {
 
 /**
  * Prix conseillé d'un pack pour encaisser, après les frais du prestataire de paiement, la valeur
- * des crédits vendus : valeur / (1 - taux), arrondie au cent supérieur. Exemple : 1 USD de crédits
- * avec 15 % de frais donne 1,18 USD.
+ * des crédits vendus : valeur / (1 - taux), arrondie au dollar supérieur, car Chariow n'accepte
+ * que des prix entiers. Exemple : 2 USD de crédits avec 15 % de frais donnent 3 USD.
  */
 export function packPriceWithFees(creditsValueUsd: number, feeRate: number): number {
   if (!(feeRate >= 0 && feeRate < 1)) return creditsValueUsd;
-  return Math.ceil((creditsValueUsd / (1 - feeRate)) * 100 - 1e-9) / 100;
+  return Math.ceil(creditsValueUsd / (1 - feeRate) - 1e-9);
 }

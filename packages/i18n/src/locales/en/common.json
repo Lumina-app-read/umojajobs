@@ -384,7 +384,7 @@
         "cancel": "Cancel",
         "saved": "Pack saved",
         "value": "Credits value: {value}",
-        "suggested": "Suggested price, {rate} fees included: {price}",
+        "suggested": "Suggested price, {rate} fees included, rounded up to the dollar: {price}",
         "useSuggested": "Use this price",
         "net": "Estimated net after fees: {net}"
       }

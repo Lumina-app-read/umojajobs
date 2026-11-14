@@ -384,7 +384,7 @@
         "cancel": "Annuler",
         "saved": "Pack enregistré",
         "value": "Valeur des crédits : {value}",
-        "suggested": "Prix conseillé, frais de {rate} inclus : {price}",
+        "suggested": "Prix conseillé, frais de {rate} inclus, arrondi au dollar supérieur : {price}",
         "useSuggested": "Utiliser ce prix",
         "net": "Net estimé après frais : {net}"
       }
