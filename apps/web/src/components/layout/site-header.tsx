@@ -33,8 +33,8 @@ export async function SiteHeader() {
   return (
     <header className="header-elevate sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur-md backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:px-6">
-        <Link href="/" className="-ml-1 rounded-md p-1" aria-label={t('homeLabel')}>
-          <Logo variant="auto" size={30} />
+        <Link href="/" className="-ml-1 shrink-0 rounded-md p-1" aria-label={t('homeLabel')}>
+          <Logo variant="auto" size={26} />
         </Link>
 
         <nav aria-label={t('main')} className="ml-4 max-xl:hidden">
@@ -43,7 +43,7 @@ export async function SiteHeader() {
               <li key={key}>
                 <Link
                   href={href}
-                  className="rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
+                  className="rounded-md px-2 py-2 text-sm font-medium whitespace-nowrap text-fg-muted transition-colors hover:bg-surface-2 hover:text-fg"
                 >
                   {t(key)}
                 </Link>

@@ -83,7 +83,7 @@ Toutes les couleurs sont des **jetons sémantiques** (`--bg`, `--surface`, `--te
 | `navy` | `#0D1B4C` | `#0D1B4C` | Identité, bandeaux, panneau d'inscription |
 | `accent` (ambre) | `#9A5B00` | `#F5B544` | Gains, nouveautés : usage rare |
 
-**Logo** (fourni par le propriétaire, `public/images/logos`) : le « O » seul, bleu en clair (`mark-light.png`), cyan en sombre (`mark-dark.png`), versions détourées de 128 px de haut. Le nom n'est jamais écrit dans les barres d'en-tête. Favicons générés depuis `images/favicon/favicon.png` (`app/favicon.ico`, `icon.png`, `apple-icon.png`).
+**Logo** (fourni par le propriétaire, `public/images/logos`) : sources `logo-white.png` (bleu, pour fond clair) et `logo-dark.png` (blanc, pour fond sombre). Versions recadrées de 128 px de haut utilisées par le composant `Logo` : `umoja-logo-light.png`, `umoja-logo-dark.png` (symbole et nom) et `umoja-mark-light.png`, `umoja-mark-dark.png` (symbole seul, petits écrans). Favicons : symbole blanc sur carré bleu (`app/favicon.ico`, `icon.png`, `apple-icon.png`).
 
 ### Neutres (légèrement teintés de bleu, jamais de gris pur)
 
