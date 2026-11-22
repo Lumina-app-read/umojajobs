@@ -6,7 +6,8 @@ import { LanguageMenu } from '@/components/layout/language-menu';
 import { ThemeMenu } from '@/components/theme/theme-menu';
 import { routerMock } from '@/test/navigation-mock';
 import { renderWithIntl } from '@/test/render';
-import { Button } from './button';
+import { Button, IconButton } from './button';
+import { TextAreaField } from './form-controls';
 import { FormField } from './form-field';
 import { Stepper } from './navigation';
 import { Toaster, toast } from './toast';
@@ -110,5 +111,23 @@ describe('Button et FormField', () => {
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAccessibleDescription('Adresse invalide');
     expect(screen.queryByText('Aide')).toBeNull();
+  });
+});
+
+describe('tailles responsives', () => {
+  it('un grand champ garde sa hauteur libre sur ordinateur comme sur mobile', () => {
+    renderWithIntl(
+      <TextAreaField label="Motif" name="reason" icon={Mail} placeholder="Ex. : motif" />,
+    );
+    const frame = screen.getByLabelText('Motif').parentElement;
+    expect(frame).toHaveClass('h-auto', 'sm:h-auto');
+    expect(frame).not.toHaveClass('sm:h-10');
+  });
+
+  it('un bouton à icône seule n’a de marge intérieure à aucune largeur', () => {
+    renderWithIntl(<IconButton icon={Send} label="Envoyer" />);
+    const button = screen.getByRole('button', { name: 'Envoyer' });
+    expect(button).toHaveClass('px-0', 'sm:px-0');
+    expect(button).not.toHaveClass('sm:px-3.5');
   });
 });

@@ -136,7 +136,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       disabled={disabled ?? loading}
       aria-busy={loading || undefined}
       {...props}
-      className={cn(buttonClasses(variant, size), ICON_SIZES[size], 'px-0', className)}
+      className={cn(buttonClasses(variant, size), ICON_SIZES[size], 'px-0 sm:px-0', className)}
     >
       <Icon className="size-[18px]" aria-hidden="true" />
       {children}

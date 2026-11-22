@@ -45,7 +45,7 @@ export function TextAreaField({
       <FieldLabel htmlFor={id} optional={optionalLabel}>
         {label}
       </FieldLabel>
-      <div className={cn(controlFrameClasses(Boolean(error)), 'h-auto items-start')}>
+      <div className={cn(controlFrameClasses(Boolean(error)), 'h-auto items-start sm:h-auto')}>
         <Icon
           className="mt-3 ml-3 size-[18px] shrink-0 text-fg-subtle sm:size-4"
           aria-hidden="true"
