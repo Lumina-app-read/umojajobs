@@ -4,6 +4,9 @@ import {
   type BundleResponse,
   type BundleSummary,
   type CareerDocumentResponse,
+  type CommissionRegistryResponse,
+  type PaymentRegistryResponse,
+  type UnlockRegistryResponse,
   type CareerDocumentSummary,
   type CareerExportFilter,
   type CareerExportHistoryResponse,
@@ -303,6 +306,28 @@ export async function getBundle(id: string): Promise<BundleResponse | null> {
   ).catch(() => null);
   return result?.data ?? null;
 }
+
+interface RegistryFilter {
+  q?: string;
+  status?: string;
+  page: number;
+}
+
+async function getRegistry<T>(path: string, filter: RegistryFilter): Promise<T | null> {
+  const query = new URLSearchParams({ page: String(filter.page) });
+  if (filter.q) query.set('q', filter.q);
+  if (filter.status) query.set('status', filter.status);
+  const result = await serverGet<T>(`${path}?${query.toString()}`).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Registres financiers de l'administration (null si l'API refuse ou ne répond pas). */
+export const getPaymentRegistry = (filter: RegistryFilter) =>
+  getRegistry<PaymentRegistryResponse>('/admin/payments', filter);
+export const getUnlockRegistry = (filter: RegistryFilter) =>
+  getRegistry<UnlockRegistryResponse>('/admin/unlocks', filter);
+export const getCommissionRegistry = (filter: RegistryFilter) =>
+  getRegistry<CommissionRegistryResponse>('/admin/commissions', filter);
 
 /** Usage de l'IA du Career Studio (administration ; null si l'API refuse ou ne répond pas). */
 export async function getAiUsage(days: number): Promise<AiUsageResponse | null> {

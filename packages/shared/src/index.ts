@@ -9,4 +9,5 @@ export * from './finance';
 export * from './locales';
 export * from './jobs';
 export * from './studio';
+export * from './registry';
 export * from './bundles';

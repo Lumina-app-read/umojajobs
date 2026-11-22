@@ -5,6 +5,7 @@ import enEmails from './locales/en/emails.json';
 import enErrors from './locales/en/errors.json';
 import enJobs from './locales/en/jobs.json';
 import enLanding from './locales/en/landing.json';
+import enRegistry from './locales/en/registry.json';
 import enStudio from './locales/en/studio.json';
 import enValidation from './locales/en/validation.json';
 import frAuth from './locales/fr/auth.json';
@@ -14,6 +15,7 @@ import frEmails from './locales/fr/emails.json';
 import frErrors from './locales/fr/errors.json';
 import frJobs from './locales/fr/jobs.json';
 import frLanding from './locales/fr/landing.json';
+import frRegistry from './locales/fr/registry.json';
 import frStudio from './locales/fr/studio.json';
 import frValidation from './locales/fr/validation.json';
 import { type MessageParams, type MessageTree, translate } from './translate';
@@ -40,6 +42,7 @@ export const CATALOGS = {
     jobs: frJobs,
     studio: frStudio,
     bundles: frBundles,
+    registry: frRegistry,
     landing: frLanding,
     emails: frEmails,
   },
@@ -51,6 +54,7 @@ export const CATALOGS = {
     jobs: enJobs,
     studio: enStudio,
     bundles: enBundles,
+    registry: enRegistry,
     landing: enLanding,
     emails: enEmails,
   },
@@ -77,10 +81,14 @@ export function getClientMessages(locale: I18nLocale) {
 
 /**
  * Messages de l'interface web pour next-intl, côté serveur : ceux des composants client, plus
- * les textes rendus uniquement par le serveur (page d'accueil), qui ne partent pas au navigateur.
+ * les textes rendus uniquement par le serveur (accueil, registres), qui ne partent pas au navigateur.
  */
 export function getWebMessages(locale: I18nLocale) {
-  return { ...getClientMessages(locale), landing: CATALOGS[locale].landing };
+  return {
+    ...getClientMessages(locale),
+    landing: CATALOGS[locale].landing,
+    registry: CATALOGS[locale].registry,
+  };
 }
 
 export type WebMessages = ReturnType<typeof getWebMessages>;

@@ -2,9 +2,12 @@ import { randomUUID } from 'node:crypto';
 import { type INestApplication } from '@nestjs/common';
 import {
   type CreditBalanceResponse,
+  type CommissionRegistryResponse,
   type CreditGrantResponse,
   type FinancialSettingResponse,
+  type PaymentRegistryResponse,
   type ServiceCostResponse,
+  type UnlockRegistryResponse,
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
 import { totp } from '../src/auth/totp/totp';
@@ -15,6 +18,7 @@ import { REDIS_CLIENT } from '../src/redis/redis.module';
 import { createTestApp } from './create-test-app';
 import { ApiClient, registrationPayload, STRONG_PASSWORD, uniqueEmail } from './support/api-client';
 import { extractToken, waitForEmail } from './support/mailpit';
+import { givePaidCredits } from './support/paid-credits';
 
 type Role = 'admin' | 'super_admin';
 
@@ -321,5 +325,70 @@ describe('Finances : paramètres, crédits et grand livre (intégration)', () =>
         },
       }),
     ).rejects.toThrow(/credit_lots_commissionable_chk/);
+  });
+
+  it('présente le registre des paiements sans données brutes, avec recherche et totaux', async () => {
+    const buyer = await account();
+    const other = await account();
+    const before = ((await treasurer.get('/api/v1/admin/payments')).body as PaymentRegistryResponse)
+      .summary;
+    const { paymentId, saleId } = await givePaidCredits(prisma, buyer.userId, 20, {
+      settled: true,
+    });
+    await prisma.payment.update({
+      where: { id: paymentId },
+      data: { settlementAmount: '1.70', rawSnapshot: { secret: 'donnée brute' } },
+    });
+    await givePaidCredits(prisma, other.userId, 50);
+
+    const all = (await treasurer.get('/api/v1/admin/payments')).body as PaymentRegistryResponse;
+    const gain = (key: 'grossUsd' | 'settledNetUsd' | 'settledFeesUsd' | 'awaitingUsd') =>
+      new Prisma.Decimal(all.summary[key]).sub(before[key]).toFixed(2);
+    expect(all.summary.paidOrders - before.paidOrders).toBe(2);
+    expect([gain('grossUsd'), gain('settledNetUsd'), gain('settledFeesUsd')]).toEqual([
+      '7.00',
+      '1.70',
+      '0.30',
+    ]);
+    expect(gain('awaitingUsd')).toBe('5.00');
+    expect(JSON.stringify(all)).not.toContain('donnée brute');
+
+    const found = (await treasurer.get(`/api/v1/admin/payments?q=${saleId.toUpperCase()}`))
+      .body as PaymentRegistryResponse;
+    expect(found.total).toBe(1);
+    expect(found.items[0]).toMatchObject({
+      status: 'paid',
+      credits: 20,
+      priceUsd: '2.00',
+      buyer: { id: buyer.userId },
+      settlement: { netUsd: '1.70', feesUsd: '0.30' },
+    });
+    // Les totaux ne dépendent pas de la recherche.
+    expect(found.summary).toEqual(all.summary);
+    const failed = await treasurer.get(`/api/v1/admin/payments?q=${saleId}&status=failed`);
+    expect((failed.body as PaymentRegistryResponse).total).toBe(0);
+    expect((await treasurer.get('/api/v1/admin/payments?status=autre')).status).toBe(400);
+    expect((await treasurer.get('/api/v1/admin/payments?page=0')).status).toBe(400);
+  });
+
+  it('réserve les registres à la consultation financière', async () => {
+    const member = await account();
+    const admin = await account('admin');
+    for (const path of ['payments', 'unlocks', 'commissions']) {
+      expect((await member.api.get(`/api/v1/admin/${path}`)).status).toBe(403);
+      expect((await admin.api.get(`/api/v1/admin/${path}`)).status).toBe(200);
+      expect((await admin.api.post(`/api/v1/admin/${path}`, {})).status).toBe(404);
+    }
+    const unlocks = (await admin.api.get('/api/v1/admin/unlocks?q=introuvable'))
+      .body as UnlockRegistryResponse;
+    expect(unlocks).toMatchObject({ items: [], total: 0, page: 1, pageSize: 25 });
+    const commissions = (await admin.api.get('/api/v1/admin/commissions?status=paid'))
+      .body as CommissionRegistryResponse;
+    expect(Object.keys(commissions.summary).sort()).toEqual([
+      'available',
+      'paid',
+      'pending',
+      'reversed',
+    ]);
   });
 });

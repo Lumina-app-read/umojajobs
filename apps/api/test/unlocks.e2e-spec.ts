@@ -17,6 +17,7 @@ import { createCanvas, loadImage } from '@napi-rs/canvas';
 import type Redis from 'ioredis';
 import { Prisma } from '../src/generated/prisma/client';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { RegistryService } from '../src/finance/registry.service';
 import { REDIS_CLIENT } from '../src/redis/redis.module';
 import { createTestApp } from './create-test-app';
 import { ApiClient, registrationPayload, STRONG_PASSWORD, uniqueEmail } from './support/api-client';
@@ -292,6 +293,27 @@ describe('Déverrouillages et commissions (intégration)', () => {
 
     const mine = (await contributor.api.get('/api/v1/me/commissions')).body as CommissionResponse[];
     expect(mine.find((entry) => entry.offer.id === offer.id)?.amountUsd).toBe('0.150000');
+
+    // Registres de l'administration : même déverrouillage, même commission.
+    const registry = app.get(RegistryService);
+    const unlocks = await registry.unlocks({ q: offer.title ?? '', page: 1 });
+    expect(unlocks.total).toBe(1);
+    expect(unlocks.items[0]).toMatchObject({
+      candidate: { id: buyer.userId },
+      offer: { id: offer.id, title: offer.title },
+      credits: 5,
+      valueUsd: '0.50',
+      commission: { amountUsd: '0.15', status: 'pending' },
+    });
+    const commissions = await registry.commissions({ q: offer.title ?? '', page: 1 }, 'pending');
+    expect(commissions.items[0]).toMatchObject({
+      contributor: { id: contributor.userId },
+      baseValueUsd: '0.50',
+      rate: '0.3',
+      amountUsd: '0.15',
+    });
+    expect((await registry.commissions({ q: offer.title ?? '', page: 1 }, 'paid')).total).toBe(0);
+    expect((await registry.unlocks({ q: offer.title ?? '', page: 2 })).items).toEqual([]);
 
     // Montant et bénéficiaire sont figés en base.
     await expect(
