@@ -26,6 +26,8 @@ function toneFor(type: string): BadgeTone {
       'password_reset_completed',
       'role_granted',
       'role_revoked',
+      'user_suspended',
+      'user_reactivated',
       'mfa_recovery_code_used',
       'logout_all',
     ].includes(type)

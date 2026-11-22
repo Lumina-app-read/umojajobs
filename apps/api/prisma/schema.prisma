@@ -144,6 +144,8 @@ enum SecurityEventType {
   withdrawal_requested
   withdrawal_status_changed
   credit_pack_changed
+  user_suspended
+  user_reactivated
 
   @@map("security_event_type")
 }

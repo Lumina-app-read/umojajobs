@@ -10,4 +10,5 @@ export * from './locales';
 export * from './jobs';
 export * from './studio';
 export * from './registry';
+export * from './users';
 export * from './bundles';

@@ -140,13 +140,13 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   {
     key: 'platform',
     items: [
-      { key: 'users', href: '/admin/users', icon: Users, permission: USERS_READ, phase: 'next' },
+      { key: 'users', href: '/admin/users', icon: Users, permission: USERS_READ, phase: null },
       {
         key: 'roles',
         href: '/admin/roles',
         icon: KeyRound,
         permission: ROLES_MANAGE,
-        phase: 'next',
+        phase: null,
       },
       {
         key: 'notifications',

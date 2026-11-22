@@ -84,5 +84,7 @@ export const SECURITY_EVENT_TYPES = [
   'withdrawal_requested',
   'withdrawal_status_changed',
   'credit_pack_changed',
+  'user_suspended',
+  'user_reactivated',
 ] as const;
 export type SecurityEventTypeCode = (typeof SECURITY_EVENT_TYPES)[number];

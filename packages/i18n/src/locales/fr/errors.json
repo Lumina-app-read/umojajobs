@@ -91,5 +91,10 @@
   "BUNDLE_TOO_FEW_FILES": "Ajoutez au moins deux fichiers avant d’exporter.",
   "BUNDLE_ORDER_CONFLICT": "La liste des fichiers a changé. Rechargez la page.",
   "BUNDLE_PDF_UNREADABLE": "Ce PDF est illisible ou endommagé.",
-  "BUNDLE_PDF_PROTECTED": "Ce PDF est protégé par un mot de passe. Retirez la protection puis réessayez."
+  "BUNDLE_PDF_PROTECTED": "Ce PDF est protégé par un mot de passe. Retirez la protection puis réessayez.",
+  "USER_ACTION_SELF": "Vous ne pouvez pas effectuer cette action sur votre propre compte.",
+  "USER_ACTION_FORBIDDEN": "Vos droits ne permettent pas cette action sur ce compte.",
+  "USER_STATE_CONFLICT": "Ce compte a déjà cet état. Rechargez la page.",
+  "USER_ROLE_INELIGIBLE": "Un rôle ne peut être attribué qu’à un compte actif dont l’email est vérifié.",
+  "LAST_SUPER_ADMIN": "La plateforme doit garder au moins un super administrateur actif."
 }

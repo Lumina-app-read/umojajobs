@@ -272,7 +272,9 @@
       "candidate_terms_accepted": "Candidate rules accepted",
       "withdrawal_requested": "Withdrawal requested",
       "withdrawal_status_changed": "Withdrawal status changed",
-      "credit_pack_changed": "Credit pack changed"
+      "credit_pack_changed": "Credit pack changed",
+      "user_suspended": "Account suspended",
+      "user_reactivated": "Account reactivated"
     },
     "badge": "Admin",
     "finance": {
@@ -419,6 +421,60 @@
         "generate": "Full generation",
         "regenerate_section": "Section regeneration",
         "improve": "Text improvement"
+      }
+    },
+    "users": {
+      "status": {
+        "active": "Active",
+        "suspended": "Suspended"
+      },
+      "roles": {
+        "user": "User",
+        "moderator": "Moderator",
+        "admin": "Administrator",
+        "super_admin": "Super administrator"
+      },
+      "roleHints": {
+        "moderator": "Reviews job offers",
+        "admin": "Users, offers and read access to finances",
+        "super_admin": "All rights"
+      },
+      "noAction": "Your permissions do not allow any action on this account.",
+      "access": "Account access",
+      "suspendHint": "The user is signed out everywhere and can no longer sign in. Credits and earnings are kept.",
+      "reactivateHint": "The user will be able to sign in again.",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "rolesTitle": "Team roles",
+      "rolesHint": "Any change signs the user out. Two-factor authentication is required for administrators.",
+      "grant": "Grant",
+      "revoke": "Revoke",
+      "reason": "Reason",
+      "reasonPlaceholder": "E.g. repeated reports checked on 22 November",
+      "cancel": "Cancel",
+      "confirm": {
+        "suspend": {
+          "title": "Suspend {name}?",
+          "body": "The account will be signed out and blocked immediately. The reason is kept in the log."
+        },
+        "reactivate": {
+          "title": "Reactivate {name}?",
+          "body": "The account will be able to sign in again. The reason is kept in the log."
+        },
+        "grant": {
+          "title": "Give the {role} role to {name}?",
+          "body": "The account will have to sign in again. The reason is kept in the log."
+        },
+        "revoke": {
+          "title": "Revoke the {role} role from {name}?",
+          "body": "The account will lose these rights and have to sign in again. The reason is kept in the log."
+        }
+      },
+      "done": {
+        "suspend": "Account suspended",
+        "reactivate": "Account reactivated",
+        "grant": "Role granted",
+        "revoke": "Role revoked"
       }
     }
   }

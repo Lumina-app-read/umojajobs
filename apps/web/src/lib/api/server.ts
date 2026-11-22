@@ -1,12 +1,15 @@
 import 'server-only';
 import {
   type AiUsageResponse,
+  type AdminRolesResponse,
+  type AdminUserDetail,
   type BundleResponse,
   type BundleSummary,
   type CareerDocumentResponse,
   type CommissionRegistryResponse,
   type PaymentRegistryResponse,
   type UnlockRegistryResponse,
+  type UserRegistryResponse,
   type CareerDocumentSummary,
   type CareerExportFilter,
   type CareerExportHistoryResponse,
@@ -328,6 +331,22 @@ export const getUnlockRegistry = (filter: RegistryFilter) =>
   getRegistry<UnlockRegistryResponse>('/admin/unlocks', filter);
 export const getCommissionRegistry = (filter: RegistryFilter) =>
   getRegistry<CommissionRegistryResponse>('/admin/commissions', filter);
+export const getUserRegistry = (filter: RegistryFilter) =>
+  getRegistry<UserRegistryResponse>('/admin/users', filter);
+
+/** Fiche d'un compte (null si l'API refuse, ne répond pas, ou si le compte n'existe pas). */
+export async function getAdminUser(id: string): Promise<AdminUserDetail | null> {
+  const result = await serverGet<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}`).catch(
+    () => null,
+  );
+  return result?.data ?? null;
+}
+
+/** Rôles, permissions et membres de l'équipe. */
+export async function getAdminRoles(): Promise<AdminRolesResponse | null> {
+  const result = await serverGet<AdminRolesResponse>('/admin/roles').catch(() => null);
+  return result?.data ?? null;
+}
 
 /** Usage de l'IA du Career Studio (administration ; null si l'API refuse ou ne répond pas). */
 export async function getAiUsage(days: number): Promise<AiUsageResponse | null> {

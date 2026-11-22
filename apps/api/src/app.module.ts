@@ -16,6 +16,7 @@ import { UnlocksModule } from './unlocks/unlocks.module';
 import { PaymentsModule } from './payments/payments.module';
 import { BundlesModule } from './bundles/bundles.module';
 import { StudioModule } from './studio/studio.module';
+import { UsersModule } from './users/users.module';
 import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 import { LocationsModule } from './locations/locations.module';
 import { MailModule } from './mail/mail.module';
@@ -64,6 +65,7 @@ import { StorageModule } from './storage/storage.module';
     PaymentsModule,
     StudioModule,
     BundlesModule,
+    UsersModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

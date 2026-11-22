@@ -91,5 +91,10 @@
   "BUNDLE_TOO_FEW_FILES": "Add at least two files before exporting.",
   "BUNDLE_ORDER_CONFLICT": "The list of files has changed. Reload the page.",
   "BUNDLE_PDF_UNREADABLE": "This PDF is unreadable or damaged.",
-  "BUNDLE_PDF_PROTECTED": "This PDF is password protected. Remove the protection and try again."
+  "BUNDLE_PDF_PROTECTED": "This PDF is password protected. Remove the protection and try again.",
+  "USER_ACTION_SELF": "You cannot do this on your own account.",
+  "USER_ACTION_FORBIDDEN": "Your permissions do not allow this action on this account.",
+  "USER_STATE_CONFLICT": "This account is already in that state. Reload the page.",
+  "USER_ROLE_INELIGIBLE": "A role can only be granted to an active account with a verified email.",
+  "LAST_SUPER_ADMIN": "The platform must keep at least one active super administrator."
 }

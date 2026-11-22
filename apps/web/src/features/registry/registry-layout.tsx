@@ -23,6 +23,8 @@ export async function RegistryLayout({
   statuses,
   stats,
   data,
+  results,
+  empty,
   children,
 }: {
   base: string;
@@ -34,6 +36,9 @@ export async function RegistryLayout({
   statuses?: { value: string; label: string }[];
   stats: ReactNode;
   data: { total: number; pageSize: number } | null;
+  /** Nombre de résultats, dans les mots du registre (par défaut : des opérations). */
+  results?: string;
+  empty?: string;
   children: ReactNode;
 }) {
   const t = await getTranslations('registry');
@@ -99,14 +104,14 @@ export async function RegistryLayout({
           {data.total === 0 ? (
             <EmptyState
               icon={Icon}
-              title={filtered ? t('noMatch') : t('empty')}
+              title={filtered ? t('noMatch') : (empty ?? t('empty'))}
               description={filtered ? t('noMatchBody') : undefined}
               className="bg-surface py-14"
             />
           ) : (
             <div className="grid gap-3">
               <p className="text-sm text-fg-muted sm:text-[13px]">
-                {t('results', { count: data.total })}
+                {results ?? t('results', { count: data.total })}
               </p>
               {children}
             </div>
