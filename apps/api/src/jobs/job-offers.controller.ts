@@ -28,7 +28,7 @@ import { type AuthContext } from '../auth/auth-context';
 import { type AppRequest, getClientInfo } from '../common/http/app-request';
 import { CurrentAuth, Public, RequirePermissions } from '../security/decorators';
 import { JobModerationService } from './job-moderation.service';
-import { JobOfferFilesService, type UploadedPdf } from './job-offer-files.service';
+import { JobOfferFilesService, type UploadedDocument } from './job-offer-files.service';
 import {
   JobOfferFileParamDto,
   JobOfferFileUploadDto,
@@ -135,7 +135,11 @@ export class MyJobOffersController {
       type: 'object',
       required: ['file', 'kind'],
       properties: {
-        file: { type: 'string', format: 'binary', description: 'PDF, sans élément actif.' },
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'PDF sans élément actif, ou image JPEG, PNG ou WebP.',
+        },
         kind: { type: 'string', enum: ['original', 'attachment'] },
       },
     },
@@ -145,7 +149,7 @@ export class MyJobOffersController {
     @CurrentAuth() auth: AuthContext,
     @Param() params: JobOfferIdParamDto,
     @Body() dto: JobOfferFileUploadDto,
-    @UploadedFile() file: UploadedPdf | undefined,
+    @UploadedFile() file: UploadedDocument | undefined,
     @Req() req: AppRequest,
   ): Promise<JobOfferResponse> {
     return this.files.upload(auth, params.id, dto.kind, file, getClientInfo(req));

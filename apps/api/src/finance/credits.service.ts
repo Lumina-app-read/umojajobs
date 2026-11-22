@@ -48,6 +48,7 @@ const DOCUMENT_SERVICES: readonly CreditService[] = [
   'doc_application_letter',
   'doc_other_letter',
   'doc_pack',
+  'doc_bundle',
 ];
 
 /** Compte de produits crédité par la consommation d'un service (débité par son remboursement). */

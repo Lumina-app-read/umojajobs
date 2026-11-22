@@ -13,6 +13,7 @@ import {
   type UnlockSummaryResponse,
   type WalletResponse,
 } from '@opportinities/shared';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import type Redis from 'ioredis';
 import { Prisma } from '../src/generated/prisma/client';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -102,7 +103,18 @@ describe('Déverrouillages et commissions (intégration)', () => {
         { kind: 'original' },
       );
       expect(uploaded.status).toBe(201);
-      created.version = (uploaded.body as JobOfferResponse).version;
+      // Document complémentaire en image : même consultation qu'une page de PDF.
+      const photo = await contributor.api.upload(
+        `/api/v1/me/job-offers/${created.id}/files`,
+        {
+          buffer: await createCanvas(400, 600).encode('png'),
+          filename: 'capture.png',
+          contentType: 'image/png',
+        },
+        { kind: 'attachment' },
+      );
+      expect(photo.status).toBe(201);
+      created.version = (photo.body as JobOfferResponse).version;
     }
     const submitted = (
       await contributor.api.post(`/api/v1/me/job-offers/${created.id}/submit`, {
@@ -334,6 +346,15 @@ describe('Déverrouillages et commissions (intégration)', () => {
     expect(image.headers['cache-control']).toBe('private, no-store');
     expect(image.headers['content-disposition']).toBe('inline');
     expect((await reader.api.get(`${base}/pages/2`)).status).toBe(404);
+
+    const capture = contents.files.find((entry) => entry.kind === 'attachment');
+    const imageBase = `/api/v1/me/unlocks/${offer.id}/files/${capture?.id}`;
+    expect(((await reader.api.get(imageBase)).body as DocumentPagesResponse).pageCount).toBe(1);
+    const shown = await reader.api.get(`${imageBase}/pages/1`);
+    expect(shown.headers['content-type']).toBe('image/webp');
+    const decoded = await loadImage(shown.body as Buffer);
+    expect([decoded.width, decoded.height]).toEqual([1240, 1860]);
+    expect((await reader.api.get(`${imageBase}/pages/2`)).status).toBe(404);
 
     // Aucun lien de téléchargement pour un lecteur, et rien pour qui n'a pas déverrouillé.
     expect((await reader.api.post(`${base}/download`)).status).toBe(404);

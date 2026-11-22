@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  DOCUMENT_FILE_ACCEPT,
   EDITABLE_JOB_STATUSES,
   type FileDownloadResponse,
   JOB_LIMITS,
@@ -17,7 +18,7 @@ import { api, apiUpload } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
 
 /**
- * Documents privés de l'offre : annonce originale et compléments (PDF). Le téléchargement passe
+ * Documents privés de l'offre : annonce originale et compléments (PDF ou image). Le téléchargement passe
  * par un lien signé de courte durée, demandé au moment du clic.
  */
 export function OfferDocuments({
@@ -102,7 +103,10 @@ export function OfferDocuments({
                     {file.kind === 'original' ? t('originalLabel') : t('attachmentLabel')}
                   </Badge>
                   {t('size', {
-                    size: format.number(file.sizeBytes / 1024 / 1024, { maximumFractionDigits: 1 }),
+                    // Une petite image s'affiche « 0,1 Mo » plutôt que « 0 Mo ».
+                    size: format.number(Math.max(0.1, file.sizeBytes / 1024 / 1024), {
+                      maximumFractionDigits: 1,
+                    }),
                   })}
                 </p>
               </div>
@@ -153,7 +157,7 @@ export function OfferDocuments({
       <input
         ref={input}
         type="file"
-        accept="application/pdf,.pdf"
+        accept={DOCUMENT_FILE_ACCEPT}
         className="sr-only"
         tabIndex={-1}
         aria-hidden="true"

@@ -1,6 +1,6 @@
 import { dirname, join } from 'node:path';
 import { Inject, Injectable } from '@nestjs/common';
-import { createCanvas, type SKRSContext2D } from '@napi-rs/canvas';
+import { createCanvas, loadImage, type SKRSContext2D } from '@napi-rs/canvas';
 import type Redis from 'ioredis';
 import type * as PdfJsModule from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { REDIS_CLIENT } from '../redis/redis.module';
@@ -21,6 +21,7 @@ type LoadingTask = ReturnType<PdfJs['getDocument']>;
 export interface RenderSource {
   fileId: string;
   storageKey: string;
+  mimeType: string;
   /** Mention incrustée sur chaque page : « Publiée par … sur Umoja Jobs ». */
   watermark: string;
 }
@@ -41,6 +42,7 @@ export class DocumentRenderService {
   ) {}
 
   async pageCount(source: RenderSource): Promise<number> {
+    if (isImage(source)) return 1;
     const cacheKey = `doc:${CACHE_VERSION}:${source.fileId}:pages`;
     const cached = await this.redis.get(cacheKey);
     if (cached) return Number(cached);
@@ -61,6 +63,28 @@ export class DocumentRenderService {
     const cached = await this.redis.getBuffer(cacheKey);
     if (cached) return cached;
 
+    const image = isImage(source)
+      ? await this.renderImage(source)
+      : await this.renderPdfPage(source, pageNumber);
+    await this.redis.set(cacheKey, image, 'EX', CACHE_TTL_SECONDS);
+    return image;
+  }
+
+  /** Annonce déposée en image : même mention incrustée que pour une page de PDF. */
+  private async renderImage(source: RenderSource): Promise<Buffer> {
+    const image = await loadImage(await this.storage.read(source.storageKey));
+    // Une petite capture est agrandie : la mention doit rester lisible sans cacher le texte.
+    const scale = TARGET_WIDTH / image.width;
+    const canvas = createCanvas(TARGET_WIDTH, Math.max(1, Math.round(image.height * scale)));
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    drawWatermark(context, canvas.width, canvas.height, source.watermark);
+    return canvas.encode('webp', 82);
+  }
+
+  private async renderPdfPage(source: RenderSource, pageNumber: number): Promise<Buffer> {
     const task = await this.open(source.storageKey);
     try {
       const document = await task.promise;
@@ -75,9 +99,7 @@ export class DocumentRenderService {
       // (Les types DOM ne sont pas chargés côté serveur, d'où la conversion.)
       await page.render({ canvas: canvas as never, viewport }).promise;
       drawWatermark(context, canvas.width, canvas.height, source.watermark);
-      const image = await canvas.encode('webp', 82);
-      await this.redis.set(cacheKey, image, 'EX', CACHE_TTL_SECONDS);
-      return image;
+      return await canvas.encode('webp', 82);
     } finally {
       await task.destroy();
     }
@@ -96,6 +118,8 @@ export class DocumentRenderService {
     });
   }
 }
+
+const isImage = (source: RenderSource): boolean => source.mimeType.startsWith('image/');
 
 /**
  * Mention répétée en diagonale, discrète mais impossible à recadrer, plus un bandeau lisible

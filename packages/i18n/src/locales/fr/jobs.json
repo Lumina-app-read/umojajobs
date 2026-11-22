@@ -68,7 +68,7 @@
       "application": "Candidature",
       "applicationHint": "Informations privées : elles ne seront révélées qu'aux personnes qui déverrouillent l'offre.",
       "documents": "Documents",
-      "documentsHint": "PDF uniquement. L'annonce originale reste privée et n'est accessible qu'après déverrouillage."
+      "documentsHint": "PDF ou image (JPG, PNG, WebP). L'annonce originale reste privée et n'est accessible qu'après déverrouillage."
     },
     "fields": {
       "title": "Intitulé du poste",
@@ -378,7 +378,7 @@
     "url": "Lien de candidature",
     "address": "Adresse de dépôt",
     "instructions": "Instructions",
-    "original": "Annonce originale (PDF)",
+    "original": "Annonce originale",
     "unlockedToastBody": "L'offre est déverrouillée : ses coordonnées vous attendent.",
     "phone": "Numéro de contact",
     "tipsTitle": "Conseils de {name}, qui a partagé l'offre",
@@ -600,7 +600,8 @@
       "job_unlock": "Déverrouillage d’une offre",
       "career_document_pass": "Export PDF",
       "ai_generation": "Génération IA",
-      "career_document_pack": "Pack CV + lettre"
+      "career_document_pack": "Pack CV + lettre",
+      "document_bundle_pass": "Dossier rassemblé"
     },
     "choose": "Choisir ce pack",
     "creditsUnit": "crédits",

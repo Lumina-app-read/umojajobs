@@ -19,17 +19,22 @@ function ThemedImage({
   /** Masquage selon la largeur d'écran, appliqué aux deux versions. */
   className?: string;
 }) {
-  const common = { alt: '', width, height, unoptimized: true, loading: 'eager' } as const;
+  const common = { width, height, unoptimized: true, loading: 'eager' } as const;
   const dark = `/images/logos/${name}-dark.png`;
   // Conteneur masquable séparé : le choix du thème ne se heurte pas au choix de la largeur.
   return (
     <span className={cn('inline-flex shrink-0', className)}>
       {onDark ? (
-        <Image {...common} src={dark} />
+        <Image {...common} alt="" src={dark} />
       ) : (
         <>
-          <Image {...common} src={`/images/logos/${name}-light.png`} className="dark:hidden" />
-          <Image {...common} src={dark} className="hidden dark:block" />
+          <Image
+            {...common}
+            alt=""
+            src={`/images/logos/${name}-light.png`}
+            className="dark:hidden"
+          />
+          <Image {...common} alt="" src={dark} className="hidden dark:block" />
         </>
       )}
     </span>

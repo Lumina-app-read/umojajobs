@@ -36,7 +36,7 @@
   "DECLARATION_REQUIRED": "You must confirm that the information is accurate and that you may share it.",
   "FILE_REQUIRED": "Choose a file to upload.",
   "FILE_TOO_LARGE": "This file is too large.",
-  "FILE_TYPE_NOT_ALLOWED": "Only PDF documents are accepted.",
+  "FILE_TYPE_NOT_ALLOWED": "Only PDF files and JPG, PNG or WebP images are accepted.",
   "FILE_UNSAFE": "This PDF contains active content (scripts, attachments) and cannot be accepted.",
   "FILE_LIMIT_REACHED": "The maximum number of documents for this offer has been reached.",
   "FILE_NOT_FOUND": "This document could not be found.",
@@ -84,5 +84,12 @@
   "CAREER_PHOTO_INVALID": "Choose a JPEG, PNG or WebP image under 5 MB.",
   "CAREER_PHOTO_NOT_FOUND": "No photo for this document.",
   "CAREER_PACK_INVALID": "A pack combines a CV with a cover letter or a job application.",
-  "CAREER_PACK_ALREADY_COVERED": "One of these documents is already paid for. Export it from the Studio at no extra cost."
+  "CAREER_PACK_ALREADY_COVERED": "One of these documents is already paid for. Export it from the Studio at no extra cost.",
+  "BUNDLE_NOT_FOUND": "This file set could not be found.",
+  "BUNDLE_LIMIT": "You have reached the maximum number of file sets. Delete one to continue.",
+  "BUNDLE_FILES_LIMIT": "This file exceeds the limits: 20 files, 100 pages and 40 MB in total.",
+  "BUNDLE_TOO_FEW_FILES": "Add at least two files before exporting.",
+  "BUNDLE_ORDER_CONFLICT": "The list of files has changed. Reload the page.",
+  "BUNDLE_PDF_UNREADABLE": "This PDF is unreadable or damaged.",
+  "BUNDLE_PDF_PROTECTED": "This PDF is password protected. Remove the protection and try again."
 }

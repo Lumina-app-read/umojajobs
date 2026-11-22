@@ -68,7 +68,7 @@
       "application": "Application",
       "applicationHint": "Private information: only revealed to people who unlock the offer.",
       "documents": "Documents",
-      "documentsHint": "PDF only. The original offer stays private and is only available after unlocking."
+      "documentsHint": "PDF or image (JPG, PNG, WebP). The original posting stays private and is only available after unlocking."
     },
     "fields": {
       "title": "Job title",
@@ -378,7 +378,7 @@
     "url": "Application link",
     "address": "Drop-off address",
     "instructions": "Instructions",
-    "original": "Original posting (PDF)",
+    "original": "Original posting",
     "unlockedToastBody": "The offer is unlocked: its application details are waiting for you.",
     "phone": "Contact number",
     "tipsTitle": "Tips from {name}, who shared the offer",
@@ -600,7 +600,8 @@
       "job_unlock": "Job offer unlock",
       "career_document_pass": "PDF export",
       "ai_generation": "AI generation",
-      "career_document_pack": "CV + letter pack"
+      "career_document_pack": "CV + letter pack",
+      "document_bundle_pass": "Combined file"
     },
     "choose": "Choose this pack",
     "creditsUnit": "credits",

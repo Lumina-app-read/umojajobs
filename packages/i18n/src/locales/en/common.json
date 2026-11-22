@@ -103,7 +103,8 @@
       "notifications": "Notifications",
       "settings": "Settings",
       "earnings": "My earnings",
-      "credits": "My credits"
+      "credits": "My credits",
+      "bundles": "Combine to PDF"
     },
     "tabs": {
       "home": "Home",
@@ -339,7 +340,8 @@
         "ai_generate_follow_up": "AI: follow-up letter",
         "ai_generate_thank_you": "AI: thank-you letter",
         "ai_regenerate_section": "AI: section regeneration",
-        "ai_improve_text": "AI: text improvement"
+        "ai_improve_text": "AI: text improvement",
+        "doc_bundle": "Combined file (single PDF)"
       },
       "grant": {
         "title": "Grant free credits",

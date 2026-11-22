@@ -103,7 +103,8 @@
       "notifications": "Notifications",
       "settings": "Paramètres",
       "earnings": "Mes revenus",
-      "credits": "Mes crédits"
+      "credits": "Mes crédits",
+      "bundles": "Rassembler en PDF"
     },
     "tabs": {
       "home": "Accueil",
@@ -339,7 +340,8 @@
         "ai_generate_follow_up": "IA : lettre de relance",
         "ai_generate_thank_you": "IA : lettre de remerciement",
         "ai_regenerate_section": "IA : régénération d’une section",
-        "ai_improve_text": "IA : amélioration d’un texte"
+        "ai_improve_text": "IA : amélioration d’un texte",
+        "doc_bundle": "Dossier rassemblé (un seul PDF)"
       },
       "grant": {
         "title": "Attribuer des crédits gratuits",

@@ -11,7 +11,7 @@ import { ERROR_CODES, PHOTO_LIMITS } from '@opportinities/shared';
 import { uuidv7 } from '../common/uuid-v7';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
-import { readImageHeader } from './image-header';
+import { readImageHeader } from '../storage/image-header';
 import { photoVersion } from './studio.service';
 
 /** Au-delà, l'image est refusée avant tout décodage (protection mémoire). */

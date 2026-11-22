@@ -36,7 +36,7 @@
   "DECLARATION_REQUIRED": "Vous devez confirmer que les informations sont exactes et que vous pouvez les partager.",
   "FILE_REQUIRED": "Choisissez un fichier à envoyer.",
   "FILE_TOO_LARGE": "Ce fichier est trop volumineux.",
-  "FILE_TYPE_NOT_ALLOWED": "Seuls les documents PDF sont acceptés.",
+  "FILE_TYPE_NOT_ALLOWED": "Seuls les PDF et les images JPG, PNG ou WebP sont acceptés.",
   "FILE_UNSAFE": "Ce PDF contient des éléments actifs (scripts, pièces jointes) et ne peut pas être accepté.",
   "FILE_LIMIT_REACHED": "Le nombre maximal de documents pour cette offre est atteint.",
   "FILE_NOT_FOUND": "Ce document est introuvable.",
@@ -84,5 +84,12 @@
   "CAREER_PHOTO_INVALID": "Choisissez une image JPEG, PNG ou WebP de moins de 5 Mo.",
   "CAREER_PHOTO_NOT_FOUND": "Aucune photo pour ce document.",
   "CAREER_PACK_INVALID": "Un pack réunit un CV et une lettre de motivation ou une demande d’emploi.",
-  "CAREER_PACK_ALREADY_COVERED": "Un de ces documents est déjà payé. Exportez-le depuis le Studio, sans nouveau débit."
+  "CAREER_PACK_ALREADY_COVERED": "Un de ces documents est déjà payé. Exportez-le depuis le Studio, sans nouveau débit.",
+  "BUNDLE_NOT_FOUND": "Ce dossier est introuvable.",
+  "BUNDLE_LIMIT": "Vous avez atteint le nombre maximal de dossiers. Supprimez-en un pour continuer.",
+  "BUNDLE_FILES_LIMIT": "Ce fichier dépasse les limites du dossier : 20 fichiers, 100 pages et 40 Mo au total.",
+  "BUNDLE_TOO_FEW_FILES": "Ajoutez au moins deux fichiers avant d’exporter.",
+  "BUNDLE_ORDER_CONFLICT": "La liste des fichiers a changé. Rechargez la page.",
+  "BUNDLE_PDF_UNREADABLE": "Ce PDF est illisible ou endommagé.",
+  "BUNDLE_PDF_PROTECTED": "Ce PDF est protégé par un mot de passe. Retirez la protection puis réessayez."
 }

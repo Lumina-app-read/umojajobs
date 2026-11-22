@@ -49,8 +49,8 @@ function isNameCharacter(byte: number): boolean {
   );
 }
 
-/** Nom de fichier affichable et sûr : sans chemin, sans caractère de contrôle, extension .pdf. */
-export function safeFileName(name: string): string {
+/** Nom de fichier affichable et sûr : sans chemin, sans caractère de contrôle, extension imposée. */
+export function safeFileName(name: string, extension: 'pdf' | 'jpg' = 'pdf'): string {
   const base = name.split(/[\\/]/).pop() ?? '';
   const cleaned = base
     .normalize('NFC')
@@ -64,6 +64,6 @@ export function safeFileName(name: string): string {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, 200);
-  const withoutExtension = cleaned.replace(/\.pdf$/i, '') || 'document';
-  return `${withoutExtension}.pdf`;
+  const withoutExtension = cleaned.replace(/\.(pdf|jpe?g|png|webp)$/i, '') || 'document';
+  return `${withoutExtension}.${extension}`;
 }

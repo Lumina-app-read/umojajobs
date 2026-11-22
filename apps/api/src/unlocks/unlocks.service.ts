@@ -364,6 +364,7 @@ export class UnlocksService {
       select: {
         id: true,
         storageKey: true,
+        mimeType: true,
         jobOffer: { select: { contributor: { select: { firstName: true, lastName: true } } } },
       },
     });
@@ -372,6 +373,7 @@ export class UnlocksService {
     return {
       fileId: file.id,
       storageKey: file.storageKey,
+      mimeType: file.mimeType,
       watermark: `Publiée par ${publisherName(file.jobOffer.contributor)} sur Umoja Jobs`,
     };
   }

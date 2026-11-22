@@ -81,6 +81,10 @@ export const JOB_LIMITS = {
   attachmentsMax: 4,
 } as const;
 
+/** Types proposés par le sélecteur de fichiers ; le serveur vérifie le contenu réel. */
+export const DOCUMENT_FILE_ACCEPT =
+  'application/pdf,image/jpeg,image/png,image/webp,.pdf,.jpg,.jpeg,.png,.webp';
+
 export const JOB_FILE_KINDS = ['original', 'attachment'] as const;
 export type JobFileKind = (typeof JOB_FILE_KINDS)[number];
 

@@ -14,6 +14,7 @@ import { FinanceModule } from './finance/finance.module';
 import { JobsModule } from './jobs/jobs.module';
 import { UnlocksModule } from './unlocks/unlocks.module';
 import { PaymentsModule } from './payments/payments.module';
+import { BundlesModule } from './bundles/bundles.module';
 import { StudioModule } from './studio/studio.module';
 import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 import { LocationsModule } from './locations/locations.module';
@@ -62,6 +63,7 @@ import { StorageModule } from './storage/storage.module';
     WithdrawalsModule,
     PaymentsModule,
     StudioModule,
+    BundlesModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

@@ -42,6 +42,7 @@ export const CREDIT_SERVICES = [
   'doc_application_letter',
   'doc_other_letter',
   'doc_pack',
+  'doc_bundle',
   'ai_generate_cv',
   'ai_generate_cover_letter',
   'ai_generate_application_letter',

@@ -1,6 +1,8 @@
 import 'server-only';
 import {
   type AiUsageResponse,
+  type BundleResponse,
+  type BundleSummary,
   type CareerDocumentResponse,
   type CareerDocumentSummary,
   type CareerExportFilter,
@@ -284,6 +286,20 @@ export async function getCareerExports(
   const query = new URLSearchParams({ page: String(page), ...(filter && { type: filter }) });
   const result = await serverGet<CareerExportHistoryResponse>(
     `/me/career-exports?${query.toString()}`,
+  ).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Dossiers rassemblés de l'utilisateur (null si l'API ne répond pas). */
+export async function getBundles(): Promise<BundleSummary[] | null> {
+  const result = await serverGet<BundleSummary[]>('/me/document-bundles').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Un dossier (null s'il n'existe pas ou n'appartient pas à l'utilisateur). */
+export async function getBundle(id: string): Promise<BundleResponse | null> {
+  const result = await serverGet<BundleResponse>(
+    `/me/document-bundles/${encodeURIComponent(id)}`,
   ).catch(() => null);
   return result?.data ?? null;
 }

@@ -4,6 +4,7 @@ import {
   Coins,
   Briefcase,
   Files,
+  FileStack,
   LayoutDashboard,
   type LucideIcon,
   Megaphone,
@@ -28,6 +29,7 @@ export interface AppNavItem {
     | 'earnings'
     | 'studio'
     | 'documents'
+    | 'bundles'
     | 'notifications'
     | 'settings';
   href: string;
@@ -68,6 +70,7 @@ export const APP_NAV: AppNavGroup[] = [
     items: [
       { key: 'studio', href: '/dashboard/studio', icon: Sparkles, phase: null },
       { key: 'documents', href: '/dashboard/documents', icon: Files, phase: null },
+      { key: 'bundles', href: '/dashboard/bundles', icon: FileStack, phase: null },
     ],
   },
   {

@@ -80,6 +80,8 @@ const INITIAL_COSTS: { service: CreditService; credits: number }[] = [
   { service: 'ai_regenerate_section', credits: 1 },
   { service: 'ai_improve_text', credits: 1 },
   { service: 'doc_pack', credits: 25 },
+  // Décision du 22 novembre 2026 : dossier rassemblé (fichiers de l'utilisateur en un seul PDF).
+  { service: 'doc_bundle', credits: 30 },
 ];
 const COST_REASON = 'Valeur initiale : arbitrage A3 validé le 9 novembre 2026.';
 

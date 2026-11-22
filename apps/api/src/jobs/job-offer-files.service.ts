@@ -22,12 +22,13 @@ import { uuidv7 } from '../common/uuid-v7';
 import { type EnvironmentVariables } from '../config/env.validation';
 import { type FileDownloadPurpose, type Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { normalizeDocumentImage } from '../storage/document-image';
 import { inspectPdf, safeFileName } from '../storage/pdf-inspection';
 import { StorageService } from '../storage/storage.service';
 import { JOB_OFFER_INCLUDE, toJobOfferResponse } from './job-offer.mapper';
 
 /** Fichier reçu par multer (stockage en mémoire, jamais écrit sur le disque du serveur). */
-export interface UploadedPdf {
+export interface UploadedDocument {
   buffer: Buffer;
   size: number;
   originalname: string;
@@ -36,7 +37,7 @@ export interface UploadedPdf {
 
 /**
  * Documents privés des offres (cahier des charges §7.2 et §8.4) : dépôt contrôlé (PDF sans
- * élément actif, taille limitée), stockage hors accès public, téléchargement par lien signé de
+ * élément actif, ou image ré-encodée : les annonces circulent souvent en image), stockage hors accès public, téléchargement par lien signé de
  * courte durée après vérification des droits, chaque téléchargement étant journalisé.
  */
 @Injectable()
@@ -56,7 +57,7 @@ export class JobOfferFilesService {
     auth: AuthContext,
     offerId: string,
     kind: JobFileKind,
-    file: UploadedPdf | undefined,
+    file: UploadedDocument | undefined,
     client: ClientInfo,
   ): Promise<JobOfferResponse> {
     const offer = await this.prisma.jobOffer.findFirst({
@@ -76,13 +77,18 @@ export class JobOfferFilesService {
       });
     }
     const problem = inspectPdf(file.buffer);
-    if (problem === 'not_pdf') {
-      throw new BadRequestException({ code: ERROR_CODES.FILE_TYPE_NOT_ALLOWED });
-    }
     if (problem === 'active_content') {
       this.logger.warn(`PDF refusé (éléments actifs) [${client.requestId}] offre ${offerId}`);
       throw new BadRequestException({ code: ERROR_CODES.FILE_UNSAFE });
     }
+    // Seul le contenu compte, jamais le type ni l'extension annoncés par le navigateur.
+    const image = problem === 'not_pdf' ? await normalizeDocumentImage(file.buffer) : null;
+    if (problem === 'not_pdf' && !image) {
+      throw new BadRequestException({ code: ERROR_CODES.FILE_TYPE_NOT_ALLOWED });
+    }
+    const content = image?.jpeg ?? file.buffer;
+    const extension = image ? 'jpg' : 'pdf';
+    const mimeType = image ? 'image/jpeg' : 'application/pdf';
 
     const active = await this.prisma.jobOfferFile.groupBy({
       by: ['kind'],
@@ -97,9 +103,9 @@ export class JobOfferFilesService {
       throw new ConflictException({ code: ERROR_CODES.FILE_LIMIT_REACHED, meta: { kind } });
     }
 
-    const digest = createHash('sha256').update(file.buffer).digest();
-    const storageKey = `job-offers/${offerId}/${uuidv7()}.pdf`;
-    await this.storage.put(storageKey, file.buffer, 'application/pdf', digest.toString('base64'));
+    const digest = createHash('sha256').update(content).digest();
+    const storageKey = `job-offers/${offerId}/${uuidv7()}.${extension}`;
+    await this.storage.put(storageKey, content, mimeType, digest.toString('base64'));
     try {
       await this.prisma.$transaction(async (tx) => {
         await tx.jobOfferFile.create({
@@ -108,9 +114,9 @@ export class JobOfferFilesService {
             uploadedById: auth.user.id,
             kind,
             storageKey,
-            originalName: safeFileName(file.originalname),
-            mimeType: 'application/pdf',
-            sizeBytes: file.size,
+            originalName: safeFileName(file.originalname, extension),
+            mimeType,
+            sizeBytes: content.length,
             sha256: digest.toString('hex'),
           },
         });
@@ -195,7 +201,7 @@ export class JobOfferFilesService {
   ): Promise<FileDownloadResponse> {
     const file = await this.prisma.jobOfferFile.findFirst({
       where,
-      select: { id: true, storageKey: true, originalName: true },
+      select: { id: true, storageKey: true, originalName: true, mimeType: true },
     });
     if (!file) throw new NotFoundException({ code: ERROR_CODES.FILE_NOT_FOUND });
     await this.prisma.fileDownloadLog.create({
@@ -211,6 +217,7 @@ export class JobOfferFilesService {
     const { url, expiresAt } = await this.storage.signedDownloadUrl(
       file.storageKey,
       file.originalName,
+      file.mimeType === 'image/jpeg' ? 'image/jpeg' : 'application/pdf',
     );
     return { url, expiresAt: expiresAt.toISOString() };
   }

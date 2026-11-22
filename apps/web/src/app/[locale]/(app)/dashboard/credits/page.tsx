@@ -19,6 +19,7 @@ const REFERENCES = [
   'job_unlock',
   'career_document_pass',
   'career_document_pack',
+  'document_bundle_pass',
   'ai_generation',
 ] as const;
 

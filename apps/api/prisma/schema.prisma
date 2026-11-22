@@ -215,6 +215,7 @@ model User {
   careerDocuments       CareerDocument[]        @relation("CareerDocumentOwner")
   careerDocumentPasses  CareerDocumentPass[]    @relation("CareerDocumentPassUser")
   careerDocumentPacks   CareerDocumentPack[]    @relation("CareerDocumentPackUser")
+  documentBundles       DocumentBundle[]        @relation("DocumentBundleOwner")
   careerDocumentExports CareerDocumentExport[]  @relation("CareerDocumentExportUser")
   aiRequests            AiRequest[]             @relation("AiRequestUser")
   aiGenerations         AiGeneration[]          @relation("AiGenerationUser")
@@ -673,6 +674,8 @@ enum CreditService {
   /// Autres lettres : demande de stage, recommandation, démission, relance, remerciement.
   doc_other_letter
   doc_pack
+  /// Dossier rassemblé : fichiers de l'utilisateur réunis en un seul PDF (22 novembre 2026).
+  doc_bundle
   /// Génération complète d'un document par l'IA (décision du 13 novembre 2026).
   ai_generate_cv
   ai_generate_cover_letter
@@ -826,6 +829,7 @@ model CreditMovement {
   jobUnlock            JobUnlock?
   careerDocumentPasses CareerDocumentPass[]
   careerDocumentPack   CareerDocumentPack?
+  documentBundlePass   DocumentBundlePass?
   aiGenerationCharge   AiGeneration?         @relation("AiGenerationCharge")
   aiGenerationRefund   AiGeneration?         @relation("AiGenerationRefund")
   account              CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
@@ -1432,4 +1436,94 @@ model AiGeneration {
   @@index([status, createdAt])
   @@index([createdAt])
   @@map("ai_generations")
+}
+
+/// Dossier rassemblé : fichiers personnels de l'utilisateur (CV, diplômes, pièce d'identité…) réunis
+/// dans un ordre choisi, puis exportés en un seul PDF.
+model DocumentBundle {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  title     String    @db.VarChar(120)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// Suppression par l'utilisateur : fichiers effacés du stockage, pièces comptables conservées.
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  user    User                   @relation("DocumentBundleOwner", fields: [userId], references: [id], onDelete: Restrict)
+  files   DocumentBundleFile[]
+  passes  DocumentBundlePass[]
+  exports DocumentBundleExport[]
+
+  @@index([userId, deletedAt, updatedAt(sort: Desc)])
+  @@map("document_bundles")
+}
+
+enum DocumentBundleFileKind {
+  pdf
+  image
+
+  @@map("document_bundle_file_kind")
+}
+
+/// Fichier d'un dossier, dans le stockage privé. Supprimé réellement quand l'utilisateur le retire.
+model DocumentBundleFile {
+  id           String                 @id @default(uuid(7)) @db.Uuid
+  bundleId     String                 @map("bundle_id") @db.Uuid
+  position     Int
+  kind         DocumentBundleFileKind
+  originalName String                 @map("original_name") @db.VarChar(255)
+  /// Clé dans le stockage objet privé (jamais exposée).
+  storageKey   String                 @unique @map("storage_key") @db.VarChar(300)
+  sizeBytes    Int                    @map("size_bytes")
+  pageCount    Int                    @map("page_count")
+  createdAt    DateTime               @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  bundle DocumentBundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)
+
+  @@index([bundleId, position])
+  @@map("document_bundle_files")
+}
+
+/// Paiement en crédits de l'export d'un dossier : ouvre une fenêtre de ré-exports gratuits.
+model DocumentBundlePass {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  bundleId   String   @map("bundle_id") @db.Uuid
+  credits    Int
+  movementId String   @unique @map("movement_id") @db.Uuid
+  valueUsd   Decimal  @map("value_usd") @db.Decimal(20, 6)
+  validUntil DateTime @map("valid_until") @db.Timestamptz(3)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  bundle   DocumentBundle         @relation(fields: [bundleId], references: [id], onDelete: Restrict)
+  movement CreditMovement         @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  exports  DocumentBundleExport[]
+
+  @@index([bundleId, createdAt(sort: Desc)])
+  @@map("document_bundle_passes")
+}
+
+/// Export d'un dossier en un seul PDF.
+model DocumentBundleExport {
+  id             String             @id @default(uuid(7)) @db.Uuid
+  bundleId       String             @map("bundle_id") @db.Uuid
+  passId         String             @map("pass_id") @db.Uuid
+  /// Clé fournie par le navigateur : un double clic ne crée pas deux exports.
+  idempotencyKey String             @map("idempotency_key") @db.VarChar(100)
+  /// Vrai si cet export a déclenché le paiement (les ré-exports couverts valent faux).
+  charged        Boolean
+  title          String             @db.VarChar(120)
+  status         CareerExportStatus @default(pending)
+  storageKey     String?            @map("storage_key") @db.VarChar(300)
+  sizeBytes      Int?               @map("size_bytes")
+  pageCount      Int?               @map("page_count")
+  failureReason  String?            @map("failure_reason") @db.VarChar(120)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  completedAt    DateTime?          @map("completed_at") @db.Timestamptz(3)
+
+  bundle DocumentBundle     @relation(fields: [bundleId], references: [id], onDelete: Restrict)
+  pass   DocumentBundlePass @relation(fields: [passId], references: [id], onDelete: Restrict)
+
+  @@unique([bundleId, idempotencyKey])
+  @@index([bundleId, createdAt(sort: Desc)])
+  @@map("document_bundle_exports")
 }

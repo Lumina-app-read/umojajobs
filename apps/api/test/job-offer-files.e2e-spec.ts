@@ -5,6 +5,7 @@ import {
   type JobOfferResponse,
   type ModerationJobOfferResponse,
 } from '@opportinities/shared';
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import type Redis from 'ioredis';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { REDIS_CLIENT } from '../src/redis/redis.module';
@@ -214,5 +215,52 @@ describe('Documents des offres : stockage privé et liens signés (intégration)
     // Après soumission, le contributeur ne peut plus modifier les documents.
     const late = await upload(contributor.api, second.id, pdf('tardif'), 'attachment');
     expect((late.body as ErrorBody).code).toBe('JOB_OFFER_NOT_EDITABLE');
+  });
+
+  it('accepte une annonce en image, ré-encodée sans ses métadonnées', async () => {
+    const { api } = await loggedInUser();
+    const offer = await draft(api);
+    const canvas = createCanvas(3000, 1500);
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffcc00';
+    context.fillRect(0, 0, 3000, 1500);
+    const png = await canvas.encode('png');
+
+    // Nom et type annoncés trompeurs : seul le contenu compte.
+    const response = await api.upload(
+      `/api/v1/me/job-offers/${offer.id}/files`,
+      { buffer: png, filename: 'annonce whatsapp.png', contentType: 'application/pdf' },
+      { kind: 'original' },
+    );
+    expect(response.status).toBe(201);
+    const file = (response.body as JobOfferResponse).files[0];
+    expect(file?.originalName).toBe('annonce whatsapp.jpg');
+
+    const link = (await api.post(`/api/v1/me/job-offers/${offer.id}/files/${file?.id}/download`))
+      .body as FileDownloadResponse;
+    const served = await fetch(link.url);
+    expect(served.headers.get('content-type')).toBe('image/jpeg');
+    const stored = Buffer.from(await served.arrayBuffer());
+    expect(stored.length).toBe(file?.sizeBytes);
+    const image = await loadImage(stored);
+    expect([image.width, image.height]).toEqual([2200, 1100]);
+  });
+
+  it('refuse une image piégée ou tronquée, et les autres formats', async () => {
+    const { api } = await loggedInUser();
+    const offer = await draft(api);
+    const bomb = Buffer.from(await createCanvas(2, 2).encode('png'));
+    bomb.writeUInt32BE(100_000, 16);
+    bomb.writeUInt32BE(100_000, 20);
+    const jpeg = await createCanvas(50, 50).encode('jpeg');
+    for (const buffer of [bomb, jpeg.subarray(0, 40), Buffer.from('GIF89a' + 'x'.repeat(60))]) {
+      const refused = await api.upload(
+        `/api/v1/me/job-offers/${offer.id}/files`,
+        { buffer, filename: 'annonce.jpg', contentType: 'image/jpeg' },
+        { kind: 'original' },
+      );
+      expect(refused.status).toBe(400);
+      expect((refused.body as ErrorBody).code).toBe('FILE_TYPE_NOT_ALLOWED');
+    }
   });
 });

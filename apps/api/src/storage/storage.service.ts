@@ -66,6 +66,7 @@ export class StorageService implements OnModuleDestroy {
   async signedDownloadUrl(
     key: string,
     fileName: string,
+    contentType: 'application/pdf' | 'image/jpeg' = 'application/pdf',
   ): Promise<{ url: string; expiresAt: Date }> {
     const expiresAt = new Date(Date.now() + this.urlTtlSeconds * 1000);
     const url = await getSignedUrl(
@@ -74,7 +75,7 @@ export class StorageService implements OnModuleDestroy {
         Bucket: this.bucket,
         Key: key,
         ResponseContentDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
-        ResponseContentType: 'application/pdf',
+        ResponseContentType: contentType,
       }),
       { expiresIn: this.urlTtlSeconds },
     );

@@ -1,4 +1,5 @@
 import enAuth from './locales/en/auth.json';
+import enBundles from './locales/en/bundles.json';
 import enCommon from './locales/en/common.json';
 import enEmails from './locales/en/emails.json';
 import enErrors from './locales/en/errors.json';
@@ -7,6 +8,7 @@ import enLanding from './locales/en/landing.json';
 import enStudio from './locales/en/studio.json';
 import enValidation from './locales/en/validation.json';
 import frAuth from './locales/fr/auth.json';
+import frBundles from './locales/fr/bundles.json';
 import frCommon from './locales/fr/common.json';
 import frEmails from './locales/fr/emails.json';
 import frErrors from './locales/fr/errors.json';
@@ -24,7 +26,8 @@ export type I18nLocale = (typeof I18N_LOCALES)[number];
 
 /**
  * Catalogues par langue et par espace de noms :
- * - interface web (next-intl) : common, auth, errors, validation, jobs, studio, landing ;
+ * - interface web (next-intl) : common, auth, errors, validation, jobs, studio, bundles,
+ *   landing ;
  * - emails transactionnels (API) : emails.
  * Format des messages : ICU (paramètres `{nom}`, pluriels), compatible next-intl.
  */
@@ -36,6 +39,7 @@ export const CATALOGS = {
     validation: frValidation,
     jobs: frJobs,
     studio: frStudio,
+    bundles: frBundles,
     landing: frLanding,
     emails: frEmails,
   },
@@ -46,6 +50,7 @@ export const CATALOGS = {
     validation: enValidation,
     jobs: enJobs,
     studio: enStudio,
+    bundles: enBundles,
     landing: enLanding,
     emails: enEmails,
   },
@@ -66,6 +71,7 @@ export function getClientMessages(locale: I18nLocale) {
     validation: catalog.validation,
     jobs: catalog.jobs,
     studio: catalog.studio,
+    bundles: catalog.bundles,
   };
 }
 
