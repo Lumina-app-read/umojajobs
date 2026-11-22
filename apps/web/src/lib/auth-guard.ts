@@ -1,5 +1,5 @@
 import 'server-only';
-import { type MeResponse } from '@opportinities/shared';
+import { isMfaPending, type MeResponse } from '@opportinities/shared';
 import { getLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { redirect } from '@/i18n/navigation';
@@ -64,7 +64,7 @@ export async function hasPermission(permission: string): Promise<boolean> {
   const result = await getCurrentUser().catch(() => null);
   return Boolean(
     result?.data &&
-    !result.data.mfaState.endsWith('_required') &&
+    !isMfaPending(result.data.mfaState) &&
     result.data.permissions.includes(permission),
   );
 }

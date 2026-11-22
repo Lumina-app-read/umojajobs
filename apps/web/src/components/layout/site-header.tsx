@@ -1,3 +1,4 @@
+import { isMfaPending } from '@opportinities/shared';
 import { LayoutDashboard, LogIn, UserPlus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { cookies } from 'next/headers';
@@ -18,7 +19,7 @@ async function isSignedIn(): Promise<boolean> {
   const cookieStore = await cookies();
   if (!SESSION_COOKIES.some((name) => cookieStore.has(name))) return false;
   const result = await getCurrentUser().catch(() => null);
-  return Boolean(result?.data && !result.data.mfaState.endsWith('_required'));
+  return Boolean(result?.data && !isMfaPending(result.data.mfaState));
 }
 
 /**
@@ -58,10 +59,10 @@ export async function SiteHeader() {
           <span className="mx-1.5 h-5 w-px bg-line max-lg:hidden" aria-hidden="true" />
           {signedIn ? (
             <div className="flex items-center gap-2 max-lg:hidden">
-              <ButtonLink href="/dashboard" variant="ghost" icon={LayoutDashboard}>
+              <ButtonLink href="/dashboard" icon={LayoutDashboard}>
                 {t('dashboard')}
               </ButtonLink>
-              <LogoutButton />
+              <LogoutButton iconOnly />
             </div>
           ) : (
             <>

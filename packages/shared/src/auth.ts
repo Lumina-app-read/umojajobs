@@ -40,6 +40,14 @@ export const MFA_STATES = [
 ] as const;
 export type MfaState = (typeof MFA_STATES)[number];
 
+/**
+ * Une étape de double authentification reste-t-elle à faire ? Comparaison exacte : « not_required »
+ * (aucune étape) se termine aussi par « _required ».
+ */
+export function isMfaPending(state: MfaState): boolean {
+  return state === 'enrollment_required' || state === 'verification_required';
+}
+
 export const THEME_PREFERENCES = ['light', 'dark', 'system'] as const;
 export type ThemePreference = (typeof THEME_PREFERENCES)[number];
 
