@@ -15,7 +15,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** Mes crédits : solde, recharge par pack (paiement Chariow) et historique des mouvements. */
-const REFERENCES = ['job_unlock', 'career_document_pass', 'ai_generation'] as const;
+const REFERENCES = [
+  'job_unlock',
+  'career_document_pass',
+  'career_document_pack',
+  'ai_generation',
+] as const;
 
 export default async function CreditsPage({
   searchParams,

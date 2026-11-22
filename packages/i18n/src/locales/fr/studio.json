@@ -595,5 +595,48 @@
     "redo": "Rétablir le CV généré",
     "missingFacts": "Ajoutez au moins une expérience, une formation ou une compétence.",
     "missingName": "Indiquez votre nom complet."
+  },
+  "pack": {
+    "open": "Pack CV + lettre",
+    "title": "Pack CV + lettre",
+    "intro": "Un seul paiement pour exporter en PDF un CV et une lettre de candidature.",
+    "paidIntro": "Pack payé. Une fois prêts, vos PDF rejoignent « Mes documents ».",
+    "cv": "CV",
+    "cvPlaceholder": "Choisir un CV",
+    "letter": "Lettre",
+    "letterPlaceholder": "Choisir une lettre",
+    "eligibleHint": "Lettres de motivation et demandes d'emploi. Les documents déjà payés ou sans nom complet ne sont pas proposés.",
+    "noCv": "Aucun CV disponible pour un pack. Créez un CV avec votre nom complet ; s'il est déjà payé, exportez-le depuis le Studio.",
+    "noLetter": "Aucune lettre disponible pour un pack. Créez une lettre de motivation ou une demande d'emploi avec votre nom complet ; si elle est déjà payée, exportez-la depuis le Studio.",
+    "toStudio": "Ouvrir le Studio",
+    "cost": "Coût du pack",
+    "saving": "Économie",
+    "insufficient": "Solde insuffisant pour ce pack.",
+    "priceMissing": "Le pack n'est pas encore disponible.",
+    "pay": "Payer {count, plural, one {# crédit} other {# crédits}}",
+    "paying": "Paiement…",
+    "retry": "Réessayer",
+    "failed": "Échec de la création du PDF. Réessayez sans nouveau débit.",
+    "close": "Fermer"
+  },
+  "documents": {
+    "intro": "Tous vos PDF exportés, à télécharger quand vous voulez.",
+    "toStudio": "Ouvrir le Studio",
+    "filter": "Type de document",
+    "filters": {
+      "all": "Tous",
+      "cv": "CV",
+      "letter": "Lettres"
+    },
+    "payment": {
+      "paid": "Payé",
+      "pack": "Pack",
+      "included": "Inclus"
+    },
+    "size": "{size} Ko",
+    "deleted": "Supprimé du Studio",
+    "edit": "Ouvrir",
+    "empty": "Aucun PDF pour le moment",
+    "emptyBody": "Exportez un document depuis le Career Studio : le PDF apparaîtra ici."
   }
 }

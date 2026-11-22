@@ -214,6 +214,7 @@ model User {
   creditOrders          CreditOrder[]           @relation("CreditOrderBuyer")
   careerDocuments       CareerDocument[]        @relation("CareerDocumentOwner")
   careerDocumentPasses  CareerDocumentPass[]    @relation("CareerDocumentPassUser")
+  careerDocumentPacks   CareerDocumentPack[]    @relation("CareerDocumentPackUser")
   careerDocumentExports CareerDocumentExport[]  @relation("CareerDocumentExportUser")
   aiRequests            AiRequest[]             @relation("AiRequestUser")
   aiGenerations         AiGeneration[]          @relation("AiGenerationUser")
@@ -822,13 +823,14 @@ model CreditMovement {
   reason         String?            @db.VarChar(500)
   createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
 
-  jobUnlock          JobUnlock?
-  careerDocumentPass CareerDocumentPass?
-  aiGenerationCharge AiGeneration?         @relation("AiGenerationCharge")
-  aiGenerationRefund AiGeneration?         @relation("AiGenerationRefund")
-  account            CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
-  actor              User?                 @relation("CreditMovementActor", fields: [actorId], references: [id], onDelete: Restrict)
-  allocations        CreditLotAllocation[]
+  jobUnlock            JobUnlock?
+  careerDocumentPasses CareerDocumentPass[]
+  careerDocumentPack   CareerDocumentPack?
+  aiGenerationCharge   AiGeneration?         @relation("AiGenerationCharge")
+  aiGenerationRefund   AiGeneration?         @relation("AiGenerationRefund")
+  account              CreditAccount         @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  actor                User?                 @relation("CreditMovementActor", fields: [actorId], references: [id], onDelete: Restrict)
+  allocations          CreditLotAllocation[]
 
   @@index([accountId, createdAt(sort: Desc)])
   @@map("credit_movements")
@@ -1299,7 +1301,10 @@ model CareerDocumentPass {
   documentId String        @map("document_id") @db.Uuid
   service    CreditService
   credits    Int
-  movementId String        @unique @map("movement_id") @db.Uuid
+  /// Unique hors pack (index partiel, voir la migration) ; les deux paiements d'un pack partagent le sien.
+  movementId String        @map("movement_id") @db.Uuid
+  /// Pack CV + lettre à l'origine de ce paiement, ou null pour un export payé seul.
+  packId     String?       @map("pack_id") @db.Uuid
   valueUsd   Decimal       @map("value_usd") @db.Decimal(20, 6)
   /// Fin de la fenêtre de ré-export gratuit (égale à la création si la fenêtre vaut 0 jour).
   validUntil DateTime      @map("valid_until") @db.Timestamptz(3)
@@ -1308,10 +1313,32 @@ model CareerDocumentPass {
   user     User                   @relation("CareerDocumentPassUser", fields: [userId], references: [id], onDelete: Restrict)
   document CareerDocument         @relation(fields: [documentId], references: [id], onDelete: Restrict)
   movement CreditMovement         @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  pack     CareerDocumentPack?    @relation(fields: [packId], references: [id], onDelete: Restrict)
   exports  CareerDocumentExport[]
 
+  @@unique([movementId, documentId])
   @@index([documentId, validUntil(sort: Desc)])
+  @@index([packId])
   @@map("career_document_passes")
+}
+
+/// Pack CV + lettre : un seul débit, réparti entre les deux paiements de documents qu'il crée.
+model CareerDocumentPack {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  /// Clé fournie par le navigateur : un double clic ne paie pas deux packs.
+  idempotencyKey String   @map("idempotency_key") @db.VarChar(100)
+  credits        Int
+  movementId     String   @unique @map("movement_id") @db.Uuid
+  valueUsd       Decimal  @map("value_usd") @db.Decimal(20, 6)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user     User                 @relation("CareerDocumentPackUser", fields: [userId], references: [id], onDelete: Restrict)
+  movement CreditMovement       @relation(fields: [movementId], references: [id], onDelete: Restrict)
+  passes   CareerDocumentPass[]
+
+  @@unique([userId, idempotencyKey])
+  @@map("career_document_packs")
 }
 
 enum CareerExportStatus {
@@ -1352,6 +1379,7 @@ model CareerDocumentExport {
 
   @@unique([userId, idempotencyKey])
   @@index([documentId, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
   @@map("career_document_exports")
 }
 

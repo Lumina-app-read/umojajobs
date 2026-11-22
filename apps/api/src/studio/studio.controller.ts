@@ -31,6 +31,12 @@ import {
   type AiImproveTarget,
   CAREER_DOCUMENT_TYPES,
   LETTER_LIMITS,
+  CAREER_EXPORT_FILTERS,
+  type CareerExportFilter,
+  type CareerExportHistoryResponse,
+  type CareerPackCreateInput,
+  type CareerPackInfoResponse,
+  type CareerPackResponse,
   type CareerExportCreateInput,
   type CareerExportDownloadResponse,
   type CareerExportRenderData,
@@ -78,6 +84,7 @@ import { StudioGenerationService } from './studio-generation.service';
 import { StudioPhotoService, type UploadedImage } from './studio-photo.service';
 import { StudioUsageService } from './studio-usage.service';
 import { StudioExportsService } from './studio-exports.service';
+import { StudioPacksService } from './studio-packs.service';
 import { StudioService } from './studio.service';
 
 const trim = ({ value }: { value: unknown }): unknown =>
@@ -180,6 +187,35 @@ class CreateExportDto implements CareerExportCreateInput {
   @ApiProperty({ format: 'uuid', description: 'Identifiant aléatoire généré par le navigateur.' })
   @IsUUID()
   idempotencyKey!: string;
+}
+
+class CreatePackDto implements CareerPackCreateInput {
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  cvDocumentId!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  @IsUUID()
+  letterDocumentId!: string;
+
+  @ApiProperty({ format: 'uuid', description: 'Identifiant aléatoire généré par le navigateur.' })
+  @IsUUID()
+  idempotencyKey!: string;
+}
+
+class ExportHistoryQueryDto {
+  @ApiPropertyOptional({ enum: CAREER_EXPORT_FILTERS })
+  @IsOptional()
+  @IsIn(CAREER_EXPORT_FILTERS)
+  type?: CareerExportFilter;
+
+  @ApiPropertyOptional({ minimum: 1, maximum: 1000, default: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(1000)
+  page?: number;
 }
 
 class ExportIdParamDto {
@@ -420,6 +456,15 @@ export class StudioController {
 export class CareerExportsController {
   constructor(private readonly exports: StudioExportsService) {}
 
+  @Get()
+  @ApiOkResponse({ description: 'PDF de l’utilisateur, du plus récent au plus ancien.' })
+  history(
+    @CurrentAuth() auth: AuthContext,
+    @Query() query: ExportHistoryQueryDto,
+  ): Promise<CareerExportHistoryResponse> {
+    return this.exports.history(auth.user.id, query.type, query.page ?? 1);
+  }
+
   @Get(':exportId/download')
   @ApiOkResponse({ description: 'Lien signé de courte durée vers le PDF.' })
   download(
@@ -427,6 +472,31 @@ export class CareerExportsController {
     @Param() params: ExportIdParamDto,
   ): Promise<CareerExportDownloadResponse> {
     return this.exports.download(auth.user.id, params.exportId);
+  }
+}
+
+/** Pack CV + lettre : un seul paiement pour l'export des deux documents. */
+@ApiTags('studio')
+@Controller('me/career-packs')
+export class CareerPacksController {
+  constructor(private readonly packs: StudioPacksService) {}
+
+  @Get('info')
+  @ApiOkResponse({ description: 'Coût du pack, solde et documents pouvant le composer.' })
+  info(@CurrentAuth() auth: AuthContext): Promise<CareerPackInfoResponse> {
+    return this.packs.info(auth.user.id);
+  }
+
+  /** Débite le pack et ouvre l'export des deux documents (ou rejoue la même clé). */
+  @Post()
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @ApiOkResponse({ description: 'Pack payé : les exports des deux documents sont couverts.' })
+  create(
+    @CurrentAuth() auth: AuthContext,
+    @Body() body: CreatePackDto,
+  ): Promise<CareerPackResponse> {
+    return this.packs.create(auth.user.id, body);
   }
 }
 

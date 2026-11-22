@@ -283,6 +283,74 @@ export interface CareerExportDownloadResponse {
   expiresAt: string;
 }
 
+/** Lettres admises dans le pack CV + lettre : celles d'une candidature. */
+export const PACK_LETTER_TYPES = ['cover_letter', 'application_letter'] as const;
+export type PackLetterType = (typeof PACK_LETTER_TYPES)[number];
+
+export interface CareerPackCandidate {
+  id: string;
+  type: 'cv' | PackLetterType;
+  title: string;
+  /** Le nom du titulaire est renseigné : le document peut être exporté. */
+  complete: boolean;
+  /** Le document bénéficie déjà d'un paiement : il ne peut pas être payé de nouveau. */
+  covered: boolean;
+}
+
+/** Ce que coûterait un pack maintenant, et les documents qui peuvent le composer. */
+export interface CareerPackInfoResponse {
+  /** Coût du pack en crédits (null si le tarif n'est pas configuré). */
+  cost: number | null;
+  /** Coût des mêmes exports payés séparément (null si un tarif manque). */
+  separateCosts: Record<PackLetterType, number | null>;
+  balance: number;
+  reexportWindowDays: number;
+  documents: CareerPackCandidate[];
+}
+
+export interface CareerPackCreateInput {
+  cvDocumentId: string;
+  letterDocumentId: string;
+  /** Identifiant aléatoire fourni par le navigateur : un double clic ne paie pas deux fois. */
+  idempotencyKey: string;
+}
+
+export interface CareerPackResponse {
+  id: string;
+  credits: number;
+  balance: number;
+  documentIds: string[];
+}
+
+export const CAREER_EXPORT_PAGE_SIZE = 20;
+
+/** Filtre de l'historique des PDF. */
+export const CAREER_EXPORT_FILTERS = ['cv', 'letter'] as const;
+export type CareerExportFilter = (typeof CAREER_EXPORT_FILTERS)[number];
+
+/** Un PDF de l'historique (« Mes documents »). */
+export interface CareerExportHistoryItem {
+  id: string;
+  documentId: string;
+  type: CareerDocumentType;
+  title: string;
+  language: 'fr' | 'en';
+  templateKey: string;
+  sizeBytes: number | null;
+  /** Payé seul, inclus dans un pack, ou ré-export gratuit. */
+  payment: 'paid' | 'pack' | 'included';
+  /** Le document existe encore dans le Studio (un PDF payé reste disponible sinon). */
+  editable: boolean;
+  createdAt: string;
+}
+
+export interface CareerExportHistoryResponse {
+  items: CareerExportHistoryItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
 /** Données d'impression d'un export (route interne, protégée par un jeton signé). */
 export interface CareerExportRenderData {
   type: CareerDocumentType;

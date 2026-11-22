@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  CAREER_EXPORT_PAGE_SIZE,
   type CareerExportDownloadResponse,
+  type CareerExportFilter,
+  type CareerExportHistoryResponse,
   type CareerExportRenderData,
   type CareerExportResponse,
   type CareerExportsResponse,
@@ -34,7 +37,7 @@ type Tx = Prisma.TransactionClient;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** Nom du signataire : titulaire du CV ou expéditeur de la lettre (obligatoire avant tout export). */
-function signerName(content: unknown): string {
+export function signerName(content: unknown): string {
   const value = content as { personal?: { fullName?: unknown }; sender?: { fullName?: unknown } };
   const name = value.personal?.fullName ?? value.sender?.fullName;
   return typeof name === 'string' ? name : '';
@@ -188,6 +191,61 @@ export class StudioExportsService {
     return this.respond(userId, finished);
   }
 
+  /**
+   * Historique des PDF de l'utilisateur (« Mes documents »). Un PDF payé y reste, même si le
+   * document d'origine a été supprimé du Studio.
+   */
+  async history(
+    userId: string,
+    filter: CareerExportFilter | undefined,
+    page: number,
+  ): Promise<CareerExportHistoryResponse> {
+    const where: Prisma.CareerDocumentExportWhereInput = {
+      userId,
+      status: 'ready',
+      ...(filter === 'cv' && { document: { type: 'cv' } }),
+      ...(filter === 'letter' && { document: { type: { not: 'cv' } } }),
+    };
+    const [total, rows] = await Promise.all([
+      this.prisma.careerDocumentExport.count({ where }),
+      this.prisma.careerDocumentExport.findMany({
+        where,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        skip: (page - 1) * CAREER_EXPORT_PAGE_SIZE,
+        take: CAREER_EXPORT_PAGE_SIZE,
+        select: {
+          id: true,
+          documentId: true,
+          title: true,
+          language: true,
+          templateKey: true,
+          sizeBytes: true,
+          charged: true,
+          createdAt: true,
+          pass: { select: { packId: true } },
+          document: { select: { type: true, deletedAt: true } },
+        },
+      }),
+    ]);
+    return {
+      total,
+      page,
+      pageSize: CAREER_EXPORT_PAGE_SIZE,
+      items: rows.map((row) => ({
+        id: row.id,
+        documentId: row.documentId,
+        type: row.document.type,
+        title: row.title,
+        language: row.language === 'en' ? 'en' : 'fr',
+        templateKey: row.templateKey,
+        sizeBytes: row.sizeBytes,
+        payment: row.pass.packId ? 'pack' : row.charged ? 'paid' : 'included',
+        editable: row.document.deletedAt === null,
+        createdAt: row.createdAt.toISOString(),
+      })),
+    };
+  }
+
   /** Lien de téléchargement signé et de courte durée (le PDF appartient à l'utilisateur). */
   async download(userId: string, exportId: string): Promise<CareerExportDownloadResponse> {
     const row = await this.prisma.careerDocumentExport.findFirst({
@@ -229,7 +287,7 @@ export class StudioExportsService {
    * Paiement couvrant un nouvel export : période en cours, ou dernier paiement dont aucun export
    * n'a abouti (un échec technique ne fait jamais payer une seconde fois).
    */
-  private async coveringPass(
+  async coveringPass(
     db: Tx | PrismaService,
     documentId: string,
   ): Promise<{ id: string; coveredUntil: Date } | null> {
@@ -280,7 +338,7 @@ export class StudioExportsService {
   }
 
   /** Fenêtre de ré-export gratuit (0 si le paramètre n'est pas configuré : chaque export est payé). */
-  private windowDays(db: Tx | PrismaService): Promise<number> {
+  windowDays(db: Tx | PrismaService): Promise<number> {
     return this.settings
       .require('studio_reexport_window_days', db)
       .then((value) => value.toNumber())

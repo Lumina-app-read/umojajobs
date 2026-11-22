@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Alert } from '@/components/ui/alert';
 import { StudioDocuments } from '@/features/studio/document-list';
+import { PackButton } from '@/features/studio/pack-dialog';
 import { getCareerDocuments } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
 
@@ -21,11 +22,14 @@ export default async function StudioPage() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg sm:text-[28px]">
-          {t('title')}
-        </h1>
-        <p className="mt-1.5 max-w-2xl text-sm text-fg-muted">{t('intro')}</p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-[-0.02em] text-fg sm:text-[28px]">
+            {t('title')}
+          </h1>
+          <p className="mt-1.5 max-w-2xl text-sm text-fg-muted">{t('intro')}</p>
+        </div>
+        <PackButton />
       </div>
       {documents === null ? (
         <Alert tone="error">{tErrors('SERVICE_UNAVAILABLE')}</Alert>

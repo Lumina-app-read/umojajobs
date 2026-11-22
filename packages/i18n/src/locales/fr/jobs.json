@@ -599,7 +599,8 @@
     "movementReferences": {
       "job_unlock": "Déverrouillage d’une offre",
       "career_document_pass": "Export PDF",
-      "ai_generation": "Génération IA"
+      "ai_generation": "Génération IA",
+      "career_document_pack": "Pack CV + lettre"
     },
     "choose": "Choisir ce pack",
     "creditsUnit": "crédits",

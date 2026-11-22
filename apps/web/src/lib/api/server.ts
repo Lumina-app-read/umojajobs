@@ -3,6 +3,8 @@ import {
   type AiUsageResponse,
   type CareerDocumentResponse,
   type CareerDocumentSummary,
+  type CareerExportFilter,
+  type CareerExportHistoryResponse,
   type CommissionResponse,
   type CountryResponse,
   type CreditBalanceResponse,
@@ -271,6 +273,18 @@ export async function getCareerDocument(id: string): Promise<CareerDocumentRespo
   const result = await serverGet<CareerDocumentResponse>(`/me/career-documents/${id}`).catch(
     () => null,
   );
+  return result?.data ?? null;
+}
+
+/** PDF exportés par l'utilisateur (null si l'API ne répond pas). */
+export async function getCareerExports(
+  filter: CareerExportFilter | null,
+  page: number,
+): Promise<CareerExportHistoryResponse | null> {
+  const query = new URLSearchParams({ page: String(page), ...(filter && { type: filter }) });
+  const result = await serverGet<CareerExportHistoryResponse>(
+    `/me/career-exports?${query.toString()}`,
+  ).catch(() => null);
   return result?.data ?? null;
 }
 

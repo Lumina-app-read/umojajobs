@@ -5,8 +5,11 @@ import {
   type CvContent,
   type CareerExportDownloadResponse,
   type CareerExportRenderData,
+  type CareerExportHistoryResponse,
   type CareerExportResponse,
   type CareerExportsResponse,
+  type CareerPackInfoResponse,
+  type CareerPackResponse,
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
 import request from 'supertest';
@@ -70,6 +73,13 @@ describe('Career Studio : export PDF payé en crédits (intégration)', () => {
     ).body as CareerDocumentResponse<CvContent>;
   }
 
+  async function letter(api: ApiClient, type = 'cover_letter') {
+    return (
+      await api.post('/api/v1/me/career-documents', { type, title: 'Lettre 2026', language: 'fr' })
+    ).body as CareerDocumentResponse;
+  }
+
+  const packPath = '/api/v1/me/career-packs';
   const exportPath = (id: string) => `/api/v1/me/career-documents/${id}/exports`;
 
   beforeAll(async () => {
@@ -275,5 +285,146 @@ describe('Career Studio : export PDF payé en crédits (intégration)', () => {
       where: { documentId: doc.id },
     });
     expect(exported.photoStorageKey).not.toBeNull();
+  });
+
+  it('paie le pack CV + lettre une seule fois et couvre les deux exports', async () => {
+    const { api, userId } = await member();
+    const doc = await cv(api);
+    const cover = await letter(api);
+    const body = { cvDocumentId: doc.id, letterDocumentId: cover.id };
+
+    const broke = await api.post(packPath, { ...body, idempotencyKey: randomUUID() });
+    expect((broke.body as { code: string }).code).toBe('INSUFFICIENT_CREDITS');
+    expect(await prisma.careerDocumentPack.count({ where: { userId } })).toBe(0);
+    expect(await prisma.careerDocumentPass.count({ where: { userId } })).toBe(0);
+
+    await givePaidCredits(prisma, userId, 60);
+    const info = (await api.get(`${packPath}/info`)).body as CareerPackInfoResponse;
+    expect(info).toMatchObject({
+      cost: 25,
+      separateCosts: { cover_letter: 25, application_letter: 25 },
+      balance: 60,
+      reexportWindowDays: 7,
+    });
+    expect(info.documents).toHaveLength(2);
+    expect(info.documents.every((entry) => entry.complete && !entry.covered)).toBe(true);
+
+    // Double clic simultané : un seul débit, la même réponse.
+    const key = randomUUID();
+    const [first, second] = await Promise.all([
+      api.post(packPath, { ...body, idempotencyKey: key }),
+      api.post(packPath, { ...body, idempotencyKey: key }),
+    ]);
+    expect([first.status, second.status]).toEqual([200, 200]);
+    const pack = first.body as CareerPackResponse;
+    expect((second.body as CareerPackResponse).id).toBe(pack.id);
+    expect(pack).toMatchObject({ credits: 25, balance: 35 });
+    expect([...pack.documentIds].sort()).toEqual([doc.id, cover.id].sort());
+
+    // Le débit unique est réparti exactement entre les deux paiements.
+    const stored = await prisma.careerDocumentPack.findUniqueOrThrow({
+      where: { id: pack.id },
+      include: { passes: true },
+    });
+    const share = (id: string) => stored.passes.find((pass) => pass.documentId === id);
+    expect(share(doc.id)?.credits).toBe(15);
+    expect(share(cover.id)?.credits).toBe(10);
+    expect(
+      stored.passes
+        .reduce((sum, pass) => sum.add(pass.valueUsd), stored.valueUsd.mul(0))
+        .eq(stored.valueUsd),
+    ).toBe(true);
+    const entries = await prisma.ledgerEntry.findMany({
+      where: { transaction: { referenceType: 'career_document_pack', referenceId: pack.id } },
+      include: { account: { select: { code: true } } },
+    });
+    expect(entries.map((entry) => entry.account.code).sort()).toEqual([
+      'customer_credits',
+      'revenue_documents',
+    ]);
+    expect(await prisma.commission.count({ where: { contributorId: userId } })).toBe(0);
+
+    // Les deux exports sont couverts ; un échec technique reste rejouable sans frais.
+    renderer.fail = true;
+    expect((await api.post(exportPath(doc.id), { idempotencyKey: randomUUID() })).status).toBe(503);
+    renderer.fail = false;
+    for (const id of [doc.id, cover.id]) {
+      const exported = (await api.post(exportPath(id), { idempotencyKey: randomUUID() }))
+        .body as CareerExportResponse;
+      expect(exported).toMatchObject({ status: 'ready', charged: false, balance: 35 });
+    }
+
+    // Déjà couverts : un second pack est refusé, sans débit.
+    const again = await api.post(packPath, { ...body, idempotencyKey: randomUUID() });
+    expect(again.status).toBe(409);
+    expect((again.body as { code: string }).code).toBe('CAREER_PACK_ALREADY_COVERED');
+    expect(
+      await prisma.creditMovement.count({ where: { account: { userId }, type: 'consume' } }),
+    ).toBe(1);
+  });
+
+  it('refuse un pack mal composé, incomplet ou appartenant à un autre', async () => {
+    const owner = await member();
+    const other = await member();
+    await givePaidCredits(prisma, owner.userId, 60);
+    await givePaidCredits(prisma, other.userId, 60);
+    const doc = await cv(owner.api);
+    const cover = await letter(owner.api);
+    const thanks = await letter(owner.api, 'thank_you_letter');
+    const buy = async (api: ApiClient, cvDocumentId: string, letterDocumentId: string) =>
+      (await api.post(packPath, { cvDocumentId, letterDocumentId, idempotencyKey: randomUUID() }))
+        .body as { code: string };
+
+    expect((await buy(other.api, doc.id, cover.id)).code).toBe('CAREER_DOCUMENT_NOT_FOUND');
+    expect((await buy(owner.api, cover.id, doc.id)).code).toBe('CAREER_PACK_INVALID');
+    expect((await buy(owner.api, doc.id, doc.id)).code).toBe('CAREER_PACK_INVALID');
+    expect((await buy(owner.api, doc.id, thanks.id)).code).toBe('CAREER_PACK_INVALID');
+
+    await owner.api.patch(`/api/v1/me/career-documents/${doc.id}`, {
+      version: doc.version,
+      content: { ...doc.content, personal: { ...doc.content.personal, fullName: '' } },
+    });
+    expect((await buy(owner.api, doc.id, cover.id)).code).toBe('CAREER_EXPORT_INCOMPLETE');
+    expect(
+      await prisma.creditMovement.count({
+        where: { account: { userId: { in: [owner.userId, other.userId] } }, type: 'consume' },
+      }),
+    ).toBe(0);
+  });
+
+  it('liste les PDF de l’utilisateur, même après suppression du document', async () => {
+    const { api, userId } = await member();
+    const other = await member();
+    await givePaidCredits(prisma, userId, 60);
+    const doc = await cv(api);
+    const cover = await letter(api);
+    await api.post(exportPath(doc.id), { idempotencyKey: randomUUID() });
+    await api.post(exportPath(doc.id), { idempotencyKey: randomUUID() });
+    await api.post(exportPath(cover.id), { idempotencyKey: randomUUID() });
+    await api.delete(`/api/v1/me/career-documents/${doc.id}`);
+
+    const list = async (query = '') =>
+      (await api.get(`/api/v1/me/career-exports${query}`)).body as CareerExportHistoryResponse;
+    const all = await list();
+    expect(all).toMatchObject({ total: 3, page: 1, pageSize: 20 });
+    expect(all.items.map((item) => [item.type, item.payment, item.editable])).toEqual([
+      ['cover_letter', 'paid', true],
+      ['cv', 'included', false],
+      ['cv', 'paid', false],
+    ]);
+    expect(all.items[0]).not.toHaveProperty('content');
+    expect((await list('?type=cv')).total).toBe(2);
+    expect((await list('?type=letter')).total).toBe(1);
+    expect((await list('?page=2')).items).toEqual([]);
+    expect((await api.get('/api/v1/me/career-exports?type=autre')).status).toBe(400);
+
+    // Le PDF payé reste téléchargeable après la suppression ; les autres comptes ne voient rien.
+    expect((await api.get(`/api/v1/me/career-exports/${all.items[2]?.id}/download`)).status).toBe(
+      200,
+    );
+    expect(
+      ((await other.api.get('/api/v1/me/career-exports')).body as CareerExportHistoryResponse)
+        .total,
+    ).toBe(0);
   });
 });

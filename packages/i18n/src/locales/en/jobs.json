@@ -599,7 +599,8 @@
     "movementReferences": {
       "job_unlock": "Job offer unlock",
       "career_document_pass": "PDF export",
-      "ai_generation": "AI generation"
+      "ai_generation": "AI generation",
+      "career_document_pack": "CV + letter pack"
     },
     "choose": "Choose this pack",
     "creditsUnit": "credits",

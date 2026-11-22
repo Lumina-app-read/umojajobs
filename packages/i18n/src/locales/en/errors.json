@@ -82,5 +82,7 @@
   "AI_PRICE_MISSING": "This feature is not available yet. Please try again later.",
   "AI_SECTION_INVALID": "This section cannot be regenerated.",
   "CAREER_PHOTO_INVALID": "Choose a JPEG, PNG or WebP image under 5 MB.",
-  "CAREER_PHOTO_NOT_FOUND": "No photo for this document."
+  "CAREER_PHOTO_NOT_FOUND": "No photo for this document.",
+  "CAREER_PACK_INVALID": "A pack combines a CV with a cover letter or a job application.",
+  "CAREER_PACK_ALREADY_COVERED": "One of these documents is already paid for. Export it from the Studio at no extra cost."
 }

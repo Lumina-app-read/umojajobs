@@ -82,5 +82,7 @@
   "AI_PRICE_MISSING": "Cette fonction n’est pas encore disponible. Réessayez plus tard.",
   "AI_SECTION_INVALID": "Cette section ne peut pas être régénérée.",
   "CAREER_PHOTO_INVALID": "Choisissez une image JPEG, PNG ou WebP de moins de 5 Mo.",
-  "CAREER_PHOTO_NOT_FOUND": "Aucune photo pour ce document."
+  "CAREER_PHOTO_NOT_FOUND": "Aucune photo pour ce document.",
+  "CAREER_PACK_INVALID": "Un pack réunit un CV et une lettre de motivation ou une demande d’emploi.",
+  "CAREER_PACK_ALREADY_COVERED": "Un de ces documents est déjà payé. Exportez-le depuis le Studio, sans nouveau débit."
 }

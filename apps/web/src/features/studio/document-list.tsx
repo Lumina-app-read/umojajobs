@@ -8,18 +8,7 @@ import {
   type CareerDocumentType,
   STUDIO_LIMITS,
 } from '@opportinities/shared';
-import {
-  ArrowRight,
-  FileText,
-  FileUser,
-  Languages,
-  Mail,
-  PenLine,
-  Plus,
-  Trash2,
-  Type,
-  X,
-} from 'lucide-react';
+import { ArrowRight, FileUser, Languages, Plus, Trash2, Type, X } from 'lucide-react';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -34,19 +23,9 @@ import { useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
 import { cn } from '@/lib/cn';
+import { TYPE_ICONS } from './document-icons';
 
 type DocLanguage = 'fr' | 'en';
-
-const TYPE_ICONS: Record<CareerDocumentType, typeof FileText> = {
-  cv: FileUser,
-  cover_letter: Mail,
-  application_letter: Mail,
-  internship_request: Mail,
-  recommendation_draft: PenLine,
-  resignation_letter: FileText,
-  follow_up_letter: Mail,
-  thank_you_letter: Mail,
-};
 
 /** Création d'un document : titre et langue, puis ouverture de l'éditeur. */
 function CreateDialog({ type, onClose }: { type: CareerDocumentType | null; onClose: () => void }) {

@@ -595,5 +595,48 @@
     "redo": "Restore the generated CV",
     "missingFacts": "Add at least one experience, education entry or skill.",
     "missingName": "Enter your full name."
+  },
+  "pack": {
+    "open": "CV + letter pack",
+    "title": "CV + letter pack",
+    "intro": "A single payment to export a CV and an application letter as PDF.",
+    "paidIntro": "Pack paid. Once ready, your PDFs appear in “My documents”.",
+    "cv": "CV",
+    "cvPlaceholder": "Choose a CV",
+    "letter": "Letter",
+    "letterPlaceholder": "Choose a letter",
+    "eligibleHint": "Cover letters and job applications. Documents already paid for or without a full name are not listed.",
+    "noCv": "No CV available for a pack. Create a CV with your full name; if it is already paid for, export it from the Studio.",
+    "noLetter": "No letter available for a pack. Create a cover letter or a job application with your full name; if it is already paid for, export it from the Studio.",
+    "toStudio": "Open the Studio",
+    "cost": "Pack cost",
+    "saving": "You save",
+    "insufficient": "Your balance is too low for this pack.",
+    "priceMissing": "The pack is not available yet.",
+    "pay": "Pay {count, plural, one {# credit} other {# credits}}",
+    "paying": "Paying…",
+    "retry": "Try again",
+    "failed": "The PDF could not be created. Try again at no extra cost.",
+    "close": "Close"
+  },
+  "documents": {
+    "intro": "All your exported PDFs, ready to download at any time.",
+    "toStudio": "Open the Studio",
+    "filter": "Document type",
+    "filters": {
+      "all": "All",
+      "cv": "CV",
+      "letter": "Letters"
+    },
+    "payment": {
+      "paid": "Paid",
+      "pack": "Pack",
+      "included": "Included"
+    },
+    "size": "{size} KB",
+    "deleted": "Deleted from the Studio",
+    "edit": "Open",
+    "empty": "No PDF yet",
+    "emptyBody": "Export a document from the Career Studio: the PDF will appear here."
   }
 }

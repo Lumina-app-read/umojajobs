@@ -17,6 +17,7 @@ import type { Metadata } from 'next';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { JobCard } from '@/features/jobs/job-card';
 import {
+  getCareerDocuments,
   getCreditBalance,
   getMyJobOffers,
   getSavedJobs,
@@ -42,12 +43,13 @@ export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const t = await getTranslations('common.app');
   const format = await getFormatter();
-  const [credits, unlocks, latest, mine, saved] = await Promise.all([
+  const [credits, unlocks, latest, mine, saved, documents] = await Promise.all([
     getCreditBalance(),
     getUnlocks(),
     searchJobs('page=1&pageSize=4'),
     getMyJobOffers(),
     getSavedJobs(),
+    getCareerDocuments(),
   ]);
 
   const steps: { icon: LucideIcon; label: string; done: boolean; href?: string }[] = [
@@ -58,7 +60,12 @@ export default async function DashboardOverviewPage() {
       done: (unlocks?.length ?? 0) > 0,
       href: '/dashboard/jobs',
     },
-    { icon: Sparkles, label: t('overview.stepStudio'), done: false },
+    {
+      icon: Sparkles,
+      label: t('overview.stepStudio'),
+      done: (documents ?? []).some((document) => document.type === 'cv'),
+      href: '/dashboard/studio',
+    },
     {
       icon: Share2,
       label: t('overview.stepShare'),
@@ -67,7 +74,7 @@ export default async function DashboardOverviewPage() {
     },
   ];
   // Valeurs réelles du compte. Les revenus de contributeur restent dans leur rubrique dédiée,
-  // jamais mis en avant ici. Les documents viendront du Career Studio (phase 4).
+  // jamais mis en avant ici.
   const stats: { icon: LucideIcon; label: string; value: string; hint: string }[] = [
     {
       icon: Coins,
@@ -90,7 +97,7 @@ export default async function DashboardOverviewPage() {
     {
       icon: Files,
       label: t('overview.documents'),
-      value: t('overview.documentsNone'),
+      value: format.number(documents?.length ?? 0),
       hint: t('overview.documentsHint'),
     },
   ];

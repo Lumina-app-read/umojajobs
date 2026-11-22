@@ -8,10 +8,12 @@ import { StudioSchedulerService } from './studio-scheduler.service';
 import {
   CareerExportRenderController,
   CareerExportsController,
+  CareerPacksController,
   StudioAdminController,
   StudioController,
 } from './studio.controller';
 import { StudioExportsService } from './studio-exports.service';
+import { StudioPacksService } from './studio-packs.service';
 import { StudioService } from './studio.service';
 import { StudioUsageService } from './studio-usage.service';
 import { StudioPhotoService } from './studio-photo.service';
@@ -22,6 +24,7 @@ import { StudioPhotoService } from './studio-photo.service';
   controllers: [
     StudioController,
     CareerExportsController,
+    CareerPacksController,
     CareerExportRenderController,
     StudioAdminController,
   ],
@@ -32,6 +35,7 @@ import { StudioPhotoService } from './studio-photo.service';
     StudioUsageService,
     StudioPhotoService,
     StudioExportsService,
+    StudioPacksService,
     RenderTokenService,
     { provide: PDF_RENDERER, useClass: ChromiumPdfRenderer },
   ],

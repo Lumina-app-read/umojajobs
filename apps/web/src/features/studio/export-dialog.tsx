@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  type CareerExportDownloadResponse,
   type CareerExportResponse,
   type CareerExportsResponse,
   type CareerExportSummary,
@@ -20,20 +19,13 @@ import { toast } from '@/components/ui/toast';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
 import { randomUuid } from '@/lib/uuid';
+import { startDownload } from './export-download';
 
 const STATUS_TONE: Record<CareerExportSummary['status'], BadgeTone> = {
   ready: 'success',
   pending: 'primary',
   failed: 'danger',
 };
-
-/** Lance le téléchargement du PDF (lien signé de courte durée, servi en pièce jointe). */
-async function startDownload(exportId: string): Promise<void> {
-  const { url } = await api.get<CareerExportDownloadResponse>(
-    `/me/career-exports/${exportId}/download`,
-  );
-  window.location.assign(url);
-}
 
 /**
  * Export PDF payé en crédits. Le coût et le solde sont affichés avant toute action ; pendant la
