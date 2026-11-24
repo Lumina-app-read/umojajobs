@@ -149,6 +149,11 @@ describe('Administration des utilisateurs et des rôles (intégration)', () => {
       where: { type: 'user_suspended', userId: admin.id },
     });
     expect(stored.requestId).not.toBeNull();
+    // L'avis de suspension part, sans le motif interne.
+    const notice = await prisma.notification.findFirstOrThrow({
+      where: { userId: member.id, type: 'account_suspended' },
+    });
+    expect(notice).toMatchObject({ emailStatus: 'pending', data: {} });
     expect(stored.metadata).toMatchObject({
       targetId: member.id,
       actorRoles: ['user', 'admin'],
