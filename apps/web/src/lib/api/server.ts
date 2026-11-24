@@ -8,6 +8,8 @@ import {
   type BundleSummary,
   type CareerDocumentResponse,
   type NotificationsPage,
+  type PlaceCityResponse,
+  type SitemapResponse,
   type CommissionRegistryResponse,
   type PaymentRegistryResponse,
   type UnlockRegistryResponse,
@@ -145,6 +147,20 @@ export async function getModerationOffer(id: string): Promise<ModerationJobOffer
 /** Recherche publique (chaîne de requête déjà construite). null si l'API ne répond pas. */
 export async function searchJobs(query: string): Promise<JobSearchResponse | null> {
   const result = await serverGet<JobSearchResponse>(`/job-offers?${query}`).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Offres actives et lieux ou catégories qui en ont (mis en cache : une lecture par requête). */
+export const getSitemapData = cache(async (): Promise<SitemapResponse | null> => {
+  const result = await serverGet<SitemapResponse>('/job-offers/sitemap').catch(() => null);
+  return result?.data ?? null;
+});
+
+/** Ville désignée par son adresse publique, ou null. */
+export async function getPlaceCity(iso2: string, slug: string): Promise<PlaceCityResponse | null> {
+  const result = await serverGet<PlaceCityResponse>(
+    `/job-offers/places/${encodeURIComponent(iso2)}/cities/${encodeURIComponent(slug)}`,
+  ).catch(() => null);
   return result?.data ?? null;
 }
 

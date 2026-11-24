@@ -12,6 +12,8 @@ import {
 import { ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   type JobSearchResponse,
+  type PlaceCityResponse,
+  type SitemapResponse,
   type PublicJobOfferDetail,
   type SavedJobResponse,
 } from '@opportinities/shared';
@@ -22,6 +24,7 @@ import {
   JobOfferSlugParamDto,
   JobSearchQueryDto,
   PageQueryDto,
+  PlaceCityParamDto,
 } from './job-offers.dto';
 import { JobSearchService } from './job-search.service';
 
@@ -44,6 +47,22 @@ export class PublicJobOffersController {
   @ApiOkResponse({ description: 'Offres expirées, conservées en archives.' })
   archives(@Query() query: PageQueryDto): Promise<JobSearchResponse> {
     return this.search.archives(query.page);
+  }
+
+  @Get('sitemap')
+  @Header('Cache-Control', 'public, max-age=600')
+  @ApiOkResponse({
+    description: 'Offres actives et lieux ou catégories qui en ont (plan du site).',
+  })
+  sitemap(): Promise<SitemapResponse> {
+    return this.search.sitemap();
+  }
+
+  @Get('places/:iso2/cities/:city')
+  @Header('Cache-Control', 'public, max-age=600')
+  @ApiOkResponse({ description: 'Ville désignée par son adresse publique.' })
+  placeCity(@Param() params: PlaceCityParamDto): Promise<PlaceCityResponse> {
+    return this.search.placeCity(params.iso2, params.city);
   }
 
   @Get(':slug')

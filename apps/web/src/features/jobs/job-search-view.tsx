@@ -27,6 +27,9 @@ function readFilters(params: SearchParams): JobFilterValues {
   return {
     q: (firstParam(params.q) ?? '').slice(0, 120),
     country: firstParam(params.country)?.toUpperCase().slice(0, 2) || null,
+    cityId: /^[0-9a-f-]{36}$/i.test(firstParam(params.cityId) ?? '')
+      ? (firstParam(params.cityId) as string)
+      : null,
     category: firstParam(params.category) || null,
     contractType: isContract(contractType) ? contractType : null,
     workMode: isWorkMode(workMode) ? workMode : null,
@@ -35,7 +38,16 @@ function readFilters(params: SearchParams): JobFilterValues {
 }
 
 /** Liste des offres vérifiées : en-tête, filtres, résultats et pagination. */
-export async function JobSearchView({ base, params }: { base: JobsBase; params: SearchParams }) {
+export async function JobSearchView({
+  base,
+  params,
+  heading,
+}: {
+  base: JobsBase;
+  params: SearchParams;
+  /** Titre propre aux pages par pays, ville ou catégorie. */
+  heading?: { title: string; intro: string };
+}) {
   const t = await getTranslations('jobs.public');
   const filters = readFilters(params);
   const page = pageParam(params);
@@ -44,6 +56,7 @@ export async function JobSearchView({ base, params }: { base: JobsBase; params: 
   if (filters.q) query.set('q', filters.q);
   if (filters.country) query.set('country', filters.country);
   if (filters.category) query.set('category', filters.category);
+  if (filters.cityId) query.set('cityId', filters.cityId);
   if (filters.contractType) query.set('contractType', filters.contractType);
   if (filters.workMode) query.set('workMode', filters.workMode);
   if (filters.sort !== 'recent') query.set('sort', filters.sort);
@@ -73,10 +86,10 @@ export async function JobSearchView({ base, params }: { base: JobsBase; params: 
                 : 'text-[28px] leading-9 font-bold tracking-[-0.02em] text-fg sm:text-display-lg'
             }
           >
-            {t('title')}
+            {heading?.title ?? t('title')}
           </h1>
           <p className={inApp ? 'mt-1.5 text-sm text-fg-muted' : 'mt-2 text-base text-fg-muted'}>
-            {t('intro')}
+            {heading?.intro ?? t('intro')}
           </p>
         </div>
         <ButtonLink href={`${base}/archives`} variant="ghost" icon={Archive}>

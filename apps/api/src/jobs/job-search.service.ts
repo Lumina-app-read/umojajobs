@@ -1,6 +1,10 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import {
+  citySlug,
   ERROR_CODES,
+  type PlaceCityResponse,
+  SITEMAP_MAX_OFFERS,
+  type SitemapResponse,
   type JobSearchResponse,
   type PublicJobOfferDetail,
   type PublicJobOfferSummary,
@@ -135,6 +139,91 @@ export class JobSearchService {
       this.prisma.jobOffer.count({ where }),
     ]);
     return { items: rows.map(toPublicSummary).filter(present), total, page, pageSize };
+  }
+
+  /** Plan du site : offres actives et lieux ou catégories qui en ont au moins une. */
+  async sitemap(now: Date = new Date()): Promise<SitemapResponse> {
+    const active: Prisma.JobOfferWhereInput = { status: 'active', endsAt: { gt: now } };
+    const [offers, countries, categories, cities] = await Promise.all([
+      this.prisma.jobOffer.findMany({
+        where: { ...active, slug: { not: null } },
+        orderBy: [{ publishedAt: 'desc' }, { id: 'desc' }],
+        take: SITEMAP_MAX_OFFERS,
+        select: { slug: true, updatedAt: true },
+      }),
+      this.prisma.jobOffer.groupBy({ by: ['countryId'], where: active, _count: true }),
+      this.prisma.jobOffer.groupBy({ by: ['categoryId'], where: active, _count: true }),
+      this.prisma.jobOffer.groupBy({
+        by: ['cityId'],
+        where: { ...active, cityId: { not: null } },
+        _count: true,
+      }),
+    ]);
+    const ids = <T extends { _count: number }>(rows: T[], key: keyof T) =>
+      rows.flatMap((row) => (row[key] ? [row[key] as string] : []));
+    const [countryRows, categoryRows, cityRows] = await Promise.all([
+      this.prisma.country.findMany({
+        where: { id: { in: ids(countries, 'countryId') }, isActive: true },
+        select: { id: true, iso2: true },
+      }),
+      this.prisma.jobCategory.findMany({
+        where: { id: { in: ids(categories, 'categoryId') }, isActive: true },
+        select: { id: true, slug: true },
+      }),
+      this.prisma.city.findMany({
+        where: { id: { in: ids(cities, 'cityId') }, isActive: true, country: { isActive: true } },
+        select: { id: true, name: true, searchName: true, country: { select: { iso2: true } } },
+      }),
+    ]);
+    const count = <T extends { _count: number }>(rows: T[], key: keyof T, id: string) =>
+      rows.find((row) => row[key] === id)?._count ?? 0;
+    return {
+      offers: offers.map((row) => ({
+        slug: row.slug as string,
+        updatedAt: row.updatedAt.toISOString(),
+      })),
+      countries: countryRows
+        .map((row) => ({ iso2: row.iso2, count: count(countries, 'countryId', row.id) }))
+        .sort((a, b) => b.count - a.count || a.iso2.localeCompare(b.iso2)),
+      categories: categoryRows
+        .map((row) => ({ slug: row.slug, count: count(categories, 'categoryId', row.id) }))
+        .sort((a, b) => b.count - a.count || a.slug.localeCompare(b.slug)),
+      cities: cityRows
+        .map((row) => ({
+          countryIso2: row.country.iso2,
+          slug: citySlug(row.searchName),
+          name: row.name,
+          count: count(cities, 'cityId', row.id),
+        }))
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+    };
+  }
+
+  /**
+   * Ville désignée par son adresse (/jobs/country/sn/dakar). Deux villes homonymes d'un même pays
+   * se départagent par le nombre d'offres actives, puis par la population.
+   */
+  async placeCity(iso2: string, slug: string, now: Date = new Date()): Promise<PlaceCityResponse> {
+    const candidates = await this.prisma.city.findMany({
+      where: {
+        searchName: slug.replace(/-/g, ' '),
+        isActive: true,
+        country: { iso2, isActive: true },
+      },
+      select: {
+        id: true,
+        name: true,
+        searchName: true,
+        population: true,
+        _count: { select: { jobOffers: { where: { status: 'active', endsAt: { gt: now } } } } },
+      },
+      take: 20,
+    });
+    const best = candidates.sort(
+      (a, b) => b._count.jobOffers - a._count.jobOffers || b.population - a.population,
+    )[0];
+    if (!best) throw new NotFoundException({ code: ERROR_CODES.CITY_NOT_FOUND });
+    return { id: best.id, name: best.name, slug: citySlug(best.searchName), countryIso2: iso2 };
   }
 
   /** Archives : offres expirées, conservées et consultables, les plus récemment expirées d'abord. */

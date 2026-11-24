@@ -607,5 +607,20 @@
     "creditsUnit": "crédits",
     "perCredit": "{price} par crédit",
     "bestValue": "Meilleur prix"
+  },
+  "places": {
+    "title": "Parcourir les offres",
+    "byCountry": "Par pays",
+    "byCity": "Par ville",
+    "byCategory": "Par catégorie",
+    "countryTitle": "Offres d’emploi : {name}",
+    "countryDescription": "Offres d’emploi vérifiées par notre équipe de modération, pays : {name}. Consultation gratuite, coordonnées de candidature après déverrouillage.",
+    "countryIntro": "Offres vérifiées par notre équipe de modération, pays : {name}.",
+    "cityTitle": "Offres d’emploi : {name}",
+    "cityDescription": "Offres d’emploi vérifiées par notre équipe de modération, ville : {name}. Consultation gratuite, coordonnées de candidature après déverrouillage.",
+    "cityIntro": "Offres vérifiées par notre équipe de modération, ville : {name}.",
+    "categoryTitle": "Offres d’emploi : {name}",
+    "categoryDescription": "Offres d’emploi vérifiées en Afrique, domaine : {name}. Consultation gratuite, coordonnées de candidature après déverrouillage.",
+    "categoryIntro": "Offres vérifiées par notre équipe de modération, domaine : {name}."
   }
 }

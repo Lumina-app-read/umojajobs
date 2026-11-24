@@ -607,5 +607,20 @@
     "creditsUnit": "credits",
     "perCredit": "{price} per credit",
     "bestValue": "Best value"
+  },
+  "places": {
+    "title": "Browse job offers",
+    "byCountry": "By country",
+    "byCity": "By city",
+    "byCategory": "By category",
+    "countryTitle": "Jobs: {name}",
+    "countryDescription": "Job offers checked by our moderation team, country: {name}. Free to browse, application details after unlocking.",
+    "countryIntro": "Offers checked by our moderation team, country: {name}.",
+    "cityTitle": "Jobs: {name}",
+    "cityDescription": "Job offers checked by our moderation team, city: {name}. Free to browse, application details after unlocking.",
+    "cityIntro": "Offers checked by our moderation team, city: {name}.",
+    "categoryTitle": "Jobs: {name}",
+    "categoryDescription": "Job offers in Africa checked by our moderation team, field: {name}. Free to browse, application details after unlocking.",
+    "categoryIntro": "Offers checked by our moderation team, field: {name}."
   }
 }

@@ -19,6 +19,8 @@ import { useRouter } from '@/i18n/navigation';
 import type { JobsBase } from './routes';
 
 export interface JobFilterValues {
+  /** Ville imposée par une page par ville (non modifiable dans les filtres). */
+  cityId?: string | null;
   q: string;
   country: string | null;
   category: string | null;

@@ -476,6 +476,17 @@ export class JobOfferSlugParamDto {
   slug!: string;
 }
 
+export class PlaceCityParamDto {
+  @ApiProperty({ example: 'SN' })
+  @Matches(/^[A-Z]{2}$/)
+  iso2!: string;
+
+  @ApiProperty({ example: 'saint-louis' })
+  @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+  @MaxLength(120)
+  city!: string;
+}
+
 export class JobOfferRefParamDto {
   @ApiProperty({ format: 'uuid' })
   @IsUUID()

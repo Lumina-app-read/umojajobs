@@ -13,4 +13,5 @@ export * from './registry';
 export * from './users';
 export * from './catalog';
 export * from './notifications';
+export * from './seo';
 export * from './bundles';

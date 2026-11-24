@@ -100,5 +100,6 @@
   "CATEGORY_NOT_FOUND": "Cette catégorie est introuvable.",
   "CATEGORY_DUPLICATE": "Une catégorie porte déjà ce nom, ou le nombre maximal est atteint.",
   "CATEGORY_ORDER_CONFLICT": "La liste des catégories a changé. Rechargez la page.",
-  "CATALOG_LAST_ACTIVE": "Il doit rester au moins un élément actif."
+  "CATALOG_LAST_ACTIVE": "Il doit rester au moins un élément actif.",
+  "CITY_NOT_FOUND": "Cette ville est introuvable."
 }

@@ -7,6 +7,8 @@ import {
   type ModerationJobOfferResponse,
   type PublicJobOfferDetail,
   type SavedJobResponse,
+  type PlaceCityResponse,
+  type SitemapResponse,
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
 import request from 'supertest';
@@ -229,5 +231,52 @@ describe('Consultation publique des offres (intégration)', () => {
     const pending = await publish({ title: `Radiologue ${tag}` }, 'none');
     const refused = await reader.put(`/api/v1/me/saved-jobs/${pending.id}`);
     expect(refused.status).toBe(404);
+  });
+
+  it('plan du site : offres actives et lieux qui en ont, sans offre suspendue, programmée ni expirée', async () => {
+    const tag = token();
+    const server = request(app.getHttpServer());
+    const city = await prisma.city.findFirstOrThrow({
+      where: { country: { iso2: 'SN' }, searchName: 'saint louis' },
+    });
+    const active = await publish({ title: `Pharmacien ${tag}`, cityId: city.id });
+    const suspended = await publish({ title: `Pharmacien ${tag}` }, 'suspend');
+    const scheduled = await publish({ title: `Pharmacien ${tag}`, startDate: day(3) });
+    const slugOf = async (id: string) =>
+      (await prisma.jobOffer.findUniqueOrThrow({ where: { id } })).slug as string;
+
+    const response = await server.get('/api/v1/job-offers/sitemap');
+    expect(response.headers['cache-control']).toBe('public, max-age=600');
+    const sitemap = response.body as SitemapResponse;
+    const slugs = sitemap.offers.map((offer) => offer.slug);
+    expect(slugs).toContain(await slugOf(active.id));
+    expect(slugs).not.toContain(await slugOf(suspended.id));
+    expect(slugs).not.toContain(await slugOf(scheduled.id));
+    expect(sitemap.countries.find((entry) => entry.iso2 === 'SN')?.count).toBeGreaterThan(0);
+    expect(sitemap.categories.some((entry) => entry.slug === 'health')).toBe(true);
+    expect(sitemap.cities).toContainEqual(
+      expect.objectContaining({ countryIso2: 'SN', slug: 'saint-louis', name: city.name }),
+    );
+    expect(JSON.stringify(sitemap)).not.toContain('rh-secret');
+
+    // Adresse d'une ville : nom normalisé, insensible aux accents.
+    const place = (await server.get('/api/v1/job-offers/places/SN/cities/saint-louis'))
+      .body as PlaceCityResponse;
+    expect(place).toEqual({ id: city.id, name: city.name, slug: 'saint-louis', countryIso2: 'SN' });
+    expect((await server.get('/api/v1/job-offers/places/SN/cities/ville-inconnue')).status).toBe(
+      404,
+    );
+    expect((await server.get('/api/v1/job-offers/places/sn/cities/dakar')).status).toBe(400);
+    expect((await server.get('/api/v1/job-offers/places/SN/cities/Dakar')).status).toBe(400);
+    // Les pages par ville s'appuient sur le filtre par ville de la recherche.
+    expect((await search(`q=${tag}&cityId=${city.id}`)).total).toBe(1);
+
+    // Une offre expirée sort du plan du site.
+    await prisma.jobOffer.update({
+      where: { id: active.id },
+      data: { endsAt: new Date(Date.now() - 1000) },
+    });
+    const after = (await server.get('/api/v1/job-offers/sitemap')).body as SitemapResponse;
+    expect(after.offers.map((offer) => offer.slug)).not.toContain(await slugOf(active.id));
   });
 });

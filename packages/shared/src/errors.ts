@@ -17,6 +17,7 @@ export const ERROR_CODES = {
 
   // Référentiel
   COUNTRY_NOT_FOUND: 'COUNTRY_NOT_FOUND',
+  CITY_NOT_FOUND: 'CITY_NOT_FOUND',
 
   // Authentification
   INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',

@@ -10,6 +10,7 @@ import { FlagEmojiPolyfill } from '@/components/layout/flag-emoji-polyfill';
 import { ThemeScript } from '@/components/theme/theme-script';
 import { Toaster } from '@/components/ui/toast';
 import { routing } from '@/i18n/routing';
+import { publicPageMetadata, SITE_URL } from '@/lib/seo';
 import '../globals.css';
 
 // Plus Jakarta Sans (police variable 200-800) est téléchargée au build et servie depuis notre domaine :
@@ -24,11 +25,22 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations('common.meta');
+  const title = `${APP_NAME} · ${t('tagline')}`;
   return {
-    title: { default: `${APP_NAME} · ${t('tagline')}`, template: `%s · ${APP_NAME}` },
+    metadataBase: new URL(SITE_URL),
+    title: { default: title, template: `%s · ${APP_NAME}` },
     description: t('description'),
+    // Aperçu de partage par défaut ; chaque page publique précise le sien et son adresse canonique.
+    openGraph: publicPageMetadata({ locale, path: '/', title, description: t('description') })
+      .openGraph,
+    twitter: { card: 'summary_large_image' },
   };
 }
 

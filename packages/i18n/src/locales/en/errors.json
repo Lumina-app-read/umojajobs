@@ -100,5 +100,6 @@
   "CATEGORY_NOT_FOUND": "This category could not be found.",
   "CATEGORY_DUPLICATE": "A category already has this name, or the maximum number is reached.",
   "CATEGORY_ORDER_CONFLICT": "The list of categories has changed. Reload the page.",
-  "CATALOG_LAST_ACTIVE": "At least one item must stay active."
+  "CATALOG_LAST_ACTIVE": "At least one item must stay active.",
+  "CITY_NOT_FOUND": "This city could not be found."
 }
