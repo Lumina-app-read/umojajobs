@@ -219,6 +219,7 @@ model User {
   careerDocumentPasses  CareerDocumentPass[]    @relation("CareerDocumentPassUser")
   careerDocumentPacks   CareerDocumentPack[]    @relation("CareerDocumentPackUser")
   documentBundles       DocumentBundle[]        @relation("DocumentBundleOwner")
+  notifications         Notification[]          @relation("NotificationRecipient")
   careerDocumentExports CareerDocumentExport[]  @relation("CareerDocumentExportUser")
   aiRequests            AiRequest[]             @relation("AiRequestUser")
   aiGenerations         AiGeneration[]          @relation("AiGenerationUser")
@@ -1529,4 +1530,68 @@ model DocumentBundleExport {
   @@unique([bundleId, idempotencyKey])
   @@index([bundleId, createdAt(sort: Desc)])
   @@map("document_bundle_exports")
+}
+
+enum NotificationType {
+  offer_submitted
+  offer_approved
+  offer_correction_requested
+  offer_rejected
+  offer_suspended
+  offer_unlocked
+  commission_earned
+  commission_available
+  credits_purchased
+  withdrawal_updated
+  account_suspended
+
+  @@map("notification_type")
+}
+
+enum NotificationEmailStatus {
+  /**
+   * À envoyer.
+   */
+  pending
+  /**
+   * Pris par un envoi en cours.
+   */
+  sending
+  sent
+  /**
+   * Abandonné après plusieurs tentatives.
+   */
+  failed
+  /**
+   * Aucun email prévu pour ce type.
+   */
+  skipped
+
+  @@map("notification_email_status")
+}
+
+/**
+ * Notification interne, créée dans la transaction de l'événement métier : elle existe si et
+ * seulement si l'événement a eu lieu. L'email associé part ensuite par la file d'envoi (reprises).
+ */
+model Notification {
+  id            String                  @id @default(uuid(7)) @db.Uuid
+  userId        String                  @map("user_id") @db.Uuid
+  type          NotificationType
+  data          Json                    @default("{}")
+  link          String?                 @db.VarChar(300)
+  /// Un même événement ne crée jamais deux notifications (rejeu, double traitement).
+  dedupeKey     String                  @unique @map("dedupe_key") @db.VarChar(200)
+  readAt        DateTime?               @map("read_at") @db.Timestamptz(3)
+  emailStatus   NotificationEmailStatus @default(pending) @map("email_status")
+  emailAttempts Int                     @default(0) @map("email_attempts")
+  emailNextAt   DateTime                @default(now()) @map("email_next_at") @db.Timestamptz(3)
+  emailSentAt   DateTime?               @map("email_sent_at") @db.Timestamptz(3)
+  createdAt     DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, id(sort: Desc)])
+  @@index([emailStatus, emailNextAt])
+  @@map("notifications")
 }

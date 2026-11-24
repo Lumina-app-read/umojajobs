@@ -147,7 +147,8 @@
       "documentsHint": "Créés avec le Career Studio",
       "start": "Commencer",
       "saved": "Offres enregistrées",
-      "savedHint": "À consulter plus tard"
+      "savedHint": "À consulter plus tard",
+      "seeNotifications": "Toutes les notifications"
     },
     "settings": {
       "intro": "Votre profil, votre sécurité et vos préférences d'affichage.",

@@ -76,7 +76,7 @@ export const APP_NAV: AppNavGroup[] = [
   {
     key: 'account',
     items: [
-      { key: 'notifications', href: '/dashboard/notifications', icon: Bell, phase: 5 },
+      { key: 'notifications', href: '/dashboard/notifications', icon: Bell, phase: null },
       { key: 'settings', href: '/dashboard/settings', icon: Settings, phase: null },
     ],
   },

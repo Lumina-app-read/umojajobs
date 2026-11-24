@@ -5,6 +5,7 @@ import enEmails from './locales/en/emails.json';
 import enErrors from './locales/en/errors.json';
 import enJobs from './locales/en/jobs.json';
 import enLanding from './locales/en/landing.json';
+import enNotifications from './locales/en/notifications.json';
 import enRegistry from './locales/en/registry.json';
 import enStudio from './locales/en/studio.json';
 import enValidation from './locales/en/validation.json';
@@ -15,6 +16,7 @@ import frEmails from './locales/fr/emails.json';
 import frErrors from './locales/fr/errors.json';
 import frJobs from './locales/fr/jobs.json';
 import frLanding from './locales/fr/landing.json';
+import frNotifications from './locales/fr/notifications.json';
 import frRegistry from './locales/fr/registry.json';
 import frStudio from './locales/fr/studio.json';
 import frValidation from './locales/fr/validation.json';
@@ -43,6 +45,7 @@ export const CATALOGS = {
     studio: frStudio,
     bundles: frBundles,
     registry: frRegistry,
+    notifications: frNotifications,
     landing: frLanding,
     emails: frEmails,
   },
@@ -55,6 +58,7 @@ export const CATALOGS = {
     studio: enStudio,
     bundles: enBundles,
     registry: enRegistry,
+    notifications: enNotifications,
     landing: enLanding,
     emails: enEmails,
   },
@@ -76,6 +80,7 @@ export function getClientMessages(locale: I18nLocale) {
     jobs: catalog.jobs,
     studio: catalog.studio,
     bundles: catalog.bundles,
+    notifications: catalog.notifications,
   };
 }
 

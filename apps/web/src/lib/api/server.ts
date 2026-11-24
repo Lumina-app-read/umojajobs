@@ -7,6 +7,7 @@ import {
   type BundleResponse,
   type BundleSummary,
   type CareerDocumentResponse,
+  type NotificationsPage,
   type CommissionRegistryResponse,
   type PaymentRegistryResponse,
   type UnlockRegistryResponse,
@@ -340,6 +341,13 @@ export async function getAdminUser(id: string): Promise<AdminUserDetail | null> 
   const result = await serverGet<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}`).catch(
     () => null,
   );
+  return result?.data ?? null;
+}
+
+/** Notifications de l'utilisateur connecté (null si l'API ne répond pas). */
+export async function getNotifications(before?: string): Promise<NotificationsPage | null> {
+  const query = before ? `?before=${encodeURIComponent(before)}` : '';
+  const result = await serverGet<NotificationsPage>(`/me/notifications${query}`).catch(() => null);
   return result?.data ?? null;
 }
 

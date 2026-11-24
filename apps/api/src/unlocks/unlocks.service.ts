@@ -30,6 +30,7 @@ import { FinancialSettingsService } from '../finance/financial-settings.service'
 import { LedgerService } from '../finance/ledger.service';
 import { Prisma } from '../generated/prisma/client';
 import { PUBLIC_SELECT, toPublicSummary } from '../jobs/job-search.service';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 
 type Tx = Prisma.TransactionClient;
@@ -91,8 +92,15 @@ export class UnlocksService {
       const result = await this.prisma.$transaction(async (tx) => {
         // Verrou partagé : l'offre ne peut pas changer d'état pendant le déverrouillage.
         const offers = await tx.$queryRaw<
-          { id: string; status: string; ends_at: Date | null; contributor_id: string }[]
-        >`SELECT "id", "status", "ends_at", "contributor_id" FROM "job_offers"
+          {
+            id: string;
+            status: string;
+            ends_at: Date | null;
+            contributor_id: string;
+            title: string | null;
+            slug: string | null;
+          }[]
+        >`SELECT "id", "status", "ends_at", "contributor_id", "title", "slug" FROM "job_offers"
           WHERE "id" = ${jobOfferId}::uuid FOR SHARE`;
         const offer = offers[0];
         if (!offer) throw new NotFoundException({ code: ERROR_CODES.JOB_OFFER_NOT_FOUND });
@@ -130,8 +138,16 @@ export class UnlocksService {
             jobOfferId,
             contributorId: offer.contributor_id,
             base: consumed.commissionableValueUsd,
+            offerTitle: offer.title ?? '',
           });
         }
+        await notify(tx, {
+          userId: auth.user.id,
+          type: 'offer_unlocked',
+          data: { offer: offer.title ?? '', credits: cost },
+          link: offer.slug ? `/dashboard/jobs/${offer.slug}` : '/dashboard/unlocked',
+          key: unlockId,
+        });
         return { balance: consumed.balance };
       });
       return { jobOfferId, balance: result.balance, charged: true };
@@ -258,7 +274,13 @@ export class UnlocksService {
    */
   private async accrueCommission(
     tx: Tx,
-    input: { unlockId: string; jobOfferId: string; contributorId: string; base: Prisma.Decimal },
+    input: {
+      unlockId: string;
+      jobOfferId: string;
+      contributorId: string;
+      base: Prisma.Decimal;
+      offerTitle: string;
+    },
   ): Promise<void> {
     const rate = await this.settings.require('contributor_commission_rate', tx);
     const amount = commissionAmount(input.base, rate);
@@ -294,6 +316,13 @@ export class UnlocksService {
     });
     await tx.commissionEvent.create({
       data: { commissionId: commission.id, fromStatus: null, toStatus: 'pending' },
+    });
+    await notify(tx, {
+      userId: input.contributorId,
+      type: 'commission_earned',
+      data: { offer: input.offerTitle, amountUsd: amount.toFixed(2) },
+      link: '/dashboard/earnings/commissions',
+      key: commission.id,
     });
   }
 

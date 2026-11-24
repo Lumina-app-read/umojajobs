@@ -1,0 +1,69 @@
+{
+  "title": "Notifications",
+  "intro": "Your approvals, unlocks, payments and withdrawals.",
+  "empty": "No notification",
+  "emptyBody": "Approvals, unlocks and payments will be shown here.",
+  "markAll": "Mark all as read",
+  "allRead": "All caught up",
+  "more": "Older notifications",
+  "newest": "Back to the latest",
+  "unread": "Unread",
+  "open": "Open",
+  "bell": "{count, plural, =0 {Notifications} one {Notifications, # unread} other {Notifications, # unread}}",
+  "seeAll": "See all notifications",
+  "emailFooter": "You can also find this notification in your Umoja Jobs account.",
+  "withdrawalStatus": {
+    "pending": "pending",
+    "under_review": "under review",
+    "approved": "approved",
+    "processing": "being paid out",
+    "paid": "paid",
+    "rejected": "rejected"
+  },
+  "types": {
+    "offer_submitted": {
+      "title": "Offer sent for review",
+      "body": "Your offer “{offer}” has been received. The moderation team checks it before publication."
+    },
+    "offer_approved": {
+      "title": "Offer approved",
+      "body": "Your offer “{offer}” has been approved. It is published or will be on its start date."
+    },
+    "offer_correction_requested": {
+      "title": "Correction requested",
+      "body": "Moderation asks for a correction to your offer “{offer}”: {reason}"
+    },
+    "offer_rejected": {
+      "title": "Offer rejected",
+      "body": "Your offer “{offer}” was not accepted: {reason}"
+    },
+    "offer_suspended": {
+      "title": "Offer suspended",
+      "body": "Your offer “{offer}” has been suspended by moderation: {reason}"
+    },
+    "offer_unlocked": {
+      "title": "Offer unlocked",
+      "body": "You unlocked the offer “{offer}” for {credits} credits. Its application details remain available in your account."
+    },
+    "commission_earned": {
+      "title": "New commission",
+      "body": "Your offer “{offer}” was just unlocked: a commission of {amount} is pending."
+    },
+    "commission_available": {
+      "title": "Commission available",
+      "body": "A commission of {amount} is now available for withdrawal."
+    },
+    "credits_purchased": {
+      "title": "Top-up confirmed",
+      "body": "Your payment of {amount} is confirmed: {credits} credits have been added to your balance."
+    },
+    "withdrawal_updated": {
+      "title": "Withdrawal request {status}",
+      "body": "Your withdrawal request of {amount} is {status}. {reason}"
+    },
+    "account_suspended": {
+      "title": "Account suspended",
+      "body": "Your Umoja Jobs account has been suspended. For any question, contact our support."
+    }
+  }
+}

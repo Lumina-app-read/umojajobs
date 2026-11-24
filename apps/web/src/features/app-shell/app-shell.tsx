@@ -2,7 +2,7 @@
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { type Locale, PERMISSIONS, type ThemePreference } from '@opportinities/shared';
-import { ArrowLeft, Bell, Globe, Menu, ShieldCheck, X } from 'lucide-react';
+import { ArrowLeft, Globe, Menu, ShieldCheck, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useEffect, useState } from 'react';
 import { LanguageMenu } from '@/components/layout/language-menu';
@@ -18,6 +18,7 @@ import { visibleAdminNav } from './admin-nav';
 import { APP_NAV, APP_TABS, isActive } from './app-nav';
 import { AppNavList, type NavGroupView } from './app-nav-list';
 import { PreferenceSync } from './preference-sync';
+import { NotificationBell } from '@/features/notifications/notification-bell';
 
 export interface ShellUser {
   firstName: string;
@@ -255,13 +256,7 @@ export function AppShell({
               </ButtonLink>
               <LanguageMenu className="max-sm:hidden" />
               <ThemeMenu />
-              <Link
-                href="/dashboard/notifications"
-                className={iconButton}
-                aria-label={t('app.nav.notifications')}
-              >
-                <Bell className="size-[18px]" aria-hidden="true" />
-              </Link>
+              <NotificationBell className={iconButton} />
               <Link
                 href="/dashboard/settings"
                 className="ml-1 rounded-full"

@@ -25,6 +25,7 @@ import { sumUsd } from '../finance/finance-rules';
 import { FinancialSettingsService } from '../finance/financial-settings.service';
 import { LedgerService } from '../finance/ledger.service';
 import { Prisma } from '../generated/prisma/client';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 import { SecurityEventsService } from '../security-events/security-events.service';
 
@@ -346,6 +347,20 @@ export class WithdrawalsService {
         },
       });
       if (input.action === 'pay') await this.settleCommissions(tx, id);
+      // L'examen interne ne concerne pas le contributeur ; un échec de versement le remet en file.
+      if (input.action !== 'review') {
+        await notify(tx, {
+          userId: request.userId,
+          type: 'withdrawal_updated',
+          data: {
+            status: rule.to,
+            amountUsd: request.amountUsd.toFixed(2),
+            ...(input.action === 'reject' && note && { reason: note }),
+          },
+          link: '/dashboard/earnings/withdrawals',
+          key: `${id}:${input.action}:${await tx.withdrawalEvent.count({ where: { withdrawalId: id } })}`,
+        });
+      }
       await this.securityEvents.record(
         {
           type: 'withdrawal_status_changed',

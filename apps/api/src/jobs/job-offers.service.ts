@@ -16,6 +16,7 @@ import {
 import { type AuthContext } from '../auth/auth-context';
 import { type ClientInfo } from '../common/http/app-request';
 import { type JobOfferStatus, type Prisma } from '../generated/prisma/client';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   buildSearchText,
@@ -196,6 +197,13 @@ export class JobOffersService {
       });
       await tx.jobOfferStatusHistory.create({
         data: statusChange(id, current.status, 'pending_review', auth, client),
+      });
+      await notify(tx, {
+        userId: auth.user.id,
+        type: 'offer_submitted',
+        data: { offer: current.title ?? '' },
+        link: '/dashboard/publications',
+        key: `${id}:v${dto.version}`,
       });
       return tx.jobOffer.findUniqueOrThrow({ where: { id }, include: JOB_OFFER_INCLUDE });
     });

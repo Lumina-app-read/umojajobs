@@ -27,6 +27,7 @@ import { type EnvironmentVariables } from '../config/env.validation';
 import { FinancialSettingsService } from '../finance/financial-settings.service';
 import { LEDGER_ACCOUNTS, LedgerService } from '../finance/ledger.service';
 import { Prisma } from '../generated/prisma/client';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 import { SecurityEventsService } from '../security-events/security-events.service';
 import { REDIS_CLIENT } from '../redis/redis.module';
@@ -389,6 +390,13 @@ export class CreditPurchasesService {
           },
         });
         await this.grantPurchasedCredits(tx, order, payment.id, sale.id);
+        await notify(tx, {
+          userId: order.userId,
+          type: 'credits_purchased',
+          data: { credits: order.credits, amountUsd: order.priceUsd.toFixed(2) },
+          link: '/dashboard/credits',
+          key: order.id,
+        });
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return;

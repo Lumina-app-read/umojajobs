@@ -27,6 +27,7 @@ import { type AuthContext } from '../auth/auth-context';
 import { SessionsService } from '../auth/sessions.service';
 import { type ClientInfo } from '../common/http/app-request';
 import { Prisma } from '../generated/prisma/client';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 import { SecurityEventsService } from '../security-events/security-events.service';
 import {
@@ -240,6 +241,13 @@ export class UsersAdminService {
       await tx.user.update({ where: { id }, data: { status } });
       const revokedSessions =
         status === 'suspended' ? await this.sessions.revokeAll(id, 'suspended', undefined, tx) : 0;
+      // Le motif reste interne ; l'avis invite à contacter le support.
+      if (status === 'suspended') {
+        const count = await tx.securityEvent.count({
+          where: { type: 'user_suspended', metadata: { path: ['targetId'], equals: id } },
+        });
+        await notify(tx, { userId: id, type: 'account_suspended', key: `${id}:${count + 1}` });
+      }
       await this.securityEvents.record(
         {
           type: status === 'suspended' ? 'user_suspended' : 'user_reactivated',

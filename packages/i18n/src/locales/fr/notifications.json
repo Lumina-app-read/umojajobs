@@ -1,0 +1,69 @@
+{
+  "title": "Notifications",
+  "intro": "Vos validations, déverrouillages, paiements et retraits.",
+  "empty": "Aucune notification",
+  "emptyBody": "Les validations, déverrouillages et paiements vous seront signalés ici.",
+  "markAll": "Tout marquer comme lu",
+  "allRead": "Tout est lu",
+  "more": "Notifications plus anciennes",
+  "newest": "Revenir aux plus récentes",
+  "unread": "Non lue",
+  "open": "Ouvrir",
+  "bell": "{count, plural, =0 {Notifications} one {Notifications, # non lue} other {Notifications, # non lues}}",
+  "seeAll": "Voir toutes les notifications",
+  "emailFooter": "Retrouvez cette notification dans votre espace Umoja Jobs.",
+  "withdrawalStatus": {
+    "pending": "en attente",
+    "under_review": "en cours d’examen",
+    "approved": "approuvée",
+    "processing": "en cours de versement",
+    "paid": "versée",
+    "rejected": "refusée"
+  },
+  "types": {
+    "offer_submitted": {
+      "title": "Offre envoyée en modération",
+      "body": "Votre offre « {offer} » a bien été reçue. L’équipe de modération la vérifie avant publication."
+    },
+    "offer_approved": {
+      "title": "Offre validée",
+      "body": "Votre offre « {offer} » a été validée par la modération. Elle est publiée ou le sera à sa date de début."
+    },
+    "offer_correction_requested": {
+      "title": "Correction demandée",
+      "body": "La modération demande une correction de votre offre « {offer} » : {reason}"
+    },
+    "offer_rejected": {
+      "title": "Offre refusée",
+      "body": "Votre offre « {offer} » n’a pas été acceptée : {reason}"
+    },
+    "offer_suspended": {
+      "title": "Offre suspendue",
+      "body": "Votre offre « {offer} » a été suspendue par la modération : {reason}"
+    },
+    "offer_unlocked": {
+      "title": "Offre déverrouillée",
+      "body": "Vous avez déverrouillé l’offre « {offer} » pour {credits} crédits. Ses coordonnées de candidature restent disponibles dans votre espace."
+    },
+    "commission_earned": {
+      "title": "Nouvelle commission",
+      "body": "Votre offre « {offer} » vient d’être déverrouillée : une commission de {amount} est en attente."
+    },
+    "commission_available": {
+      "title": "Commission disponible",
+      "body": "Une commission de {amount} est maintenant disponible au retrait."
+    },
+    "credits_purchased": {
+      "title": "Recharge confirmée",
+      "body": "Votre paiement de {amount} est confirmé : {credits} crédits ont été ajoutés à votre solde."
+    },
+    "withdrawal_updated": {
+      "title": "Demande de retrait {status}",
+      "body": "Votre demande de retrait de {amount} est {status}. {reason}"
+    },
+    "account_suspended": {
+      "title": "Compte suspendu",
+      "body": "Votre compte Umoja Jobs a été suspendu. Pour toute question, contactez notre support."
+    }
+  }
+}

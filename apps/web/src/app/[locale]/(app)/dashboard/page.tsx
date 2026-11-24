@@ -18,6 +18,7 @@ import { getFormatter, getTranslations } from 'next-intl/server';
 import { JobCard } from '@/features/jobs/job-card';
 import {
   getCareerDocuments,
+  getNotifications,
   getCreditBalance,
   getMyJobOffers,
   getSavedJobs,
@@ -28,6 +29,7 @@ import { Badge } from '@/components/ui/badge';
 import { ButtonLink } from '@/components/ui/button-link';
 import { EmptyState, StatCard } from '@/components/ui/feedback';
 import { requireUser } from '@/lib/auth-guard';
+import { NotificationList } from '@/features/notifications/notification-list';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('common.app.nav');
@@ -43,13 +45,14 @@ export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const t = await getTranslations('common.app');
   const format = await getFormatter();
-  const [credits, unlocks, latest, mine, saved, documents] = await Promise.all([
+  const [credits, unlocks, latest, mine, saved, documents, notifications] = await Promise.all([
     getCreditBalance(),
     getUnlocks(),
     searchJobs('page=1&pageSize=4'),
     getMyJobOffers(),
     getSavedJobs(),
     getCareerDocuments(),
+    getNotifications(),
   ]);
 
   const steps: { icon: LucideIcon; label: string; done: boolean; href?: string }[] = [
@@ -178,12 +181,30 @@ export default async function DashboardOverviewPage() {
           <h2 id="notifications" className="mb-3 text-base font-semibold text-fg">
             {t('overview.notifications')}
           </h2>
-          <EmptyState
-            icon={Bell}
-            title={t('overview.notificationsEmpty')}
-            description={t('overview.notificationsEmptyBody')}
-            className="bg-surface py-12"
-          />
+          {notifications && notifications.items.length > 0 ? (
+            <div className="grid gap-3">
+              <NotificationList
+                compact
+                initial={{ ...notifications, items: notifications.items.slice(0, 3) }}
+              />
+              <ButtonLink
+                href="/dashboard/notifications"
+                variant="ghost"
+                size="sm"
+                trailingIcon={ArrowRight}
+                className="justify-self-start"
+              >
+                {t('overview.seeNotifications')}
+              </ButtonLink>
+            </div>
+          ) : (
+            <EmptyState
+              icon={Bell}
+              title={t('overview.notificationsEmpty')}
+              description={t('overview.notificationsEmptyBody')}
+              className="bg-surface py-12"
+            />
+          )}
         </section>
       </div>
     </div>

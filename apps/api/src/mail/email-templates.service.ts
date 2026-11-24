@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { getTranslator, type I18nLocale } from '@opportinities/i18n';
-import { APP_NAME } from '@opportinities/shared';
+import { APP_NAME, type NotificationData, type NotificationType } from '@opportinities/shared';
 import { type EnvironmentVariables } from '../config/env.validation';
 import { type OutgoingEmail } from './mail.service';
 
@@ -28,6 +28,24 @@ interface EmailContent {
   paragraphs: string[];
   action?: { label: string; url: string };
   closing: string[];
+}
+
+/** Paramètres d'un texte de notification : montants et états mis en forme dans la langue. */
+export function notificationParams(
+  locale: I18nLocale,
+  data: NotificationData,
+): Record<string, string | number> {
+  const t = getTranslator(locale, 'notifications');
+  return {
+    offer: data.offer ?? '',
+    reason: data.reason ?? '',
+    credits: data.credits ?? 0,
+    amount: new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'fr-FR', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(Number(data.amountUsd ?? 0)),
+    status: data.status ? t(`withdrawalStatus.${data.status}`) : '',
+  };
 }
 
 /**
@@ -94,6 +112,25 @@ export class EmailTemplatesService {
     });
   }
 
+  /** Email d'une notification : mêmes textes que le centre de notifications, lien vers l'application. */
+  notification(
+    to: Recipient,
+    type: NotificationType,
+    data: NotificationData,
+    link: string | null,
+  ): OutgoingEmail {
+    const t = getTranslator(to.locale, 'notifications');
+    const params = notificationParams(to.locale, data);
+    return this.render(to, {
+      subject: t(`types.${type}.title`, params),
+      paragraphs: [t(`types.${type}.body`, params)],
+      ...(link && {
+        action: { label: t('open'), url: `${this.appUrl}/${to.locale}${link}` },
+      }),
+      closing: [t('emailFooter')],
+    });
+  }
+
   private link(locale: I18nLocale, page: string, token: string): string {
     return `${this.appUrl}/${locale}/${page}#token=${encodeURIComponent(token)}`;
   }
@@ -120,7 +157,7 @@ export class EmailTemplatesService {
 
     const html = `<!doctype html>
 <html lang="${to.locale}">
-<body style="margin:0;padding:24px;background:#f1f5f9;font-family:'IBM Plex Sans',Arial,Helvetica,sans-serif;color:#0f172a;">
+<body style="margin:0;padding:24px;background:#f1f5f9;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;color:#0f172a;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px;padding:32px;">
     <p style="margin:0 0 24px;font-size:18px;font-weight:700;color:#1e3a8a;">${APP_NAME}</p>
     ${p(greeting)}

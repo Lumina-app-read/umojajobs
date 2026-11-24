@@ -13,6 +13,7 @@ import {
 import { type AuthContext } from '../auth/auth-context';
 import { type ClientInfo } from '../common/http/app-request';
 import { type JobOfferStatus, type Prisma } from '../generated/prisma/client';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   buildSlug,
@@ -32,6 +33,14 @@ import { type ModerationDecisionDto, type ModerationQueueQueryDto } from './job-
 import { datesError, statusChange } from './job-offers.service';
 
 export type ModerationAction = 'approve' | 'reject' | 'request-correction' | 'suspend';
+
+/** Notification envoyée au contributeur pour chaque décision. */
+const DECISION_NOTIFICATION = {
+  approve: 'offer_approved',
+  reject: 'offer_rejected',
+  'request-correction': 'offer_correction_requested',
+  suspend: 'offer_suspended',
+} as const;
 
 /** Statut d'arrivée et exigence de motif de chaque décision (hors validation, calculée). */
 const DECISIONS: Record<
@@ -169,6 +178,17 @@ export class JobModerationService {
       }
       await tx.jobOfferStatusHistory.create({
         data: statusChange(id, offer.status, to, auth, client, dto.reason),
+      });
+      await notify(tx, {
+        userId: offer.contributorId,
+        type: DECISION_NOTIFICATION[action],
+        data: {
+          offer: offer.title ?? '',
+          ...(action !== 'approve' && dto.reason && { reason: dto.reason }),
+        },
+        link:
+          action === 'request-correction' ? `/dashboard/publish/${id}` : '/dashboard/publications',
+        key: `${id}:v${dto.version}`,
       });
     });
     return this.get(id);

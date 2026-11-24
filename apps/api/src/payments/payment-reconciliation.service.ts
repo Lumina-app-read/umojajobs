@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { FinancialSettingsService } from '../finance/financial-settings.service';
 import { LedgerService } from '../finance/ledger.service';
+import { notify } from '../notifications/notify';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreditPurchasesService } from './credit-purchases.service';
 
@@ -165,6 +166,13 @@ export class PaymentReconciliationService {
         if (moved.count === 0) return;
         await tx.commissionEvent.create({
           data: { commissionId: commission.id, fromStatus: 'pending', toStatus: 'available' },
+        });
+        await notify(tx, {
+          userId: commission.contributorId,
+          type: 'commission_available',
+          data: { amountUsd: commission.amountUsd.toFixed(2) },
+          link: '/dashboard/earnings',
+          key: commission.id,
         });
         await this.ledger.post(tx, {
           type: 'commission_release',

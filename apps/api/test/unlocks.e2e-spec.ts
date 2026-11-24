@@ -12,11 +12,13 @@ import {
   type UnlockResponse,
   type UnlockSummaryResponse,
   type WalletResponse,
+  type NotificationsPage,
 } from '@opportinities/shared';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import type Redis from 'ioredis';
 import { Prisma } from '../src/generated/prisma/client';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { NotificationsService } from '../src/notifications/notifications.service';
 import { RegistryService } from '../src/finance/registry.service';
 import { REDIS_CLIENT } from '../src/redis/redis.module';
 import { createTestApp } from './create-test-app';
@@ -49,6 +51,7 @@ const day = (days: number): string =>
 
 interface Member {
   userId: string;
+  email: string;
   api: ApiClient;
 }
 
@@ -74,7 +77,7 @@ describe('Déverrouillages et commissions (intégration)', () => {
     }
     api.adoptCsrfToken(await api.post('/api/v1/auth/login', { email, password: STRONG_PASSWORD }));
     await api.post('/api/v1/auth/me/contributor-terms', { version: CONTRIBUTOR_TERMS_VERSION });
-    return { userId: user.id, api };
+    return { userId: user.id, email, api };
   }
 
   /** Offre active publiée par le contributeur et validée par le modérateur. */
@@ -293,6 +296,59 @@ describe('Déverrouillages et commissions (intégration)', () => {
 
     const mine = (await contributor.api.get('/api/v1/me/commissions')).body as CommissionResponse[];
     expect(mine.find((entry) => entry.offer.id === offer.id)?.amountUsd).toBe('0.150000');
+
+    // Notifications : une par événement, jamais en double, email seulement si prévu.
+    const notes = async (userId: string) =>
+      prisma.notification.findMany({
+        where: {
+          userId,
+          OR: [
+            { data: { path: ['offer'], equals: offer.title ?? '' } },
+            { type: 'commission_earned' },
+          ],
+        },
+        orderBy: { id: 'asc' },
+      });
+    const own = await notes(contributor.userId);
+    expect(own.map((note) => note.type)).toEqual(
+      expect.arrayContaining(['offer_submitted', 'offer_approved', 'commission_earned']),
+    );
+    expect(own.find((note) => note.type === 'commission_earned')).toMatchObject({
+      emailStatus: 'skipped',
+      data: { amountUsd: '0.15' },
+    });
+    expect((await notes(buyer.userId)).map((note) => [note.type, note.emailStatus])).toEqual([
+      ['offer_unlocked', 'pending'],
+    ]);
+    // Un second clic ne crée ni déverrouillage ni notification.
+    await unlock(buyer, offer.id);
+    expect(await prisma.notification.count({ where: { userId: buyer.userId } })).toBe(1);
+
+    await app.get(NotificationsService).dispatch();
+    const email = await waitForEmail(buyer.email, 'Offre déverrouillée');
+    expect(email.Text).toContain(offer.title ?? '');
+    const { slug } = await prisma.jobOffer.findUniqueOrThrow({ where: { id: offer.id } });
+    expect(email.Text).toContain(`/fr/dashboard/jobs/${slug}`);
+    expect(
+      (await prisma.notification.findFirstOrThrow({ where: { userId: buyer.userId } })).emailStatus,
+    ).toBe('sent');
+
+    const page = (await buyer.api.get('/api/v1/me/notifications')).body as NotificationsPage;
+    expect(page).toMatchObject({ unread: 1, next: null });
+    expect(page.items[0]).toMatchObject({
+      type: 'offer_unlocked',
+      read: false,
+      data: { credits: 5 },
+    });
+    // Marquer la notification d'un autre compte n'a aucun effet.
+    await contributor.api.post('/api/v1/me/notifications/read', { ids: [page.items[0]?.id] });
+    expect((await buyer.api.get('/api/v1/me/notifications/unread-count')).body).toEqual({
+      unread: 1,
+    });
+    expect((await buyer.api.post('/api/v1/me/notifications/read', {})).body).toEqual({ unread: 0 });
+    expect((await buyer.api.get('/api/v1/me/notifications/unread-count')).body).toEqual({
+      unread: 0,
+    });
 
     // Registres de l'administration : même déverrouillage, même commission.
     const registry = app.get(RegistryService);
