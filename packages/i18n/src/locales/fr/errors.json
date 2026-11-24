@@ -96,5 +96,9 @@
   "USER_ACTION_FORBIDDEN": "Vos droits ne permettent pas cette action sur ce compte.",
   "USER_STATE_CONFLICT": "Ce compte a déjà cet état. Rechargez la page.",
   "USER_ROLE_INELIGIBLE": "Un rôle ne peut être attribué qu’à un compte actif dont l’email est vérifié.",
-  "LAST_SUPER_ADMIN": "La plateforme doit garder au moins un super administrateur actif."
+  "LAST_SUPER_ADMIN": "La plateforme doit garder au moins un super administrateur actif.",
+  "CATEGORY_NOT_FOUND": "Cette catégorie est introuvable.",
+  "CATEGORY_DUPLICATE": "Une catégorie porte déjà ce nom, ou le nombre maximal est atteint.",
+  "CATEGORY_ORDER_CONFLICT": "La liste des catégories a changé. Rechargez la page.",
+  "CATALOG_LAST_ACTIVE": "Il doit rester au moins un élément actif."
 }

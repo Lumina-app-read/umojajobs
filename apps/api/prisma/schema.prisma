@@ -146,6 +146,7 @@ enum SecurityEventType {
   credit_pack_changed
   user_suspended
   user_reactivated
+  catalog_changed
 
   @@map("security_event_type")
 }

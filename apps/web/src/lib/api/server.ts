@@ -1,6 +1,7 @@
 import 'server-only';
 import {
   type AiUsageResponse,
+  type AdminCatalogResponse,
   type AdminRolesResponse,
   type AdminUserDetail,
   type BundleResponse,
@@ -339,6 +340,12 @@ export async function getAdminUser(id: string): Promise<AdminUserDetail | null> 
   const result = await serverGet<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}`).catch(
     () => null,
   );
+  return result?.data ?? null;
+}
+
+/** Catégories et pays, actifs ou non (administration). */
+export async function getAdminCatalog(): Promise<AdminCatalogResponse | null> {
+  const result = await serverGet<AdminCatalogResponse>('/admin/catalog').catch(() => null);
   return result?.data ?? null;
 }
 

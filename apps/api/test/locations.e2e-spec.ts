@@ -60,7 +60,7 @@ describe('API — référentiel pays et villes (intégration)', () => {
       const body = response.body as CountryBody[];
 
       expect(body).toHaveLength(AFRICAN_COUNTRY_COUNT);
-      expect(response.headers['cache-control']).toBe('public, max-age=3600');
+      expect(response.headers['cache-control']).toBe('public, max-age=300');
       expect(body.find((c) => c.iso2 === 'CD')).toEqual(
         expect.objectContaining({
           iso3: 'COD',

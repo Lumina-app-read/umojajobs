@@ -274,7 +274,8 @@
       "withdrawal_status_changed": "Withdrawal status changed",
       "credit_pack_changed": "Credit pack changed",
       "user_suspended": "Account suspended",
-      "user_reactivated": "Account reactivated"
+      "user_reactivated": "Account reactivated",
+      "catalog_changed": "Categories or countries changed"
     },
     "badge": "Admin",
     "finance": {
@@ -476,6 +477,44 @@
         "grant": "Role granted",
         "revoke": "Role revoked"
       }
+    },
+    "catalog": {
+      "intro": "What forms and filters offer. Nothing is deleted: a disabled item stays on the accounts and offers that use it.",
+      "categories": "Categories",
+      "countries": "Countries",
+      "categoriesHint": "The order below is the one used in forms and filters.",
+      "add": "Add a category",
+      "editTitle": "Edit the category",
+      "dialogHint": "The name is shown in each visitor’s language.",
+      "nameFr": "Name in French",
+      "nameFrPlaceholder": "E.g. Énergies renouvelables",
+      "nameEn": "Name in English",
+      "nameEnPlaceholder": "E.g. Renewable energy",
+      "nameRequired": "Enter at least 2 characters.",
+      "save": "Save",
+      "saved": "Category saved",
+      "cancel": "Cancel",
+      "inactive": "Disabled",
+      "offers": "{count, plural, =0 {no offer} one {# offer} other {# offers}}",
+      "users": "{count, plural, =0 {no account} one {# account} other {# accounts}}",
+      "moveUp": "Move {name} up",
+      "moveDown": "Move {name} down",
+      "editName": "Edit {name}",
+      "disableName": "Disable {name}",
+      "enableName": "Enable {name}",
+      "disable": "Disable",
+      "enable": "Enable",
+      "ordered": "Order saved",
+      "disabled": "Category disabled",
+      "enabled": "Category enabled",
+      "countryDisabled": "Country disabled",
+      "countryEnabled": "Country enabled",
+      "searchCountry": "Search for a country",
+      "searchCountryPlaceholder": "E.g. Senegal, SN",
+      "noCountry": "No country found",
+      "activeCount": "{active} active countries out of {total}",
+      "disableTitle": "Disable {name}?",
+      "disableBody": "This country will no longer be offered at sign-up, in new offers or in filters. Existing accounts and offers do not change."
     }
   }
 }

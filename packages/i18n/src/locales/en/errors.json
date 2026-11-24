@@ -96,5 +96,9 @@
   "USER_ACTION_FORBIDDEN": "Your permissions do not allow this action on this account.",
   "USER_STATE_CONFLICT": "This account is already in that state. Reload the page.",
   "USER_ROLE_INELIGIBLE": "A role can only be granted to an active account with a verified email.",
-  "LAST_SUPER_ADMIN": "The platform must keep at least one active super administrator."
+  "LAST_SUPER_ADMIN": "The platform must keep at least one active super administrator.",
+  "CATEGORY_NOT_FOUND": "This category could not be found.",
+  "CATEGORY_DUPLICATE": "A category already has this name, or the maximum number is reached.",
+  "CATEGORY_ORDER_CONFLICT": "The list of categories has changed. Reload the page.",
+  "CATALOG_LAST_ACTIVE": "At least one item must stay active."
 }

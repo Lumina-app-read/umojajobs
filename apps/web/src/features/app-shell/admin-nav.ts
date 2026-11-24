@@ -85,7 +85,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
         href: '/admin/catalog',
         icon: Globe2,
         permission: SETTINGS_MANAGE,
-        phase: 2,
+        phase: null,
       },
       {
         key: 'pricing',

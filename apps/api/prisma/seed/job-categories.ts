@@ -1,8 +1,8 @@
 import { type PrismaClient } from '../../src/generated/prisma/client';
 
 /**
- * Catégories professionnelles initiales. Administrables ensuite : le seed met à jour les noms
- * et l'ordre, mais ne réactive jamais une catégorie désactivée par l'administration.
+ * Catégories professionnelles initiales. Administrables ensuite : le seed ajoute les catégories
+ * manquantes, mais ne modifie jamais un nom, un ordre ou un état réglé par l'administration.
  */
 export const JOB_CATEGORIES: { slug: string; nameFr: string; nameEn: string }[] = [
   {
@@ -74,7 +74,7 @@ export async function seedJobCategories(prisma: PrismaClient): Promise<number> {
     await prisma.jobCategory.upsert({
       where: { slug: category.slug },
       create: { slug: category.slug, ...data },
-      update: data,
+      update: {},
     });
   }
   return JOB_CATEGORIES.length;

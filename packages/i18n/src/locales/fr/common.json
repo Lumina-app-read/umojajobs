@@ -274,7 +274,8 @@
       "withdrawal_status_changed": "Retrait : changement d'état",
       "credit_pack_changed": "Pack de crédits modifié",
       "user_suspended": "Compte suspendu",
-      "user_reactivated": "Compte réactivé"
+      "user_reactivated": "Compte réactivé",
+      "catalog_changed": "Catégories ou pays modifiés"
     },
     "badge": "Admin",
     "finance": {
@@ -476,6 +477,44 @@
         "grant": "Rôle attribué",
         "revoke": "Rôle retiré"
       }
+    },
+    "catalog": {
+      "intro": "Ce que les formulaires et les filtres proposent. Rien n’est supprimé : un élément désactivé reste sur les comptes et les offres qui l’utilisent.",
+      "categories": "Catégories",
+      "countries": "Pays",
+      "categoriesHint": "L’ordre ci-dessous est celui des formulaires et des filtres.",
+      "add": "Ajouter une catégorie",
+      "editTitle": "Modifier la catégorie",
+      "dialogHint": "Le nom est affiché dans la langue de chaque visiteur.",
+      "nameFr": "Nom en français",
+      "nameFrPlaceholder": "Ex. : Énergies renouvelables",
+      "nameEn": "Nom en anglais",
+      "nameEnPlaceholder": "Ex. : Renewable energy",
+      "nameRequired": "Saisissez au moins 2 caractères.",
+      "save": "Enregistrer",
+      "saved": "Catégorie enregistrée",
+      "cancel": "Annuler",
+      "inactive": "Désactivé",
+      "offers": "{count, plural, =0 {aucune offre} one {# offre} other {# offres}}",
+      "users": "{count, plural, =0 {aucun compte} one {# compte} other {# comptes}}",
+      "moveUp": "Monter {name}",
+      "moveDown": "Descendre {name}",
+      "editName": "Modifier {name}",
+      "disableName": "Désactiver {name}",
+      "enableName": "Activer {name}",
+      "disable": "Désactiver",
+      "enable": "Activer",
+      "ordered": "Ordre enregistré",
+      "disabled": "Catégorie désactivée",
+      "enabled": "Catégorie activée",
+      "countryDisabled": "Pays désactivé",
+      "countryEnabled": "Pays activé",
+      "searchCountry": "Rechercher un pays",
+      "searchCountryPlaceholder": "Ex. : Sénégal, SN",
+      "noCountry": "Aucun pays trouvé",
+      "activeCount": "{active} pays actifs sur {total}",
+      "disableTitle": "Désactiver {name} ?",
+      "disableBody": "Ce pays ne sera plus proposé à l’inscription, dans les nouvelles offres ni dans les filtres. Les comptes et les offres existants ne changent pas."
     }
   }
 }

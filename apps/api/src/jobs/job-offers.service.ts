@@ -280,7 +280,11 @@ export class JobOffersService {
     if (dto.countryIso2 !== undefined) {
       if (dto.countryIso2 !== null) {
         country = await this.prisma.country.findFirst({
-          where: { iso2: dto.countryIso2, isActive: true },
+          // Une offre garde le pays qu'elle a déjà, même désactivé depuis.
+          where: {
+            iso2: dto.countryIso2,
+            OR: [{ isActive: true }, ...(current?.countryId ? [{ id: current.countryId }] : [])],
+          },
           select: { id: true, iso2: true, defaultTimezone: true },
         });
         if (!country) throw validationError('countryIso2', 'isIn');
@@ -309,7 +313,11 @@ export class JobOffersService {
 
     if (dto.categoryId !== undefined && dto.categoryId !== null) {
       const category = await this.prisma.jobCategory.findFirst({
-        where: { id: dto.categoryId, isActive: true },
+        // De même pour sa catégorie.
+        where: {
+          id: dto.categoryId,
+          ...(dto.categoryId === current?.categoryId ? {} : { isActive: true }),
+        },
         select: { id: true },
       });
       if (!category) throw validationError('categoryId', 'isIn');

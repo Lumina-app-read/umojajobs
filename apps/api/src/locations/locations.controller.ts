@@ -12,7 +12,7 @@ export class LocationsController {
   constructor(private readonly locations: LocationsService) {}
 
   @Get()
-  @Header('Cache-Control', 'public, max-age=3600')
+  @Header('Cache-Control', 'public, max-age=300')
   @ApiOkResponse({ type: CountryDto, isArray: true })
   listCountries(): Promise<CountryDto[]> {
     return this.locations.listCountries();

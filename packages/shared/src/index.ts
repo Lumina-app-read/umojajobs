@@ -11,4 +11,5 @@ export * from './jobs';
 export * from './studio';
 export * from './registry';
 export * from './users';
+export * from './catalog';
 export * from './bundles';
