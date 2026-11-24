@@ -226,6 +226,7 @@ model User {
   aiGenerations         AiGeneration[]          @relation("AiGenerationUser")
 
   @@index([countryId])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
   @@map("users")
 }
 
@@ -515,6 +516,9 @@ model JobOffer {
   @@index([sourceUrl])
   @@index([status, publishedAt(sort: Desc)])
   @@index([status, countryId, categoryId])
+  @@index([categoryId, status])
+  @@index([cityId, status])
+  @@index([status, expiredAt(sort: Desc)])
   @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin, map: "job_offers_search_text_trgm_idx")
   @@map("job_offers")
 }
@@ -951,6 +955,7 @@ model JobUnlock {
   @@unique([userId, jobOfferId])
   @@index([userId, createdAt(sort: Desc)])
   @@index([jobOfferId])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
   @@map("job_unlocks")
 }
 
@@ -980,6 +985,7 @@ model Commission {
   withdrawalAllocations WithdrawalCommissionAllocation[]
 
   @@index([contributorId, status, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
   @@index([jobOfferId])
   @@map("commissions")
 }
@@ -1171,6 +1177,7 @@ model CreditOrder {
 
   @@index([userId, createdAt(sort: Desc)])
   @@index([status, createdAt])
+  @@index([createdAt(sort: Desc), id(sort: Desc)])
   @@map("credit_orders")
 }
 
@@ -1593,6 +1600,7 @@ model Notification {
   user User @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, id(sort: Desc)])
+  @@index([userId, readAt])
   @@index([emailStatus, emailNextAt])
   @@map("notifications")
 }

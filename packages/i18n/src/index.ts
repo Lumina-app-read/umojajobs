@@ -78,21 +78,37 @@ export function getClientMessages(locale: I18nLocale) {
     errors: catalog.errors,
     validation: catalog.validation,
     jobs: catalog.jobs,
-    studio: catalog.studio,
-    bundles: catalog.bundles,
     notifications: catalog.notifications,
   };
 }
 
 /**
- * Messages de l'interface web pour next-intl, côté serveur : ceux des composants client, plus
+ * Messages des pages du Career Studio et des dossiers : ceux de toutes les pages, plus les
+ * espaces studio et bundles (environ un quart du volume), envoyés seulement là où ils servent.
+ */
+export function getStudioClientMessages(locale: I18nLocale) {
+  const catalog = CATALOGS[locale];
+  return { ...getClientMessages(locale), studio: catalog.studio, bundles: catalog.bundles };
+}
+
+/**
+ * Messages de l'interface web pour next-intl, côté serveur : ceux des composants client (studio
+ * compris), plus
  * les textes rendus uniquement par le serveur (accueil, registres), qui ne partent pas au navigateur.
  */
 export function getWebMessages(locale: I18nLocale) {
+  const catalog = CATALOGS[locale];
   return {
-    ...getClientMessages(locale),
-    landing: CATALOGS[locale].landing,
-    registry: CATALOGS[locale].registry,
+    common: catalog.common,
+    auth: catalog.auth,
+    errors: catalog.errors,
+    validation: catalog.validation,
+    jobs: catalog.jobs,
+    studio: catalog.studio,
+    bundles: catalog.bundles,
+    notifications: catalog.notifications,
+    landing: catalog.landing,
+    registry: catalog.registry,
   };
 }
 

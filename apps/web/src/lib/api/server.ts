@@ -71,6 +71,29 @@ async function serverGet<T>(path: string): Promise<ServerResult<T>> {
   return { status: response.status, data: body as T, code: null };
 }
 
+/** Durées de mise en cache des lectures publiques (alignées sur l'en-tête Cache-Control de l'API). */
+const OFFERS_TTL = 60;
+const REFERENCE_TTL = 300;
+
+/**
+ * Lecture publique, identique pour tous les visiteurs : aucun cookie n'est transmis et la réponse
+ * est conservée par le cache de données de Next.js pendant `revalidate` secondes. Réservée aux
+ * routes @Public() de l'API qui ne dépendent pas de l'utilisateur ; jamais pour les prix, qui
+ * doivent toujours être à jour.
+ */
+async function publicGet<T>(path: string, revalidate: number): Promise<ServerResult<T>> {
+  const response = await fetch(`${API_INTERNAL_URL}/api/v1${path}`, {
+    headers: { Accept: 'application/json' },
+    next: { revalidate },
+  });
+  const body = (await response.json().catch(() => null)) as unknown;
+  if (!response.ok) {
+    const code = (body as { code?: unknown } | null)?.code;
+    return { status: response.status, data: null, code: typeof code === 'string' ? code : null };
+  }
+  return { status: response.status, data: body as T, code: null };
+}
+
 /**
  * Utilisateur connecté, ou état d'authentification à traiter par la page appelante.
  * Mis en cache pour la durée d'une requête : en-tête, mise en page et page partagent un seul appel.
@@ -81,7 +104,7 @@ export const getCurrentUser = cache((): Promise<ServerResult<MeResponse>> =>
 
 /** Pays actifs (référentiel administrable). */
 export async function getCountries(): Promise<CountryResponse[]> {
-  const result = await serverGet<CountryResponse[]>('/countries');
+  const result = await publicGet<CountryResponse[]>('/countries', REFERENCE_TTL);
   if (!result.data) {
     throw new Error(`Référentiel des pays indisponible (HTTP ${result.status}).`);
   }
@@ -111,7 +134,9 @@ export async function getSecurityEvents(query: {
 
 /** Catégories actives des offres (liste vide si l'API ne répond pas). */
 export async function getJobCategories(): Promise<JobCategoryResponse[]> {
-  const result = await serverGet<JobCategoryResponse[]>('/job-categories').catch(() => null);
+  const result = await publicGet<JobCategoryResponse[]>('/job-categories', REFERENCE_TTL).catch(
+    () => null,
+  );
   return result?.data ?? [];
 }
 
@@ -147,36 +172,43 @@ export async function getModerationOffer(id: string): Promise<ModerationJobOffer
 
 /** Recherche publique (chaîne de requête déjà construite). null si l'API ne répond pas. */
 export async function searchJobs(query: string): Promise<JobSearchResponse | null> {
-  const result = await serverGet<JobSearchResponse>(`/job-offers?${query}`).catch(() => null);
+  const result = await publicGet<JobSearchResponse>(`/job-offers?${query}`, OFFERS_TTL).catch(
+    () => null,
+  );
   return result?.data ?? null;
 }
 
 /** Offres actives et lieux ou catégories qui en ont (mis en cache : une lecture par requête). */
 export const getSitemapData = cache(async (): Promise<SitemapResponse | null> => {
-  const result = await serverGet<SitemapResponse>('/job-offers/sitemap').catch(() => null);
+  const result = await publicGet<SitemapResponse>('/job-offers/sitemap', REFERENCE_TTL).catch(
+    () => null,
+  );
   return result?.data ?? null;
 });
 
 /** Ville désignée par son adresse publique, ou null. */
 export async function getPlaceCity(iso2: string, slug: string): Promise<PlaceCityResponse | null> {
-  const result = await serverGet<PlaceCityResponse>(
+  const result = await publicGet<PlaceCityResponse>(
     `/job-offers/places/${encodeURIComponent(iso2)}/cities/${encodeURIComponent(slug)}`,
+    REFERENCE_TTL,
   ).catch(() => null);
   return result?.data ?? null;
 }
 
 /** Archives publiques des offres expirées. */
 export async function getJobArchives(page: number): Promise<JobSearchResponse | null> {
-  const result = await serverGet<JobSearchResponse>(`/job-offers/archives?page=${page}`).catch(
-    () => null,
-  );
+  const result = await publicGet<JobSearchResponse>(
+    `/job-offers/archives?page=${page}`,
+    REFERENCE_TTL,
+  ).catch(() => null);
   return result?.data ?? null;
 }
 
 /** Fiche publique d'une offre (null si introuvable ou non publique). */
 export const getPublicJob = cache(async (slug: string): Promise<PublicJobOfferDetail | null> => {
-  const result = await serverGet<PublicJobOfferDetail>(
+  const result = await publicGet<PublicJobOfferDetail>(
     `/job-offers/${encodeURIComponent(slug)}`,
+    OFFERS_TTL,
   ).catch(() => null);
   return result?.data ?? null;
 });
