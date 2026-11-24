@@ -8,17 +8,19 @@ export function RegistrySearchField({
   label,
   placeholder,
   defaultValue,
+  name = 'q',
 }: {
   label: string;
   placeholder: string;
   defaultValue: string;
+  name?: string;
 }) {
   return (
     <FormField
       // Une nouvelle adresse (filtre, effacement) réinitialise le champ.
       key={defaultValue}
       label={label}
-      name="q"
+      name={name}
       type="search"
       icon={Search}
       placeholder={placeholder}

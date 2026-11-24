@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { type ClientInfo } from '../common/http/app-request';
 import { type Prisma, type SecurityEventType } from '../generated/prisma/client';
+import { recordAuditChange } from '../audit/audit-context';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface SecurityEventInput {
@@ -20,6 +21,14 @@ export class SecurityEventsService {
 
   async record(event: SecurityEventInput, tx?: TransactionClient): Promise<void> {
     const db = tx ?? this.prisma;
+    const metadata = event.metadata as { before?: unknown; after?: unknown } | undefined;
+    if (metadata && ('before' in metadata || 'after' in metadata)) {
+      recordAuditChange({
+        type: event.type,
+        before: metadata.before ?? null,
+        after: metadata.after ?? null,
+      });
+    }
     await db.securityEvent.create({
       data: {
         type: event.type,

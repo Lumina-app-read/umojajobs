@@ -2,6 +2,7 @@ import 'server-only';
 import {
   type AiUsageResponse,
   type AdminCatalogResponse,
+  type AuditLogPage,
   type AdminRolesResponse,
   type AdminUserDetail,
   type BundleResponse,
@@ -364,6 +365,23 @@ export async function getAdminUser(id: string): Promise<AdminUserDetail | null> 
 export async function getNotifications(before?: string): Promise<NotificationsPage | null> {
   const query = before ? `?before=${encodeURIComponent(before)}` : '';
   const result = await serverGet<NotificationsPage>(`/me/notifications${query}`).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Journal d'audit (administration ; null si l'API refuse ou ne répond pas). */
+export async function getAuditLogs(filter: {
+  before?: string;
+  result?: string;
+  actor?: string;
+}): Promise<AuditLogPage | null> {
+  const query = new URLSearchParams();
+  if (filter.before) query.set('before', filter.before);
+  if (filter.result) query.set('result', filter.result);
+  if (filter.actor) query.set('actor', filter.actor);
+  const text = query.toString();
+  const result = await serverGet<AuditLogPage>(`/admin/audit-logs${text ? `?${text}` : ''}`).catch(
+    () => null,
+  );
   return result?.data ?? null;
 }
 

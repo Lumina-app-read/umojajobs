@@ -167,5 +167,34 @@
       "finance_read": "Consulter les finances",
       "finance_manage": "Gérer les finances et les retraits"
     }
+  },
+  "audit": {
+    "title": "Journaux d’audit",
+    "intro": "Actions d’administration, réussies ou refusées, et consultations de fiches sensibles. Journal en ajout seul : aucune ligne ne peut être modifiée ni supprimée.",
+    "filter": "Filtrer par résultat",
+    "all": "Tous",
+    "results": {
+      "success": "Réussi",
+      "denied": "Accès refusé",
+      "rejected": "Refusé",
+      "error": "Erreur"
+    },
+    "actor": "Administrateur",
+    "actorHint": "Ex. : admin@example.com",
+    "search": "Filtrer",
+    "reset": "Effacer",
+    "empty": "Aucune action enregistrée",
+    "anonymous": "Non connecté",
+    "roles": "Rôles",
+    "target": "Cible",
+    "ip": "Adresse IP",
+    "request": "Requête",
+    "userAgent": "Navigateur",
+    "input": "Données envoyées (secrets masqués)",
+    "before": "Avant ({type})",
+    "after": "Après ({type})",
+    "none": "Aucun",
+    "older": "Actions plus anciennes",
+    "newest": "Revenir aux plus récentes"
   }
 }

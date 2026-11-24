@@ -4,6 +4,7 @@ import {
   type AdminUserDetail,
   type RoleCode,
   type UserRegistryResponse,
+  type AuditLogPage,
 } from '@opportinities/shared';
 import type Redis from 'ioredis';
 import { totp } from '../src/auth/totp/totp';
@@ -255,5 +256,78 @@ describe('Administration des utilisateurs et des rôles (intégration)', () => {
       where: { status: 'active', roles: { some: { roleId: role.id } } },
     });
     expect(active).toBe(1);
+  });
+
+  it('journal d’audit : acteur, résultat, valeurs avant et après, sans secret ni modification possible', async () => {
+    const boss = await account('super_admin');
+    const admin = await account('admin');
+    const member = await account();
+    const outsider = await account();
+    const logs = async (where: object) =>
+      prisma.auditLog.findMany({ where, orderBy: { id: 'desc' } });
+    // Le journal s'écrit à la fin de la réponse : on attend qu'il apparaisse.
+    const waitFor = async (where: object) => {
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        const found = await logs(where);
+        if (found.length > 0) return found;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      throw new Error('aucune ligne de journal');
+    };
+
+    // Action réussie : route, cible, rôles, motif et valeurs avant et après.
+    await setRole(boss, member, 'moderator', true);
+    const [granted] = await waitFor({ actorId: boss.id, route: '/admin/users/:id/roles' });
+    expect(granted).toMatchObject({
+      method: 'POST',
+      targetId: member.id,
+      statusCode: 200,
+      result: 'success',
+      actorRoles: ['user', 'super_admin'],
+      input: { role: 'moderator', granted: true, reason: REASON },
+      changes: [{ type: 'role_granted', before: ['user'], after: ['user', 'moderator'] }],
+    });
+    expect(granted?.requestId).toBeTruthy();
+
+    // Refus d'accès et refus métier : journalisés eux aussi.
+    await outsider.api.post(`${BASE}/${member.id}/suspend`, { reason: REASON });
+    expect((await waitFor({ actorId: outsider.id }))[0]).toMatchObject({
+      result: 'denied',
+      statusCode: 403,
+    });
+    await suspend(admin, admin);
+    expect((await waitFor({ actorId: admin.id }))[0]).toMatchObject({
+      result: 'denied',
+      statusCode: 403,
+    });
+    await suspend(boss, member, 'court');
+    expect((await waitFor({ actorId: boss.id, statusCode: 400 }))[0]?.result).toBe('rejected');
+
+    // Consultation d'une fiche : journalisée ; liste : non.
+    await admin.api.get(`${BASE}/${member.id}`);
+    await waitFor({ actorId: admin.id, method: 'GET', targetId: member.id });
+    await admin.api.get(BASE);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(
+      await prisma.auditLog.count({ where: { actorId: admin.id, route: '/admin/users' } }),
+    ).toBe(0);
+
+    // Aucun secret, aucune modification, lecture réservée.
+    await boss.api.post('/api/v1/admin/finance/credit-grants', { password: 'ne-doit-pas-sortir' });
+    const raw = JSON.stringify(
+      await waitFor({ actorId: boss.id, path: '/admin/finance/credit-grants' }),
+    );
+    expect(raw).not.toContain('ne-doit-pas-sortir');
+    await expect(
+      prisma.auditLog.update({ where: { id: granted?.id }, data: { result: 'error' } }),
+    ).rejects.toThrow();
+    await expect(prisma.auditLog.delete({ where: { id: granted?.id } })).rejects.toThrow();
+
+    const page = (await boss.api.get(`/api/v1/admin/audit-logs?actor=${boss.email}`))
+      .body as AuditLogPage;
+    expect(page.items[0]?.actor?.id).toBe(boss.id);
+    expect(page.items.some((item) => item.route === '/admin/users/:id/roles')).toBe(true);
+    expect((await outsider.api.get('/api/v1/admin/audit-logs')).status).toBe(403);
+    expect((await boss.api.get('/api/v1/admin/audit-logs?result=autre')).status).toBe(400);
   });
 });

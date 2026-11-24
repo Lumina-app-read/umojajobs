@@ -220,6 +220,7 @@ model User {
   careerDocumentPacks   CareerDocumentPack[]    @relation("CareerDocumentPackUser")
   documentBundles       DocumentBundle[]        @relation("DocumentBundleOwner")
   notifications         Notification[]          @relation("NotificationRecipient")
+  auditLogs             AuditLog[]              @relation("AuditActor")
   careerDocumentExports CareerDocumentExport[]  @relation("CareerDocumentExportUser")
   aiRequests            AiRequest[]             @relation("AiRequestUser")
   aiGenerations         AiGeneration[]          @relation("AiGenerationUser")
@@ -1594,4 +1595,48 @@ model Notification {
   @@index([userId, id(sort: Desc)])
   @@index([emailStatus, emailNextAt])
   @@map("notifications")
+}
+
+enum AuditResult {
+  success
+  /**
+   * Refus d'accès (non connecté, droits insuffisants).
+   */
+  denied
+  /**
+   * Demande refusée par une règle métier ou une validation.
+   */
+  rejected
+  error
+
+  @@map("audit_result")
+}
+
+/**
+ * Journal d'audit des actions d'administration (CLAUDE.md §16) : qui, avec quels rôles, quoi,
+ * quand, d'où, par quelle route, avec quel résultat et quelles valeurs avant et après. Ajout seul :
+ * aucune ligne ne peut être modifiée ni supprimée (déclencheurs en base).
+ */
+model AuditLog {
+  id         String      @id @default(uuid(7)) @db.Uuid
+  actorId    String?     @map("actor_id") @db.Uuid
+  actorRoles String[]    @map("actor_roles")
+  method     String      @db.VarChar(10)
+  route      String      @db.VarChar(200)
+  path       String      @db.VarChar(300)
+  targetId   String?     @map("target_id") @db.VarChar(100)
+  statusCode Int         @map("status_code")
+  result     AuditResult
+  ip         String?     @db.VarChar(45)
+  userAgent  String?     @map("user_agent") @db.VarChar(512)
+  requestId  String      @map("request_id") @db.VarChar(64)
+  input      Json?
+  changes    Json        @default("[]")
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  actor User? @relation("AuditActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([actorId, id(sort: Desc)])
+  @@index([result, id(sort: Desc)])
+  @@map("audit_logs")
 }

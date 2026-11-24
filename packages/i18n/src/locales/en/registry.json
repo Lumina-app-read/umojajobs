@@ -167,5 +167,34 @@
       "finance_read": "View finances",
       "finance_manage": "Manage finances and withdrawals"
     }
+  },
+  "audit": {
+    "title": "Audit logs",
+    "intro": "Administration actions, successful or refused, and views of sensitive records. Append-only log: no entry can be changed or deleted.",
+    "filter": "Filter by result",
+    "all": "All",
+    "results": {
+      "success": "Succeeded",
+      "denied": "Access denied",
+      "rejected": "Refused",
+      "error": "Error"
+    },
+    "actor": "Administrator",
+    "actorHint": "E.g. admin@example.com",
+    "search": "Filter",
+    "reset": "Clear",
+    "empty": "No action recorded",
+    "anonymous": "Not signed in",
+    "roles": "Roles",
+    "target": "Target",
+    "ip": "IP address",
+    "request": "Request",
+    "userAgent": "Browser",
+    "input": "Data sent (secrets hidden)",
+    "before": "Before ({type})",
+    "after": "After ({type})",
+    "none": "None",
+    "older": "Older actions",
+    "newest": "Back to the latest"
   }
 }

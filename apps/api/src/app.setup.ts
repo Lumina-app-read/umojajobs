@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { API_DEFAULT_VERSION, API_GLOBAL_PREFIX, APP_NAME } from '@opportinities/shared';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { AuditService } from './audit/audit.service';
 import { requestIdMiddleware } from './common/http/request-id.middleware';
 import { validationExceptionFactory } from './common/http/validation-exception.factory';
 import { type EnvironmentVariables } from './config/env.validation';
@@ -30,6 +31,8 @@ export function configureApp(app: NestExpressApplication, options: AppSetupOptio
   app.use(requestIdMiddleware);
   app.use(helmet());
   app.use(cookieParser());
+  // Journal d'audit de l'administration (avant les routes, pour voir aussi les refus d'accès).
+  app.use(app.get(AuditService).middleware);
 
   app.setGlobalPrefix(API_GLOBAL_PREFIX);
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: API_DEFAULT_VERSION });

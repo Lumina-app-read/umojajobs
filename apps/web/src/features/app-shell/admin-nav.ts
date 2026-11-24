@@ -179,7 +179,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
         href: '/admin/audit-logs',
         icon: FileClock,
         permission: PERMISSIONS.AUDIT_LOGS_READ,
-        phase: 5,
+        phase: null,
       },
       {
         key: 'securityEvents',

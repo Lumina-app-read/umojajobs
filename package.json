@@ -31,5 +31,10 @@
   "devDependencies": {
     "prettier": "3.9.10",
     "turbo": "2.11.10"
+  },
+  "pnpm": {
+    "overrides": {
+      "effect": "^3.22.1"
+    }
   }
 }
