@@ -15,4 +15,6 @@ export * from './catalog';
 export * from './notifications';
 export * from './seo';
 export * from './audit';
+export * from './admin-overview';
+export * from './platform';
 export * from './bundles';

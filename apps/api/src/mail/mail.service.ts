@@ -32,6 +32,18 @@ export class MailService {
     });
   }
 
+  /** Le serveur SMTP accepte la connexion (supervision ; aucun email n'est envoyé). */
+  async isReachable(timeoutMs = 5000): Promise<boolean> {
+    const timeout = new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs));
+    return Promise.race([
+      this.transporter.verify().then(
+        () => true,
+        () => false,
+      ),
+      timeout,
+    ]);
+  }
+
   /**
    * Envoie un email. Un échec est journalisé sans interrompre l'opération métier :
    * l'utilisateur peut redemander l'email (vérification, réinitialisation).

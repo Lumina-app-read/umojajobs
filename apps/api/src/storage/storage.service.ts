@@ -3,6 +3,7 @@ import {
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
+  HeadBucketCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable, type OnModuleDestroy } from '@nestjs/common';
@@ -36,6 +37,18 @@ export class StorageService implements OnModuleDestroy {
 
   onModuleDestroy(): void {
     this.client.destroy();
+  }
+
+  /** Le bucket privé répond (supervision de la plateforme). Aucune donnée n'est lue. */
+  async isReachable(timeoutMs = 3000): Promise<boolean> {
+    try {
+      await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }), {
+        abortSignal: AbortSignal.timeout(timeoutMs),
+      });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async put(key: string, body: Buffer, contentType: string, sha256Base64: string): Promise<void> {

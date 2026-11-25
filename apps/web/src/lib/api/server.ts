@@ -1,5 +1,9 @@
 import 'server-only';
 import {
+  type AdminEmailsPage,
+  type AdminOverview,
+  type NotificationEmailStatus,
+  type PlatformStatus,
   type AiUsageResponse,
   type AdminCatalogResponse,
   type AuditLogPage,
@@ -434,5 +438,32 @@ export async function getAiUsage(days: number): Promise<AiUsageResponse | null> 
   const result = await serverGet<AiUsageResponse>(`/admin/studio/ai-usage?days=${days}`).catch(
     () => null,
   );
+  return result?.data ?? null;
+}
+
+/** Tableau de bord de l'administration (blocs selon les permissions ; null si indisponible). */
+export async function getAdminOverview(): Promise<AdminOverview | null> {
+  const result = await serverGet<AdminOverview>('/admin/overview').catch(() => null);
+  return result?.data ?? null;
+}
+
+/** Supervision des emails de notification (administration ; null si refusé ou indisponible). */
+export async function getAdminEmails(filter: {
+  status?: NotificationEmailStatus;
+  before?: string;
+}): Promise<AdminEmailsPage | null> {
+  const query = new URLSearchParams();
+  if (filter.status) query.set('status', filter.status);
+  if (filter.before) query.set('before', filter.before);
+  const text = query.toString();
+  const result = await serverGet<AdminEmailsPage>(
+    `/admin/notifications/emails${text ? `?${text}` : ''}`,
+  ).catch(() => null);
+  return result?.data ?? null;
+}
+
+/** État de la plateforme (administration ; null si refusé ou indisponible). */
+export async function getPlatformStatus(): Promise<PlatformStatus | null> {
+  const result = await serverGet<PlatformStatus>('/admin/platform/status').catch(() => null);
   return result?.data ?? null;
 }

@@ -17,6 +17,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { BundlesModule } from './bundles/bundles.module';
 import { StudioModule } from './studio/studio.module';
 import { AuditModule } from './audit/audit.module';
+import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { UsersModule } from './users/users.module';
@@ -72,6 +73,7 @@ import { StorageModule } from './storage/storage.module';
     CatalogModule,
     NotificationsModule,
     AuditModule,
+    AdminModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

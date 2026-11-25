@@ -49,3 +49,42 @@ export interface NotificationsPage {
 }
 
 export const NOTIFICATIONS_PAGE_SIZE = 20;
+
+/** États d'envoi de l'email d'une notification. */
+export const NOTIFICATION_EMAIL_STATUSES = [
+  'pending',
+  'sending',
+  'sent',
+  'failed',
+  'skipped',
+] as const;
+export type NotificationEmailStatus = (typeof NOTIFICATION_EMAIL_STATUSES)[number];
+
+/** Supervision des emails (administration) : une ligne par notification. */
+export interface AdminEmailItem {
+  id: string;
+  type: NotificationType;
+  recipient: { id: string; name: string; email: string };
+  status: NotificationEmailStatus;
+  attempts: number;
+  createdAt: string;
+  nextAttemptAt: string | null;
+  sentAt: string | null;
+}
+
+export interface AdminEmailsPage {
+  items: AdminEmailItem[];
+  /** Curseur de la page suivante (dernier identifiant), null en fin de liste. */
+  nextBefore: string | null;
+  /** Nombre d'emails par état, sur tout l'historique. */
+  totals: Record<NotificationEmailStatus, number>;
+  /** Emails envoyés sur les 7 derniers jours. */
+  sentLast7d: number;
+  /** Notifications créées par type sur les 30 derniers jours. */
+  byType: { type: NotificationType; count: number }[];
+}
+
+export const ADMIN_EMAILS_PAGE_SIZE = 50;
+
+/** Nombre maximal d'emails en échec relancés d'un coup. */
+export const ADMIN_EMAILS_RETRY_LIMIT = 500;
