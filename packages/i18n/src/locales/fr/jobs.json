@@ -116,8 +116,8 @@
       "salaryMax": "Ex. : 500000",
       "salaryCurrency": "Ex. : XOF",
       "salaryPeriod": "Choisissez une période",
-      "startDate": "AAAA-MM-JJ",
-      "endDate": "AAAA-MM-JJ",
+      "startDate": "Choisir la date de début",
+      "endDate": "Choisir la date limite",
       "sourceType": "Choisissez la source",
       "sourceUrl": "Ex. : https://entreprise.com/carrieres/42",
       "sourceDetails": "Ex. : Le Soleil, édition du 10 novembre",
@@ -349,7 +349,22 @@
       "expired": "Expirée",
       "endsOn": "Ouverte jusqu'au {date}",
       "endedOn": "Expirée depuis le {date}"
-    }
+    },
+    "scope": {
+      "mine": "Mon pays",
+      "all": "Tous les pays",
+      "custom": "Choisir des pays"
+    },
+    "countriesPlaceholder": "Rechercher un pays",
+    "countriesSelected": "{count, plural, one {# pays sélectionné} other {# pays sélectionnés}}",
+    "countriesChosen": "Pays sélectionnés",
+    "removeFilter": "Retirer le filtre « {label} »",
+    "activeFilters": "Filtres",
+    "clearAll": "Tout effacer",
+    "defaultCountryNote": "Les offres du pays de votre profil sont affichées par défaut. Changez de pays à tout moment ci-dessus.",
+    "emptyCountries": "Aucune offre pour le moment dans les pays choisis",
+    "emptyCountriesBody": "De nouvelles offres sont vérifiées chaque jour. Élargissez la recherche à d’autres pays ou revenez bientôt.",
+    "seeAllCountries": "Voir les offres de tous les pays"
   },
   "saved": {
     "intro": "Les offres que vous avez mises de côté pour plus tard.",
@@ -546,7 +561,8 @@
         "pay": "Versement confirmé",
         "fail": "Échec enregistré",
         "reject": "Demande refusée, montant libéré"
-      }
+      },
+      "paidOnPlaceholder": "Choisir la date du versement"
     }
   },
   "earnings": {

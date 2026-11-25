@@ -373,6 +373,19 @@ export class JobOfferFileUploadDto {
 const toArray = ({ value }: { value: unknown }): unknown =>
   value === undefined ? undefined : Array.isArray(value) ? value : [value];
 
+/** Pays répétés ou uniques, en majuscules et sans doublon. */
+const toUpperArray = ({ value }: { value: unknown }): unknown => {
+  const values = toArray({ value });
+  if (!Array.isArray(values)) return values;
+  return [
+    ...new Set(
+      (values as unknown[]).map((item: unknown) =>
+        typeof item === 'string' ? item.trim().toUpperCase() : item,
+      ),
+    ),
+  ];
+};
+
 export class JobSearchQueryDto implements JobSearchQuery {
   @ApiPropertyOptional({ description: 'Recherche textuelle (intitulé, entreprise, compétences…).' })
   @IsOptional()
@@ -380,11 +393,17 @@ export class JobSearchQueryDto implements JobSearchQuery {
   @MaxLength(120)
   q?: string;
 
-  @ApiPropertyOptional({ example: 'SN' })
+  @ApiPropertyOptional({
+    description: 'Un ou plusieurs pays (code ISO 2) : ?country=SN&country=CD.',
+    example: ['SN', 'CD'],
+    isArray: true,
+  })
   @IsOptional()
-  @Transform(upper)
-  @IsIn(AFRICAN_ISO2)
-  country?: string;
+  @Transform(toUpperArray)
+  @IsArray()
+  @ArrayMaxSize(AFRICAN_ISO2.length)
+  @IsIn(AFRICAN_ISO2, { each: true })
+  country?: string[];
 
   @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()

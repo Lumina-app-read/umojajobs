@@ -32,6 +32,7 @@ import { FormField } from '@/components/ui/form-field';
 import { AiAssist } from '../ai-assist';
 import { Section } from '../form-section';
 import { SectionRegenerate } from '../section-regenerate';
+import { DatePicker } from '@/components/ui/date-picker';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE = /^\+?[0-9 ().-]{6,25}$/;
@@ -216,16 +217,16 @@ export function LetterForm({
     <div className="grid gap-4">
       <Section icon={CalendarDays} title={t('sections.details')}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField
+          <DatePicker
             label={t('fields.date')}
             name="date"
             icon={CalendarDays}
             placeholder={t('placeholders.date')}
-            inputMode="numeric"
-            maxLength={10}
+            yearsBack={5}
+            yearsAhead={2}
             hint={t('hints.date')}
             value={content.date}
-            onChange={(event) => set('date', event.target.value)}
+            onChange={(next) => set('date', next)}
             error={issues.date ? t('dateInvalid') : null}
           />
           <FormField

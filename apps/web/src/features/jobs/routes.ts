@@ -9,12 +9,13 @@ export type SearchParams = Record<string, string | string[] | undefined>;
 export const firstParam = (value: string | string[] | undefined): string | undefined =>
   Array.isArray(value) ? value[0] : value;
 
-/** Reconstruit la chaîne de requête d'une adresse (pour une redirection fidèle). */
+/** Reconstruit la chaîne de requête d'une adresse (redirection fidèle, valeurs répétées comprises). */
 export function queryString(params: SearchParams): string {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
-    const first = firstParam(value);
-    if (first !== undefined) query.set(key, first);
+    for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) {
+      query.append(key, item);
+    }
   }
   const text = query.toString();
   return text ? `?${text}` : '';

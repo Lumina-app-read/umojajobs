@@ -133,3 +133,93 @@ export function CountrySelect({
     </Field>
   );
 }
+
+interface CountryMultiSelectProps {
+  countries: CountryResponse[];
+  value: string[];
+  onChange: (iso2: string[]) => void;
+  /** Fermeture de la liste : la page applique alors la sélection. */
+  onClose?: () => void;
+  label: string;
+  placeholder: string;
+  selectedLabel: (count: number) => string;
+}
+
+/** Sélection de plusieurs pays, recherchable (mêmes règles de recherche que CountrySelect). */
+export function CountryMultiSelect({
+  countries,
+  value,
+  onChange,
+  onClose,
+  label,
+  placeholder,
+  selectedLabel,
+}: CountryMultiSelectProps) {
+  const t = useTranslations('auth.country');
+  const locale = useLocale();
+  const [query, setQuery] = useState('');
+
+  const sorted = useMemo(() => {
+    const collator = new Intl.Collator(locale, { sensitivity: 'base' });
+    return [...countries].sort((a, b) =>
+      collator.compare(countryName(a, locale), countryName(b, locale)),
+    );
+  }, [countries, locale]);
+  const filtered = useMemo(() => filterCountries(sorted, query), [sorted, query]);
+  const selected = sorted.filter((country) => value.includes(country.iso2));
+
+  return (
+    <Field className="grid min-w-0 gap-1.5">
+      <Label className="sr-only">{label}</Label>
+      <Combobox
+        multiple
+        value={selected}
+        onChange={(list: CountryResponse[]) => onChange(list.map((country) => country.iso2))}
+        onClose={() => {
+          setQuery('');
+          onClose?.();
+        }}
+        by="iso2"
+      >
+        <div className={controlFrameClasses(false)}>
+          <MapPin className="ml-3 size-[18px] text-fg-subtle sm:size-4" aria-hidden="true" />
+          <ComboboxInput
+            className={cn(controlInputClasses, 'pl-2 pr-1')}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={selected.length > 0 ? selectedLabel(selected.length) : placeholder}
+            autoComplete="off"
+          />
+          <ComboboxButton className="flex h-full w-9 items-center justify-center text-fg-subtle">
+            <ChevronsUpDown className="size-4" aria-hidden="true" />
+          </ComboboxButton>
+        </div>
+        <ComboboxOptions
+          anchor={{ to: 'bottom start', gap: 6 }}
+          transition
+          className={cn(
+            menuSurfaceClasses,
+            'max-h-72 w-(--input-width) overflow-auto empty:invisible',
+          )}
+        >
+          {filtered.length === 0 ? (
+            <div className="px-2 py-2 text-sm sm:text-[13px] text-fg-muted">{t('noResult')}</div>
+          ) : (
+            filtered.map((country) => (
+              <ComboboxOption key={country.iso2} value={country} className={menuItemClasses}>
+                <span aria-hidden="true" className="w-5 text-center text-base leading-none">
+                  {country.flagEmoji}
+                </span>
+                <span className="min-w-0 flex-1 truncate">{countryName(country, locale)}</span>
+                <Check
+                  className="invisible size-4 text-brand group-data-selected:visible"
+                  aria-hidden="true"
+                />
+              </ComboboxOption>
+            ))
+          )}
+        </ComboboxOptions>
+      </Combobox>
+    </Field>
+  );
+}

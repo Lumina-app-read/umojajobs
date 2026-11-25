@@ -25,6 +25,8 @@ import { toast } from '@/components/ui/toast';
 import { useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api/client';
 import { useFormErrors } from '@/lib/use-form-errors';
+import { DatePicker } from '@/components/ui/date-picker';
+import { formatDateValue, today } from '@/lib/calendar';
 
 /** Actions possibles selon l'état (les règles sont appliquées par l'API). */
 const ACTIONS: Record<string, WithdrawalAction[]> = {
@@ -55,7 +57,8 @@ export function WithdrawalDecisionPanel({
   const router = useRouter();
   const { fromApiError } = useFormErrors();
   const [reference, setReference] = useState('');
-  const [paidOn, setPaidOn] = useState(new Date().toISOString().slice(0, 10));
+  // Jour calendaire de l'administrateur (et non celui de l'UTC, décalé tard le soir).
+  const [paidOn, setPaidOn] = useState(() => formatDateValue(today(), 'day'));
   const [note, setNote] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<WithdrawalAction | null>(null);
@@ -102,14 +105,17 @@ export function WithdrawalDecisionPanel({
             value={reference}
             onChange={(event) => setReference(event.target.value)}
           />
-          <FormField
+          <DatePicker
             label={t('paidOn')}
             name="paidOn"
-            type="date"
             icon={CalendarDays}
-            placeholder="2026-11-12"
+            placeholder={t('paidOnPlaceholder')}
+            yearsBack={1}
+            yearsAhead={0}
+            max={formatDateValue(today(), 'day')}
+            required
             value={paidOn}
-            onChange={(event) => setPaidOn(event.target.value)}
+            onChange={setPaidOn}
           />
         </div>
       )}

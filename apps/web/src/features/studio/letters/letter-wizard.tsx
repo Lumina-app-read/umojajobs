@@ -36,6 +36,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
+import { DatePicker } from '@/components/ui/date-picker';
 import { TextAreaField } from '@/components/ui/form-controls';
 import { FieldError, FormField } from '@/components/ui/form-field';
 import { SegmentedControl, Stepper } from '@/components/ui/navigation';
@@ -121,6 +122,12 @@ const STEP_ICONS: Record<FactStepKey | 'sender' | 'signer' | 'recipient' | 'gene
     thanks: MessageSquareText,
     generate: Sparkles,
   };
+
+/**
+ * Informations de départ qui sont des dates : choisies dans le calendrier et transmises à l'IA
+ * au format AAAA-MM-JJ. Une ancienne valeur saisie en texte libre reste affichée et conservée.
+ */
+const BRIEF_DATE_FIELDS: readonly LetterBriefField[] = ['startDate', 'lastDay', 'initialDate'];
 
 const FIELD_ICONS: Partial<Record<LetterBriefField, LucideIcon>> = {
   jobTitle: Briefcase,
@@ -329,6 +336,23 @@ export function LetterWizard({
                       : long
                         ? BRIEF_LIMITS.long
                         : BRIEF_LIMITS.short;
+                  if (BRIEF_DATE_FIELDS.includes(field)) {
+                    return (
+                      <DatePicker
+                        key={field}
+                        label={text(field).label}
+                        name={`brief.${field}`}
+                        icon={FIELD_ICONS[field] ?? CalendarDays}
+                        placeholder={text(field).placeholder}
+                        optionalLabel={optional}
+                        required={!optional}
+                        yearsBack={60}
+                        yearsAhead={5}
+                        value={value(field)}
+                        onChange={(next) => setField(field, next)}
+                      />
+                    );
+                  }
                   return long ? (
                     <TextAreaField
                       key={field}

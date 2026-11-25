@@ -121,7 +121,7 @@
       "role": "Ex. : Comptable",
       "organization": "Ex. : Logistique Ouest SA",
       "location": "Ex. : Dakar, Sénégal",
-      "month": "AAAA-MM",
+      "month": "Choisir le mois",
       "description": "Ex. : Tenue de la comptabilité générale ; réduction du délai de clôture de 10 à 5 jours.",
       "degree": "Ex. : Licence en comptabilité",
       "school": "Ex. : Université Cheikh Anta Diop",
@@ -152,7 +152,7 @@
     "removeSkill": "Retirer {skill}",
     "invalid": "Corrigez les champs signalés pour enregistrer.",
     "errors": {
-      "month": "Format attendu : AAAA-MM, par exemple 2024-03.",
+      "month": "Choisissez le mois et l’année dans le calendrier.",
       "email": "Adresse email invalide.",
       "url": "Le lien doit commencer par https://",
       "phone": "Numéro invalide, par exemple +221 77 123 45 67."
@@ -258,7 +258,7 @@
     },
     "hints": {
       "recipient": "Indiquez la personne ou le service à qui vous écrivez, si vous le connaissez.",
-      "date": "Laissez vide pour utiliser la date du jour.",
+      "date": "Sans date choisie, la date du jour est utilisée.",
       "body": "Séparez les paragraphes par une ligne vide. N’écrivez que des informations exactes.",
       "enclosures": "Une pièce par ligne, par exemple « Curriculum vitae »."
     },
@@ -295,7 +295,7 @@
       "recipientAddress": "Ex. : Route de Rufisque, BP 1234",
       "recipientCity": "Ex. : Dakar",
       "place": "Ex. : Dakar",
-      "date": "AAAA-MM-JJ",
+      "date": "Choisir la date",
       "reference": "Ex. : Offre n° RH-2026-14",
       "salutation": "Ex. : Madame, Monsieur,",
       "closing": "Ex. : Je vous prie d’agréer mes salutations distinguées.",
@@ -320,7 +320,7 @@
       "thank_you_letter": "Remerciez pour l’entretien, rappelez un point marquant de l’échange et confirmez votre intérêt."
     },
     "bodyPlaceholder": "Ex. : Titulaire d’une licence en comptabilité, je vous propose ma candidature…",
-    "dateInvalid": "Format attendu : AAAA-MM-JJ, par exemple 2026-11-13.",
+    "dateInvalid": "Choisissez la date dans le calendrier.",
     "emailInvalid": "Adresse email invalide.",
     "phoneInvalid": "Numéro invalide, par exemple +221 77 123 45 67."
   },
@@ -475,11 +475,11 @@
     },
     "startDate": {
       "label": "Date d’entrée en fonction",
-      "placeholder": "Ex. : 1er mars 2021"
+      "placeholder": "Choisir la date"
     },
     "lastDay": {
       "label": "Dernier jour de travail souhaité",
-      "placeholder": "Ex. : 31 janvier 2027"
+      "placeholder": "Choisir la date"
     },
     "notice": {
       "label": "Préavis",
@@ -515,7 +515,7 @@
     },
     "initialDate": {
       "label": "Date de la candidature",
-      "placeholder": "Ex. : 15 octobre 2026"
+      "placeholder": "Choisir la date"
     },
     "context": {
       "label": "Contexte",

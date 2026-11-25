@@ -19,6 +19,7 @@ import { APP_NAV, APP_TABS, isActive } from './app-nav';
 import { AppNavList, type NavGroupView } from './app-nav-list';
 import { PreferenceSync } from './preference-sync';
 import { NotificationBell } from '@/features/notifications/notification-bell';
+import { CookiePreferencesLink } from '@/components/consent/consent-gate';
 
 export interface ShellUser {
   firstName: string;
@@ -81,6 +82,7 @@ function UserBlock({ user }: { user: ShellUser }) {
         </div>
       </div>
       <LogoutButton className="w-full" />
+      <CookiePreferencesLink className="justify-center text-xs text-fg-subtle transition-colors hover:text-fg" />
     </div>
   );
 }

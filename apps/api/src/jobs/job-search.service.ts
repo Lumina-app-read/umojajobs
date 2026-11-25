@@ -105,7 +105,7 @@ export class JobSearchService {
       // Double garde : statut actif et fin de validité non atteinte (avant même l'expiration planifiée).
       status: 'active',
       endsAt: { gt: now },
-      ...(query.country ? { country: { iso2: query.country } } : {}),
+      ...(query.country?.length ? { country: { iso2: { in: query.country } } } : {}),
       ...(query.cityId ? { cityId: query.cityId } : {}),
       ...(query.category ? { category: { slug: query.category } } : {}),
       ...(query.contractType ? { contractType: { in: query.contractType } } : {}),

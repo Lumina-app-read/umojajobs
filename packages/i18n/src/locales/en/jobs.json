@@ -116,8 +116,8 @@
       "salaryMax": "e.g. 500000",
       "salaryCurrency": "e.g. XOF",
       "salaryPeriod": "Choose a period",
-      "startDate": "YYYY-MM-DD",
-      "endDate": "YYYY-MM-DD",
+      "startDate": "Select the start date",
+      "endDate": "Select the deadline",
       "sourceType": "Choose the source",
       "sourceUrl": "e.g. https://company.com/careers/42",
       "sourceDetails": "e.g. Daily Nation, November 10 edition",
@@ -349,7 +349,22 @@
       "expired": "Expired",
       "endsOn": "Open until {date}",
       "endedOn": "Expired on {date}"
-    }
+    },
+    "scope": {
+      "mine": "My country",
+      "all": "All countries",
+      "custom": "Choose countries"
+    },
+    "countriesPlaceholder": "Search for a country",
+    "countriesSelected": "{count, plural, one {# country selected} other {# countries selected}}",
+    "countriesChosen": "Selected countries",
+    "removeFilter": "Remove the “{label}” filter",
+    "activeFilters": "Filters",
+    "clearAll": "Clear all",
+    "defaultCountryNote": "Offers from your profile country are shown by default. Change countries above at any time.",
+    "emptyCountries": "No offers yet in the selected countries",
+    "emptyCountriesBody": "New offers are verified every day. Widen your search to other countries or come back soon.",
+    "seeAllCountries": "See offers from all countries"
   },
   "saved": {
     "intro": "The offers you set aside for later.",
@@ -546,7 +561,8 @@
         "pay": "Payout confirmed",
         "fail": "Failure recorded",
         "reject": "Request rejected, amount released"
-      }
+      },
+      "paidOnPlaceholder": "Select the payout date"
     }
   },
   "earnings": {

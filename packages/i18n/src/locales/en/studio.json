@@ -121,7 +121,7 @@
       "role": "E.g. Accountant",
       "organization": "E.g. Logistique Ouest SA",
       "location": "E.g. Dakar, Senegal",
-      "month": "YYYY-MM",
+      "month": "Select the month",
       "description": "E.g. General ledger; cut the closing time from 10 to 5 days.",
       "degree": "E.g. Bachelor in accounting",
       "school": "E.g. Cheikh Anta Diop University",
@@ -152,7 +152,7 @@
     "removeSkill": "Remove {skill}",
     "invalid": "Fix the highlighted fields to save.",
     "errors": {
-      "month": "Expected format: YYYY-MM, for example 2024-03.",
+      "month": "Pick the month and year in the calendar.",
       "email": "Invalid email address.",
       "url": "The link must start with https://",
       "phone": "Invalid number, for example +221 77 123 45 67."
@@ -258,7 +258,7 @@
     },
     "hints": {
       "recipient": "Enter the person or department you are writing to, if you know it.",
-      "date": "Leave empty to use today’s date.",
+      "date": "Without a date, today’s date is used.",
       "body": "Separate paragraphs with an empty line. Only write accurate information.",
       "enclosures": "One item per line, for example “Curriculum vitae”."
     },
@@ -295,7 +295,7 @@
       "recipientAddress": "E.g. Route de Rufisque, PO Box 1234",
       "recipientCity": "E.g. Dakar",
       "place": "E.g. Dakar",
-      "date": "YYYY-MM-DD",
+      "date": "Select the date",
       "reference": "E.g. Job ref. HR-2026-14",
       "salutation": "E.g. Dear Sir or Madam,",
       "closing": "E.g. Yours faithfully,",
@@ -320,7 +320,7 @@
       "thank_you_letter": "Thank them for the interview, mention a highlight of the conversation and confirm your interest."
     },
     "bodyPlaceholder": "E.g. With a bachelor’s degree in accounting, I would like to apply…",
-    "dateInvalid": "Expected format: YYYY-MM-DD, for example 2026-11-13.",
+    "dateInvalid": "Pick the date in the calendar.",
     "emailInvalid": "Invalid email address.",
     "phoneInvalid": "Invalid number, for example +221 77 123 45 67."
   },
@@ -475,11 +475,11 @@
     },
     "startDate": {
       "label": "Start date",
-      "placeholder": "E.g. 1 March 2021"
+      "placeholder": "Select the date"
     },
     "lastDay": {
       "label": "Intended last working day",
-      "placeholder": "E.g. 31 January 2027"
+      "placeholder": "Select the date"
     },
     "notice": {
       "label": "Notice period",
@@ -515,7 +515,7 @@
     },
     "initialDate": {
       "label": "Application date",
-      "placeholder": "E.g. 15 October 2026"
+      "placeholder": "Select the date"
     },
     "context": {
       "label": "Context",

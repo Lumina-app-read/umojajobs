@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
-import { type ComponentProps } from 'react';
+import { type ComponentProps, type ReactNode } from 'react';
+import { CookiePreferencesLink } from '@/components/consent/consent-gate';
 import { Link } from '@/i18n/navigation';
 import { Logo } from './logo';
 import { PRIMARY_NAV } from './nav-items';
@@ -9,9 +10,11 @@ const linkClasses = 'text-sm text-fg-muted transition-colors hover:text-fg';
 function Column({
   title,
   links,
+  extra,
 }: {
   title: string;
   links: { label: string; href: ComponentProps<typeof Link>['href'] }[];
+  extra?: ReactNode;
 }) {
   return (
     <div>
@@ -24,6 +27,7 @@ function Column({
             </Link>
           </li>
         ))}
+        {extra && <li>{extra}</li>}
       </ul>
     </div>
   );
@@ -69,6 +73,7 @@ export async function SiteFooter() {
               { label: t('footer.terms'), href: '/terms' },
               { label: t('footer.privacy'), href: '/privacy' },
             ]}
+            extra={<CookiePreferencesLink className={linkClasses} />}
           />
         </div>
 

@@ -143,6 +143,37 @@ describe('Consultation publique des offres (intégration)', () => {
     expect((await server.get(`/api/v1/job-offers/${suspendedSlug}`)).status).toBe(404);
   });
 
+  it('filtre par un ou plusieurs pays, avec une pagination cohérente', async () => {
+    const tag = token();
+    const senegal = await publish({ title: `Comptable ${tag}` });
+    const congo = await publish({ title: `Juriste ${tag}`, countryIso2: 'CD' });
+    const congoBis = await publish({ title: `Auditeur ${tag}`, countryIso2: 'cd' });
+    await publish({ title: `Logisticien ${tag}`, countryIso2: 'CI' });
+
+    const ids = (result: JobSearchResponse) => result.items.map((item) => item.id).sort();
+    expect(ids(await search(`q=${tag}&country=SN`))).toEqual([senegal.id]);
+    expect(ids(await search(`q=${tag}&country=cd`))).toEqual([congo.id, congoBis.id].sort());
+    expect(ids(await search(`q=${tag}&country=SN&country=CD`))).toEqual(
+      [senegal.id, congo.id, congoBis.id].sort(),
+    );
+    expect((await search(`q=${tag}`)).total).toBe(4);
+    expect((await search(`q=${tag}&country=CD&country=CD`)).total).toBe(2);
+
+    const pageOne = await search(`q=${tag}&country=SN&country=CD&pageSize=2&page=1`);
+    const pageTwo = await search(`q=${tag}&country=SN&country=CD&pageSize=2&page=2`);
+    expect(pageOne).toMatchObject({ total: 3, page: 1, pageSize: 2 });
+    expect(pageOne.items).toHaveLength(2);
+    expect(pageTwo.items).toHaveLength(1);
+    expect(new Set([...pageOne.items, ...pageTwo.items].map((item) => item.id)).size).toBe(3);
+    expect(pageOne.items.every((item) => ['SN', 'CD'].includes(item.countryIso2))).toBe(true);
+
+    for (const bad of ['country=FR', 'country=SN&country=XX']) {
+      expect((await request(app.getHttpServer()).get(`/api/v1/job-offers?${bad}`)).status).toBe(
+        400,
+      );
+    }
+  });
+
   it('filtre par mode de travail, contrat et catégorie, trie et pagine', async () => {
     const tag = token();
     const remote = await publish({

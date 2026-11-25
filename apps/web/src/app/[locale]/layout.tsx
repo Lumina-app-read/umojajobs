@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { type ReactNode } from 'react';
+import { CookieConsent } from '@/components/consent/cookie-consent';
 import { FlagEmojiPolyfill } from '@/components/layout/flag-emoji-polyfill';
 import { ThemeScript } from '@/components/theme/theme-script';
 import { Toaster } from '@/components/ui/toast';
@@ -84,6 +85,7 @@ export default async function LocaleLayout({
           </a>
           {/* Chaque groupe fournit sa structure : site public (site) ou espace connecté (app). */}
           {children}
+          <CookieConsent />
           <Toaster />
         </NextIntlClientProvider>
       </body>

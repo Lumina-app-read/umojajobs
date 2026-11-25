@@ -709,5 +709,44 @@
       "financeLink": "Tarifs, crédits et règles financières",
       "financeLinkBody": "Les paramètres modifiables (valeur du crédit, packs, coûts des services, seuils) se règlent dans Tarifs et paramètres."
     }
+  },
+  "cookies": {
+    "title": "Votre vie privée, vos choix",
+    "body": "Les cookies indispensables (connexion, sécurité, langue) sont toujours actifs. Les autres, seulement avec votre accord, modifiable à tout moment. <privacy>En savoir plus</privacy>",
+    "acceptAll": "Tout accepter",
+    "rejectAll": "Tout refuser",
+    "customize": "Personnaliser",
+    "save": "Enregistrer mes choix",
+    "preferencesTitle": "Préférences des cookies",
+    "preferencesIntro": "Choisissez les catégories que vous acceptez. Les cookies strictement nécessaires restent toujours actifs.",
+    "alwaysActive": "Toujours actifs",
+    "preferencesLink": "Préférences des cookies",
+    "lastChoice": "Dernier choix : {date} (politique du {version}).",
+    "categories": {
+      "necessary": {
+        "title": "Strictement nécessaires",
+        "body": "Connexion à votre compte, sécurité des formulaires, langue et thème choisis, mémorisation de vos choix de cookies. Sans eux, le site ne fonctionne pas."
+      },
+      "functional": {
+        "title": "Fonctionnels",
+        "body": "Mémorisent vos préférences de recherche, comme les pays sélectionnés dans les offres d'emploi, d'une visite à l'autre."
+      },
+      "analytics": {
+        "title": "Statistiques et mesure d'audience",
+        "body": "Aident à comprendre l'utilisation du site. Aucun outil de mesure n'est utilisé aujourd'hui ; aucun ne sera chargé sans votre accord."
+      }
+    }
+  },
+  "datePicker": {
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant",
+    "previousYear": "Année précédente",
+    "nextYear": "Année suivante",
+    "chooseMonth": "Choisir le mois et l’année",
+    "chooseYear": "Choisir l’année",
+    "years": "Années",
+    "today": "Aujourd’hui",
+    "thisMonth": "Ce mois-ci",
+    "clear": "Effacer"
   }
 }

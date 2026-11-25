@@ -11,6 +11,7 @@ import { ProfileForm } from '@/features/settings/profile-form';
 import { SessionsList } from '@/features/settings/sessions-list';
 import { getCountries, getSessions } from '@/lib/api/server';
 import { requireUser } from '@/lib/auth-guard';
+import { CookiePreferencesLink } from '@/components/consent/consent-gate';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('common.app.nav');
@@ -98,8 +99,9 @@ export default async function SettingsPage() {
         title={t('app.settings.preferences')}
         hint={t('app.settings.preferencesHint')}
       >
-        <div className="max-w-sm">
+        <div className="grid max-w-sm gap-4">
           <PreferenceControls />
+          <CookiePreferencesLink className="text-sm font-medium text-brand hover:underline" />
         </div>
       </SettingsSection>
 

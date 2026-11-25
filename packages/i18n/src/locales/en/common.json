@@ -709,5 +709,44 @@
       "financeLink": "Prices, credits and financial rules",
       "financeLinkBody": "Editable settings (credit value, packs, service costs, thresholds) live in Prices and settings."
     }
+  },
+  "cookies": {
+    "title": "Your privacy, your choice",
+    "body": "Essential cookies (sign-in, security, language) are always on. Others only with your consent, which you can change at any time. <privacy>Learn more</privacy>",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "save": "Save my choices",
+    "preferencesTitle": "Cookie preferences",
+    "preferencesIntro": "Choose the categories you accept. Strictly necessary cookies are always on.",
+    "alwaysActive": "Always on",
+    "preferencesLink": "Cookie preferences",
+    "lastChoice": "Last choice: {date} (policy of {version}).",
+    "categories": {
+      "necessary": {
+        "title": "Strictly necessary",
+        "body": "Signing in to your account, form security, your chosen language and theme, and remembering your cookie choices. The site cannot work without them."
+      },
+      "functional": {
+        "title": "Functional",
+        "body": "Remember your search preferences, such as the countries selected in job offers, from one visit to the next."
+      },
+      "analytics": {
+        "title": "Statistics and audience measurement",
+        "body": "Help us understand how the site is used. No measurement tool is used today, and none will be loaded without your consent."
+      }
+    }
+  },
+  "datePicker": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "chooseMonth": "Choose month and year",
+    "chooseYear": "Choose year",
+    "years": "Years",
+    "today": "Today",
+    "thisMonth": "This month",
+    "clear": "Clear"
   }
 }

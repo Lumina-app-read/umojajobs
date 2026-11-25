@@ -61,6 +61,7 @@ import { useFormErrors } from '@/lib/use-form-errors';
 import { type FieldError } from '@/lib/validation';
 import { ContributorTermsReview } from './contributor-terms';
 import { OfferDocuments } from './offer-documents';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface FormValues {
   title: string;
@@ -636,25 +637,27 @@ export function JobOfferForm({
 
       <Section title={t('form.sections.validity')} hint={t('form.sections.validityHint')}>
         <div className="grid gap-5 sm:grid-cols-2">
-          <FormField
+          <DatePicker
             label={label('startDate')}
             name="startDate"
-            type="date"
             icon={CalendarDays}
             placeholder={t('form.placeholders.startDate')}
+            yearsBack={2}
+            yearsAhead={3}
             value={values.startDate}
-            onChange={(event) => set('startDate', event.target.value)}
+            onChange={(next) => set('startDate', next)}
             error={error('startDate')}
           />
-          <FormField
+          <DatePicker
             label={label('endDate')}
             name="endDate"
-            type="date"
             icon={CalendarClock}
             placeholder={t('form.placeholders.endDate')}
+            yearsBack={2}
+            yearsAhead={3}
             value={values.endDate}
             min={values.startDate || undefined}
-            onChange={(event) => set('endDate', event.target.value)}
+            onChange={(next) => set('endDate', next)}
             error={error('endDate')}
           />
         </div>

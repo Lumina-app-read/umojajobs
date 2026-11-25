@@ -38,6 +38,7 @@ import { type ReactNode } from 'react';
 import { CountrySelect } from '@/components/forms/country-select';
 import { Button, IconButton } from '@/components/ui/button';
 import { FormSelect, TextAreaField } from '@/components/ui/form-controls';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Checkbox, FormField } from '@/components/ui/form-field';
 import { AiAssist } from './ai-assist';
 import { ChipsField } from './chips-field';
@@ -197,18 +198,18 @@ export function CvForm({
     label: string,
     value: string,
     onValue: (value: string) => void,
-    disabled = false,
+    { disabled = false, min }: { disabled?: boolean; min?: string } = {},
   ) => (
-    <FormField
+    <DatePicker
       label={label}
       name={path}
+      precision="month"
       icon={CalendarDays}
       placeholder={t('placeholders.month')}
-      inputMode="numeric"
-      maxLength={7}
       value={value}
+      min={min || undefined}
       disabled={disabled}
-      onChange={(event) => onValue(event.target.value)}
+      onChange={onValue}
       error={error(path)}
     />
   );
@@ -378,7 +379,7 @@ export function CvForm({
                     t('fields.endDate'),
                     item.current ? '' : item.endDate,
                     (value) => setItem('experiences', index, { endDate: value }),
-                    item.current,
+                    { disabled: item.current, min: item.startDate },
                   )}
                 </div>
                 <Checkbox
@@ -483,6 +484,7 @@ export function CvForm({
                     t('fields.endDate'),
                     item.endDate,
                     (value) => setItem('education', index, { endDate: value }),
+                    { min: item.startDate },
                   )}
                 </div>
                 <TextAreaField

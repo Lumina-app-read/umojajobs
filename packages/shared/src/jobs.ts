@@ -242,7 +242,8 @@ export type JobSearchSort = (typeof JOB_SEARCH_SORTS)[number];
 /** Paramètres de recherche (chaîne de requête). Les listes acceptent plusieurs valeurs. */
 export interface JobSearchQuery {
   q?: string;
-  country?: string;
+  /** Un ou plusieurs pays (codes ISO 2). */
+  country?: string[];
   cityId?: string;
   category?: string;
   contractType?: ContractType[];
