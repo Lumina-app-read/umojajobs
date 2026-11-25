@@ -48,11 +48,9 @@ import {
   type SecurityEventResponse,
   type SessionResponse,
 } from '@opportinities/shared';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { cache } from 'react';
-
-/** Adresse interne de l'API, utilisée par les Server Components (jamais exposée au navigateur). */
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
+import { API_INTERNAL_URL, publicHeaders } from './internal';
 
 interface ServerResult<T> {
   status: number;
@@ -60,11 +58,20 @@ interface ServerResult<T> {
   code: string | null;
 }
 
-/** Appel de l'API côté serveur, en transmettant les cookies de la requête (session). */
+/**
+ * Appel de l'API côté serveur, en transmettant les cookies de la requête (session) et l'adresse
+ * du visiteur posée par Nginx (X-Forwarded-For) : l'API applique ainsi sa limite par visiteur
+ * et non à l'adresse commune du serveur web.
+ */
 async function serverGet<T>(path: string): Promise<ServerResult<T>> {
-  const cookieStore = await cookies();
+  const [cookieStore, incoming] = await Promise.all([cookies(), headers()]);
+  const forwardedFor = incoming.get('x-forwarded-for');
   const response = await fetch(`${API_INTERNAL_URL}/api/v1${path}`, {
-    headers: { Accept: 'application/json', Cookie: cookieStore.toString() },
+    headers: {
+      Accept: 'application/json',
+      Cookie: cookieStore.toString(),
+      ...(forwardedFor ? { 'X-Forwarded-For': forwardedFor } : {}),
+    },
     cache: 'no-store',
   });
   const body = (await response.json().catch(() => null)) as unknown;
@@ -87,7 +94,7 @@ const REFERENCE_TTL = 300;
  */
 async function publicGet<T>(path: string, revalidate: number): Promise<ServerResult<T>> {
   const response = await fetch(`${API_INTERNAL_URL}/api/v1${path}`, {
-    headers: { Accept: 'application/json' },
+    headers: publicHeaders(),
     next: { revalidate },
   });
   const body = (await response.json().catch(() => null)) as unknown;

@@ -50,7 +50,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Validation du Docker Compose de développement
+      - name: Validation des Docker Compose (développement et production)
         run: |
           cp .env.example .env
           pnpm docker:config
+          ENV_FILE="$PWD/infrastructure/production.env.example" docker compose             -f infrastructure/compose/docker-compose.prod.yml             --env-file infrastructure/production.env.example --profile garage config --quiet

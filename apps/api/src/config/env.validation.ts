@@ -155,6 +155,24 @@ export class EnvironmentVariables {
   CHROMIUM_EXECUTABLE_PATH?: string;
 
   /**
+   * Chromium sans bac à sable : nécessaire dans un conteneur Docker (pas d'espaces de noms
+   * utilisateur). Le navigateur n'imprime que la page d'impression de l'application.
+   */
+  @Transform(toBoolean)
+  @IsBoolean()
+  CHROMIUM_NO_SANDBOX = false;
+
+  /**
+   * Jeton partagé avec le serveur de l'application web : ses lectures publiques mises en cache
+   * ne comptent pas dans la limite par adresse IP (toutes viennent de la même adresse interne).
+   * Facultatif ; au moins 32 caractères.
+   */
+  @IsOptional()
+  @IsString()
+  @MinLength(32)
+  INTERNAL_API_TOKEN?: string;
+
+  /**
    * Garde-fou : générations IA (payées) par utilisateur et par période de 24 heures, contre les
    * scripts et les abus. Le prix en crédits est fixé dans l'administration (coûts des services).
    */
@@ -249,7 +267,10 @@ export class EnvironmentVariables {
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {
-  const validated = plainToInstance(EnvironmentVariables, config, {
+  // Une variable vide (« NOM= » dans un fichier d'environnement Docker) vaut une variable absente :
+  // les facultatives restent désactivées, les obligatoires sont signalées comme manquantes.
+  const defined = Object.fromEntries(Object.entries(config).filter(([, value]) => value !== ''));
+  const validated = plainToInstance(EnvironmentVariables, defined, {
     enableImplicitConversion: true,
   });
   const errors = validateSync(validated, { skipMissingProperties: false });

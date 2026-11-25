@@ -16,8 +16,10 @@ packages/
   shared/     Types et constantes partagés (compilés en CommonJS + déclarations)
   config/     Configurations TypeScript et ESLint partagées
 infrastructure/
-  compose/    Docker Compose de développement (PostgreSQL, Redis, Mailpit)
-docs/         Cahier des charges, rapports d'audit et de phase
+  compose/    Docker Compose de développement et de production
+  docker/     Images de l'API et de l'application web
+  nginx/      Proxy inverse HTTPS de production
+docs/         Cahier des charges, rapports, guide de déploiement (DEPLOIEMENT.md)
 ```
 
 ## Prérequis
@@ -70,6 +72,10 @@ Les emails envoyés en développement sont capturés par Mailpit : http://localh
 | `pnpm db:studio`                      | Explorateur de données Prisma                |
 | `pnpm format` / `pnpm format:check`   | Formatage Prettier                           |
 | `pnpm docker:up` / `pnpm docker:down` | Services d'infrastructure locaux             |
+
+## Production
+
+Pile Docker complète (Nginx, web, API, PostgreSQL, Redis) : voir [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
 ## Règles
 

@@ -1,0 +1,99 @@
+# Proxy inverse d'Umoja Jobs (production). Modèle traité au démarrage du conteneur Nginx :
+# ${SERVER_NAME} est remplacé par la variable d'environnement du même nom ; les variables Nginx
+# ($host, $remote_addr...) restent intactes.
+#
+# Flux : navigateur -> Nginx (HTTPS) -> /api/* vers l'API NestJS, tout le reste vers Next.js.
+# L'API et l'application web ne sont jamais exposées directement.
+
+# Limite par visiteur devant l'API (l'API applique en plus ses propres limites par route).
+limit_req_zone $binary_remote_addr zone=umoja_api:10m rate=20r/s;
+limit_req_status 429;
+
+# Noms résolus en continu par le DNS de Docker : après une mise à jour, les conteneurs web et
+# api changent d'adresse sans qu'il faille redémarrer Nginx.
+resolver 127.0.0.11 valid=10s ipv6=off;
+
+upstream umoja_web {
+    zone umoja_web_peers 64k;
+    server web:3000 resolve;
+    keepalive 32;
+}
+
+upstream umoja_api {
+    zone umoja_api_peers 64k;
+    server api:4000 resolve;
+    keepalive 16;
+}
+
+# HTTP : validation Let's Encrypt, puis redirection permanente vers HTTPS.
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/acme;
+    }
+
+    location / {
+        return 301 https://${SERVER_NAME}$request_uri;
+    }
+}
+
+# HTTPS : tout nom d'hôte inconnu est refusé dès la négociation TLS.
+server {
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    ssl_reject_handshake on;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name ${SERVER_NAME};
+    server_tokens off;
+
+    ssl_certificate /etc/letsencrypt/live/${SERVER_NAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${SERVER_NAME}/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:umoja_ssl:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # Documents des offres : 10 Mo maximum côté API (JOB_FILE_MAX_MB), plus l'enveloppe du formulaire.
+    client_max_body_size 12m;
+
+    # Compression (Next.js ne compresse pas en production : c'est fait ici).
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 5;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml application/javascript application/json
+               application/xml application/rss+xml image/svg+xml application/manifest+json;
+
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header Host $host;
+    # Nginx est le premier proxy : l'adresse du visiteur remplace tout X-Forwarded-For reçu.
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Request-Id $request_id;
+
+    location /api/ {
+        limit_req zone=umoja_api burst=40 nodelay;
+        # Génération IA et export PDF : réponses pouvant dépasser la minute.
+        proxy_read_timeout 120s;
+        proxy_pass http://umoja_api;
+    }
+
+    location / {
+        proxy_read_timeout 60s;
+        proxy_pass http://umoja_web;
+    }
+}

@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
@@ -24,7 +25,9 @@ const CONTENT_SECURITY_POLICY = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
-  ...(PRODUCTION ? ['upgrade-insecure-requests'] : []),
+  // Pas de upgrade-insecure-requests : le Chromium de l'API ouvre la page d'impression par le
+  // réseau interne en HTTP, ses ressources doivent rester en HTTP. Le public passe par Nginx,
+  // qui redirige vers HTTPS, et par HSTS.
 ].join('; ');
 
 const SECURITY_HEADERS = [
@@ -43,6 +46,14 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  /**
+   * Image Docker : serveur autonome (.next/standalone) avec les seules dépendances utilisées.
+   * La racine du monorepo permet d'y inclure les paquets partagés.
+   */
+  output: 'standalone',
+  outputFileTracingRoot: fileURLToPath(new URL('../..', import.meta.url)),
+  // La compression est faite par Nginx, devant l'application.
+  compress: !PRODUCTION,
   /**
    * Même origine pour l'interface et l'API : /api est relayé vers NestJS. Les cookies de session
    * restent limités à l'hôte et aucune configuration CORS n'est nécessaire.

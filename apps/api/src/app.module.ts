@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { PermissionsGuard } from './auth/guards/permissions.guard';
 import { SessionAuthGuard } from './auth/guards/session-auth.guard';
@@ -28,6 +28,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { SecurityEventsModule } from './security-events/security-events.module';
 import { CsrfGuard } from './security/csrf.guard';
+import { AppThrottlerGuard } from './security/app-throttler.guard';
 import { RedisThrottlerStorage } from './security/redis-throttler.storage';
 import { SecurityModule } from './security/security.module';
 import { StorageModule } from './storage/storage.module';
@@ -78,7 +79,7 @@ import { StorageModule } from './storage/storage.module';
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
     // Ordre d'exécution : limitation, CSRF, session, permissions.
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: AppThrottlerGuard },
     { provide: APP_GUARD, useExisting: CsrfGuard },
     { provide: APP_GUARD, useClass: SessionAuthGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },

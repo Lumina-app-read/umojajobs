@@ -1,0 +1,21 @@
+# Contexte des images Docker : le code source seulement, jamais les secrets ni les artefacts.
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+**/next-env.d.ts
+apps/api/src/generated
+.pnpm-store
+.git
+.github
+.claude
+.vscode
+.idea
+**/.env
+**/.env.*
+!**/.env.example
+docs
+infrastructure
+*.log

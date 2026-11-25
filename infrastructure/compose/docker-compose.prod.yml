@@ -1,0 +1,144 @@
+# Production : Nginx (HTTPS), application web, API, migrations, PostgreSQL, Redis et, en option,
+# le stockage Garage. Guide : docs/DEPLOIEMENT.md.
+#
+# Depuis la racine du dépôt, avec un fichier .env.production (modèle :
+# infrastructure/production.env.example) :
+#   docker compose -f infrastructure/compose/docker-compose.prod.yml --env-file .env.production up -d --build
+#
+# Autre emplacement du fichier de variables : ENV_FILE=/chemin/absolu (pour les conteneurs).
+#
+# Seul Nginx publie des ports. PostgreSQL, Redis, l'API et l'application web restent sur le
+# réseau interne.
+name: umoja
+
+x-env-file: &env-file
+  env_file:
+    - path: ${ENV_FILE:-../../.env.production}
+      required: true
+
+services:
+  postgres:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER manquant}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB manquant}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4.12-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD manquant}
+    command: ['sh', '-c', 'exec redis-server --appendonly yes --requirepass "$${REDIS_PASSWORD}"']
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli -a "$${REDIS_PASSWORD}" --no-auth-warning ping | grep -q PONG']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Stockage objet privé auto-hébergé (profil « garage »). Inutile avec un fournisseur S3 externe.
+  garage:
+    image: dxflrs/garage:v2.5.0
+    profiles: ['garage']
+    restart: unless-stopped
+    environment:
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET:-}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN:-}
+    volumes:
+      - ../garage/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+
+  # Migrations Prisma, appliquées avant chaque démarrage de l'API. Le seed (pays, rôles,
+  # catégories, paramètres initiaux) se lance à part, une seule fois : voir le guide.
+  migrate:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/api.Dockerfile
+      target: migrate
+    image: umoja-migrate:${IMAGE_TAG:-latest}
+    restart: 'no'
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/api.Dockerfile
+      target: runtime
+    image: umoja-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    init: true
+    <<: *env-file
+    environment:
+      NODE_ENV: production
+      API_PORT: 4000
+      APP_URL: ${SITE_URL:?SITE_URL manquant}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      COOKIE_SECURE: 'true'
+      # Nginx seul devant l'API ; pour les rendus serveur, le serveur web relaie l'adresse posée par Nginx.
+      TRUST_PROXY: 1
+      STUDIO_RENDER_BASE_URL: http://web:3000
+    # Chromium (export PDF) : mémoire partagée suffisante.
+    shm_size: 256mb
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/web.Dockerfile
+      args:
+        SITE_URL: ${SITE_URL:?SITE_URL manquant}
+    image: umoja-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    init: true
+    environment:
+      API_INTERNAL_URL: http://api:4000
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+    depends_on:
+      api:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.28.0-alpine
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ${SERVER_NAME:?SERVER_NAME manquant}
+    ports:
+      - '${HTTP_PORT:-80}:80'
+      - '${HTTPS_PORT:-443}:443'
+    volumes:
+      - ../nginx/templates:/etc/nginx/templates:ro
+      - ${LETSENCRYPT_DIR:-/etc/letsencrypt}:/etc/letsencrypt:ro
+      - ${ACME_WEBROOT:-/var/www/acme}:/var/www/acme:ro
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  redis-data:
+  garage-meta:
+  garage-data:

@@ -25,12 +25,14 @@ const MAX_CONCURRENT = 2;
 export class ChromiumPdfRenderer implements PdfRenderer, OnModuleDestroy {
   private readonly logger = new Logger(ChromiumPdfRenderer.name);
   private readonly executablePath: string | undefined;
+  private readonly noSandbox: boolean;
   private browser: Promise<Browser> | null = null;
   private running = 0;
   private readonly waiting: (() => void)[] = [];
 
   constructor(config: ConfigService<EnvironmentVariables, true>) {
     this.executablePath = config.get('CHROMIUM_EXECUTABLE_PATH', { infer: true }) || undefined;
+    this.noSandbox = config.get('CHROMIUM_NO_SANDBOX', { infer: true });
   }
 
   get enabled(): boolean {
@@ -83,7 +85,12 @@ export class ChromiumPdfRenderer implements PdfRenderer, OnModuleDestroy {
     this.browser ??= launch({
       executablePath: this.executablePath,
       headless: true,
-      args: ['--no-first-run', '--disable-dev-shm-usage', '--font-render-hinting=none'],
+      args: [
+        '--no-first-run',
+        '--disable-dev-shm-usage',
+        '--font-render-hinting=none',
+        ...(this.noSandbox ? ['--no-sandbox'] : []),
+      ],
     }).catch((error: unknown) => {
       this.browser = null;
       this.logger.error(`Chromium ne démarre pas : ${(error as Error).message}`);

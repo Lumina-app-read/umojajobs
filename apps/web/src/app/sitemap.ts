@@ -1,15 +1,15 @@
 import { type SitemapResponse } from '@opportinities/shared';
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
+import { API_INTERNAL_URL, publicHeaders } from '@/lib/api/internal';
 import { SITE_URL } from '@/lib/seo';
-
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 
 /** Régénéré au plus toutes les 10 minutes. */
 export const revalidate = 600;
 
 async function data(): Promise<SitemapResponse | null> {
   const response = await fetch(`${API_INTERNAL_URL}/api/v1/job-offers/sitemap`, {
+    headers: publicHeaders(),
     next: { revalidate },
   }).catch(() => null);
   return response?.ok ? ((await response.json()) as SitemapResponse) : null;

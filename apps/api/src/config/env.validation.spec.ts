@@ -44,6 +44,21 @@ describe('validateEnv', () => {
     );
   });
 
+  it('traite une variable vide comme absente (fichiers d’environnement Docker)', () => {
+    const env = validateEnv({
+      ...BASE,
+      OPENAI_PRICE_INPUT_USD_PER_MTOK: '',
+      S3_ENDPOINT: '',
+      CHARIOW_API_KEY: '',
+      API_PORT: '',
+    });
+    expect(env.OPENAI_PRICE_INPUT_USD_PER_MTOK).toBeUndefined();
+    expect(env.S3_ENDPOINT).toBeUndefined();
+    expect(env.CHARIOW_API_KEY).toBeUndefined();
+    expect(env.API_PORT).toBe(4000);
+    expect(() => validateEnv({ ...BASE, DATABASE_URL: '' })).toThrow(/DATABASE_URL/);
+  });
+
   it('refuse un port hors limites', () => {
     expect(() => validateEnv({ ...BASE, API_PORT: '70000' })).toThrow(/API_PORT/);
   });

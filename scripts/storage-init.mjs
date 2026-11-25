@@ -4,18 +4,26 @@
  *
  * Usage (depuis la racine, après pnpm docker:up) : pnpm storage:init
  * Les identifiants viennent du fichier .env (S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET).
+ *
+ * Production (profil « garage ») : STORAGE_ENV_FILE=.env.production
+ *   STORAGE_COMPOSE_FILE=infrastructure/compose/docker-compose.prod.yml pnpm storage:init
  */
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
-process.loadEnvFile(resolve(import.meta.dirname, '../.env'));
+const ENV_FILE = process.env.STORAGE_ENV_FILE ?? '.env';
+const COMPOSE_FILE =
+  process.env.STORAGE_COMPOSE_FILE ?? 'infrastructure/compose/docker-compose.dev.yml';
+process.loadEnvFile(resolve(import.meta.dirname, '..', ENV_FILE));
 
 const COMPOSE = [
   'compose',
   '-f',
-  'infrastructure/compose/docker-compose.dev.yml',
+  COMPOSE_FILE,
   '--env-file',
-  '.env',
+  ENV_FILE,
+  '--profile',
+  'garage',
   'exec',
   '-T',
   'garage',

@@ -4,12 +4,12 @@ import { notFound } from 'next/navigation';
 import { studioLabels } from '@/features/studio/cv-labels';
 import { documentCountry, StudioDocument } from '@/features/studio/document-view';
 import { A4_WIDTH } from '@/features/studio/templates';
+import { API_INTERNAL_URL } from '@/lib/api/internal';
 import { getCountries } from '@/lib/api/server';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 export const dynamic = 'force-dynamic';
 
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 const UUID = /^[0-9a-f-]{36}$/i;
 
 type Props = {
